@@ -57,7 +57,7 @@ export class FriendsController {
     this.init();
   }
 
-  static compressImage(file, maxDimension = 600, quality = 0.8) {
+  static compressImage(file, maxDimension = 400, quality = 0.7) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -668,10 +668,24 @@ export class FriendsController {
 
     if (this.saveAllBtn) {
       this.saveAllBtn.addEventListener('click', () => {
+        // Explicitly scrape all current input values from DOM
+        if (this.editorList) {
+          const cards = this.editorList.querySelectorAll('.friend-edit-card');
+          cards.forEach(card => {
+            const idx = parseInt(card.getAttribute('data-index'), 10);
+            const nameInput = card.querySelector('.friend-name-input');
+            const nickInput = card.querySelector('.friend-nickname-input');
+            if (this.friends[idx]) {
+              if (nameInput && nameInput.value.trim()) this.friends[idx].name = nameInput.value.trim();
+              if (nickInput) this.friends[idx].nickname = nickInput.value.trim() || undefined;
+            }
+          });
+        }
+
         this.saveFriends();
         this.render();
         this.closeEditor();
-        this.showToast("💾 Gang changes saved successfully! ✨");
+        this.showToast("💾 Gang changes saved & synced across devices! ✨");
         window.dispatchEvent(new CustomEvent('refresh-friends'));
       });
     }
@@ -767,12 +781,15 @@ export class FriendsController {
         const file = e.target.files[0];
         if (!file) return;
 
+        this.showToast("⏳ Compressing photo...");
         try {
-          const newPhotoSrc = await FriendsController.compressImage(file, 600, 0.8);
+          const newPhotoSrc = await FriendsController.compressImage(file, 400, 0.7);
           this.friends[idx].photos = [newPhotoSrc];
           this.renderEditorList();
+          this.showToast("📷 Photo updated! Click 'Save Changes' to apply.");
         } catch (err) {
           console.warn('Error compressing photo:', err);
+          this.showToast("❌ Could not process photo.");
         }
       });
     });
