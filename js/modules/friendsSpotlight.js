@@ -112,6 +112,7 @@ export class FriendsController {
   }
 
   async init() {
+    this.checkForUrlSync();
     this.loadFriends();
     this.render();
     this.setupAddMemberEvents();
@@ -642,6 +643,91 @@ export class FriendsController {
       });
     }
 
+    // QR Code Sync Modal Elements
+    const syncQrModal = document.getElementById('sync-qr-modal');
+    const syncQrClose = document.getElementById('sync-qr-close');
+    const syncQrImg = document.getElementById('sync-qr-img');
+    const showSyncQrBtn = document.getElementById('btn-show-sync-qr');
+    const shareGangLinkBtn = document.getElementById('btn-share-gang-link');
+    const copySyncLinkInsideQrBtn = document.getElementById('btn-copy-sync-link-inside-qr');
+    const importGangCodeBtn = document.getElementById('btn-import-gang-code');
+
+    if (showSyncQrBtn) {
+      showSyncQrBtn.addEventListener('click', () => {
+        const syncUrl = this.generateSyncUrl();
+        if (syncQrImg) {
+          syncQrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(syncUrl)}`;
+        }
+        if (syncQrModal) {
+          syncQrModal.classList.add('active');
+          document.body.style.overflow = 'hidden';
+        }
+      });
+    }
+
+    if (syncQrClose && syncQrModal) {
+      syncQrClose.addEventListener('click', () => {
+        syncQrModal.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+      syncQrModal.addEventListener('click', (e) => {
+        if (e.target === syncQrModal) {
+          syncQrModal.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+
+    const copyLinkAction = () => {
+      const syncUrl = this.generateSyncUrl();
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(syncUrl).then(() => {
+          this.showToast("🔗 Direct Sync Link copied! Open this on your other phone.");
+        }).catch(() => {
+          prompt("Copy this Sync Link to open on your other phone:", syncUrl);
+        });
+      } else {
+        prompt("Copy this Sync Link to open on your other phone:", syncUrl);
+      }
+    };
+
+    if (shareGangLinkBtn) {
+      shareGangLinkBtn.addEventListener('click', copyLinkAction);
+    }
+    if (copySyncLinkInsideQrBtn) {
+      copySyncLinkInsideQrBtn.addEventListener('click', copyLinkAction);
+    }
+
+    if (importGangCodeBtn) {
+      importGangCodeBtn.addEventListener('click', () => {
+        const input = prompt("Paste your Gang JSON or Sync Link code below:");
+        if (!input) return;
+
+        try {
+          let parsed = null;
+          if (input.includes('sync=')) {
+            const rawEncoded = input.split('sync=')[1].split('&')[0];
+            const decodedStr = decodeURIComponent(escape(atob(decodeURIComponent(rawEncoded))));
+            parsed = JSON.parse(decodedStr);
+          } else {
+            parsed = JSON.parse(input.trim());
+          }
+
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            this.friends = parsed;
+            this.saveFriends();
+            this.render();
+            this.renderEditorList();
+            this.showToast("🎉 Gang imported successfully!");
+          } else {
+            alert("Invalid gang data format. Please try again.");
+          }
+        } catch (err) {
+          alert("Could not parse data. Please make sure you copied the full code.");
+        }
+      });
+    }
+
     if (this.resetDefaultBtn) {
       this.resetDefaultBtn.addEventListener('click', () => {
         if (confirm('Reset all gang members and photos back to original defaults?')) {
@@ -688,6 +774,46 @@ export class FriendsController {
         this.showToast("💾 Gang changes saved & synced across devices! ✨");
         window.dispatchEvent(new CustomEvent('refresh-friends'));
       });
+    }
+  }
+
+  checkForUrlSync() {
+    const hash = window.location.hash || '';
+    const search = window.location.search || '';
+    let rawEncoded = null;
+
+    if (hash.includes('sync=')) {
+      rawEncoded = hash.split('sync=')[1].split('&')[0];
+    } else if (search.includes('sync=')) {
+      rawEncoded = search.split('sync=')[1].split('&')[0];
+    }
+
+    if (rawEncoded) {
+      try {
+        const decodedStr = decodeURIComponent(escape(atob(decodeURIComponent(rawEncoded))));
+        const parsed = JSON.parse(decodedStr);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          this.friends = parsed;
+          this.saveFriends();
+          this.render();
+          this.showToast("🎉 Gang imported & synced successfully from link!");
+          try {
+            history.replaceState(null, document.title, window.location.pathname);
+          } catch (e) {}
+        }
+      } catch (e) {
+        console.warn('Sync import error:', e);
+      }
+    }
+  }
+
+  generateSyncUrl() {
+    try {
+      const jsonStr = JSON.stringify(this.friends);
+      const encoded = encodeURIComponent(btoa(unescape(encodeURIComponent(jsonStr))));
+      return `${window.location.origin}${window.location.pathname}#sync=${encoded}`;
+    } catch (e) {
+      return window.location.href;
     }
   }
 

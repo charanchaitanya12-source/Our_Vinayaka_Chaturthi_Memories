@@ -557,13 +557,22 @@
         <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
           <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
             <button id="btn-add-new-friend" type="button" class="btn-secondary" style="font-size: 0.85rem;">
-              ➕ Add Another Person/Card
+              ➕ Add Person
+            </button>
+            <button id="btn-show-sync-qr" type="button" class="btn-secondary" style="font-size: 0.85rem; color: var(--gold-300); border-color: rgba(245, 184, 66, 0.4);" title="Scan QR Code with other phone to sync instantly">
+              📱 Sync QR Code
+            </button>
+            <button id="btn-share-gang-link" type="button" class="btn-secondary" style="font-size: 0.85rem; color: var(--gold-300);" title="Copy direct sync link for other devices">
+              🔗 Copy Sync Link
+            </button>
+            <button id="btn-import-gang-code" type="button" class="btn-secondary" style="font-size: 0.85rem;" title="Paste and import gang code from another device">
+              📥 Import Code
+            </button>
+            <button id="btn-export-gang-code" type="button" class="btn-secondary" style="font-size: 0.85rem;" title="Copy updated gang code">
+              📋 Copy Code
             </button>
             <button id="btn-reset-friends-default" type="button" class="btn-secondary" style="font-size: 0.85rem; color: #ff9e9e; border-color: rgba(255,100,100,0.3);" title="Reset gang back to original code defaults">
-              ↺ Reset Defaults
-            </button>
-            <button id="btn-export-gang-code" type="button" class="btn-secondary" style="font-size: 0.85rem; color: var(--gold-300);" title="Copy updated gang code to update memoriesData.js">
-              📋 Copy Code
+              ↺ Reset
             </button>
           </div>
           <button id="btn-save-friends" type="button" class="btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1.4rem;">
@@ -574,6 +583,32 @@
         <div id="friend-editor-list" style="margin-top: 1rem;">
           <!-- Dynamically populated from friendsSpotlight.js -->
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       14C. SYNC QR CODE MODAL
+       ========================================================================= -->
+  <div id="sync-qr-modal" class="customizer-modal" role="dialog" aria-modal="true" aria-label="Sync QR Code">
+    <div class="customizer-dialog" style="max-width: 420px; text-align: center;">
+      <div class="customizer-header">
+        <div>
+          <h3 class="customizer-header-title">📱 Sync to Another Device</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Scan this QR Code with your other phone's camera</p>
+        </div>
+        <button id="sync-qr-close" class="lightbox-close-btn" style="position: static;" aria-label="Close QR Modal">✕</button>
+      </div>
+      <div class="customizer-body" style="padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+        <div id="sync-qr-container" style="background: #fff; padding: 1rem; border-radius: var(--radius-lg); box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
+          <img id="sync-qr-img" src="" alt="Sync QR Code" style="width: 220px; height: 220px; display: block;" />
+        </div>
+        <p style="font-size: 0.85rem; color: var(--gold-300);">
+          ✨ Point your other phone's camera at this QR code to open the site with all your updated names and photos instantly applied!
+        </p>
+        <button id="btn-copy-sync-link-inside-qr" type="button" class="btn-secondary" style="font-size: 0.85rem; width: 100%;">
+          🔗 Copy Direct Sync Link
+        </button>
       </div>
     </div>
   </div>
@@ -769,6 +804,6 @@
   </div>
 
   <!-- Main JavaScript App Entrypoint (ES Module) -->
-  <script type="module" src="js/main.js?v=2.4"></script>
+  <script type="module" src="js/main.js?v=2.5"></script>
 </body>
 </html>
