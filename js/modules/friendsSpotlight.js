@@ -41,13 +41,15 @@ export class FriendsController {
     this.saveAllBtn = document.getElementById('btn-save-friends');
 
     // Storage Keys
-    this.customStorageKey = 'vinayaka_custom_gang_members_v10';
-    this.overridesStorageKey = 'vinayaka_friend_overrides_v10';
-    this.deletedKey = 'vinayaka_deleted_friend_ids_v10';
+    this.storageKey = 'vinayaka_saved_gang_v12';
+    this.deletedKey = 'vinayaka_deleted_friend_ids_v12';
     this.currentUploadedPhoto = null;
     this.friends = [];
 
-    // Purge any old stale localStorage keys from earlier versions so mobile devices always see correct photos
+    // Reset Defaults Button
+    this.resetDefaultBtn = document.getElementById('btn-reset-friends-default');
+
+    // Purge old legacy keys to prevent stale overrides
     this.purgeLegacyCaches();
 
     this.init();
@@ -64,14 +66,15 @@ export class FriendsController {
       'vinayaka_gang_profiles_v6',
       'vinayaka_gang_profiles_v7',
       'vinayaka_gang_profiles_v8',
-      'vinayaka_gang_profiles_v9'
+      'vinayaka_gang_profiles_v9',
+      'vinayaka_custom_gang_members_v10',
+      'vinayaka_friend_overrides_v10',
+      'vinayaka_deleted_friend_ids_v10'
     ];
     legacyKeys.forEach(k => {
       try {
         localStorage.removeItem(k);
-      } catch (e) {
-        // ignore
-      }
+      } catch (e) {}
     });
   }
 
@@ -83,7 +86,6 @@ export class FriendsController {
 
     // Re-render when external refresh requested
     window.addEventListener('refresh-friends', () => {
-      this.loadFriends();
       this.render();
     });
   }
@@ -113,8 +115,22 @@ export class FriendsController {
   loadFriends() {
     const deletedIds = this.getDeletedIds();
 
-    // 1. Base Canonical Friends directly from memoriesData.js (always accurate source of truth)
-    const baseFriends = (memoriesData.friends || []).map(f => {
+    // 1. Try loading user-saved modifications from localStorage
+    try {
+      const stored = localStorage.getItem(this.storageKey);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          this.friends = parsed.filter(f => f && f.id && !deletedIds.includes(f.id));
+          return;
+        }
+      }
+    } catch (e) {
+      console.warn('Error reading saved friends data:', e);
+    }
+
+    // 2. Default canonical list directly from memoriesData.js
+    this.friends = (memoriesData.friends || []).filter(f => !deletedIds.includes(f.id)).map(f => {
       if (f.id === 'friend-sai-nikhil' || (f.name && f.name.toLowerCase().includes('sai nikhil'))) {
         return {
           id: f.id || 'friend-sai-nikhil',
@@ -125,8 +141,7 @@ export class FriendsController {
             'assets/images/tribute/tribute_solo_night_smile.jpg',
             'assets/images/tribute/tribute_group_araku_pinery.jpg'
           ],
-          taggedMoments: f.taggedMoments || ['gal-1', 'gal-2'],
-          isDefault: true
+          taggedMoments: f.taggedMoments || ['gal-1', 'gal-2']
         };
       }
       return {
@@ -134,37 +149,43 @@ export class FriendsController {
         name: f.name,
         nickname: f.nickname || undefined,
         photos: (f.photos && f.photos.length > 0) ? [...f.photos] : ['assets/images/gang/gang_member_ramesh.jpg'],
-        taggedMoments: f.taggedMoments || ['gal-1', 'gal-2'],
-        isDefault: true
+        taggedMoments: f.taggedMoments || ['gal-1', 'gal-2']
       };
     });
-
-    // 2. Custom members added by user through "+ Add Member" modal
-    let customFriends = [];
-    try {
-      const customStored = localStorage.getItem(this.customStorageKey);
-      if (customStored) {
-        const parsed = JSON.parse(customStored);
-        if (Array.isArray(parsed)) {
-          customFriends = parsed.filter(f => f && f.isCustom && !deletedIds.includes(f.id));
-        }
-      }
-    } catch (e) {
-      console.warn('Error reading custom friends data:', e);
-    }
-
-    // 3. Combine base canonical friends + user-added custom friends
-    this.friends = [...baseFriends, ...customFriends].filter(f => !deletedIds.includes(f.id));
   }
 
   saveFriends() {
     try {
-      // Save only custom friends to localStorage so canonical friends are never corrupted or duplicated
-      const customOnly = this.friends.filter(f => f.isCustom);
-      localStorage.setItem(this.customStorageKey, JSON.stringify(customOnly));
+      localStorage.setItem(this.storageKey, JSON.stringify(this.friends));
     } catch (e) {
-      console.warn('Could not save custom friends data to localStorage:', e);
+      console.warn('Could not save friends data to localStorage:', e);
     }
+  }
+
+  resetDefaults() {
+    try {
+      localStorage.removeItem(this.storageKey);
+      localStorage.removeItem(this.deletedKey);
+    } catch (e) {}
+    this.loadFriends();
+    this.render();
+    this.showToast("↺ Reset gang members back to defaults!");
+  }
+
+  showToast(message) {
+    let toast = document.getElementById('festive-toast');
+    if (!toast) {
+      toast = document.createElement('div');
+      toast.id = 'festive-toast';
+      toast.className = 'festive-toast';
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add('show');
+    clearTimeout(this.toastTimer);
+    this.toastTimer = setTimeout(() => {
+      toast.classList.remove('show');
+    }, 3200);
   }
 
   render() {
@@ -512,11 +533,21 @@ export class FriendsController {
       });
     }
 
+    if (this.resetDefaultBtn) {
+      this.resetDefaultBtn.addEventListener('click', () => {
+        if (confirm('Reset all gang members and photos back to original defaults?')) {
+          this.resetDefaults();
+          this.renderEditorList();
+        }
+      });
+    }
+
     if (this.saveAllBtn) {
       this.saveAllBtn.addEventListener('click', () => {
         this.saveFriends();
         this.render();
         this.closeEditor();
+        this.showToast("💾 Gang changes saved successfully! ✨");
         window.dispatchEvent(new CustomEvent('refresh-friends'));
       });
     }
