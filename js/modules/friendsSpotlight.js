@@ -48,11 +48,43 @@ export class FriendsController {
 
     // Reset Defaults Button
     this.resetDefaultBtn = document.getElementById('btn-reset-friends-default');
+    this.exportGangCodeBtn = document.getElementById('btn-export-gang-code');
 
     // Purge old legacy keys to prevent stale overrides
     this.purgeLegacyCaches();
 
     this.init();
+  }
+
+  static compressImage(file, maxDimension = 600, quality = 0.8) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > maxDimension || height > maxDimension) {
+            if (width > height) {
+              height = Math.round((height * maxDimension) / width);
+              width = maxDimension;
+            } else {
+              width = Math.round((width * maxDimension) / height);
+              height = maxDimension;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = reject;
+        img.src = e.target.result;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   }
 
   purgeLegacyCaches() {
@@ -456,10 +488,10 @@ export class FriendsController {
     }
   }
 
-  handlePhotoFile(file) {
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      this.currentUploadedPhoto = event.target.result;
+  async handlePhotoFile(file) {
+    if (!file) return;
+    try {
+      this.currentUploadedPhoto = await FriendsController.compressImage(file, 600, 0.8);
       if (this.addMemberPreviewImg) {
         this.addMemberPreviewImg.src = this.currentUploadedPhoto;
       }
@@ -468,8 +500,9 @@ export class FriendsController {
         const textEl = this.addMemberDropzone.querySelector('.dropzone-text');
         if (textEl) textEl.textContent = `Selected: ${file.name}`;
       }
-    };
-    reader.readAsDataURL(file);
+    } catch (e) {
+      console.warn('Error compressing photo:', e);
+    }
   }
 
   openAddMemberModal() {
@@ -576,6 +609,21 @@ export class FriendsController {
       });
     }
 
+    if (this.exportGangCodeBtn) {
+      this.exportGangCodeBtn.addEventListener('click', () => {
+        const jsonStr = JSON.stringify(this.friends, null, 2);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(jsonStr).then(() => {
+            this.showToast("📋 Gang code copied to clipboard!");
+          }).catch(() => {
+            prompt("Copy your updated gang JSON below:", jsonStr);
+          });
+        } else {
+          prompt("Copy your updated gang JSON below:", jsonStr);
+        }
+      });
+    }
+
     if (this.saveAllBtn) {
       this.saveAllBtn.addEventListener('click', () => {
         this.saveFriends();
@@ -673,17 +721,17 @@ export class FriendsController {
 
     // Attach Photo uploads
     this.editorList.querySelectorAll('.friend-photo-upload-input').forEach((input, idx) => {
-      input.addEventListener('change', (e) => {
+      input.addEventListener('change', async (e) => {
         const file = e.target.files[0];
         if (!file) return;
 
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          const newPhotoSrc = event.target.result;
+        try {
+          const newPhotoSrc = await FriendsController.compressImage(file, 600, 0.8);
           this.friends[idx].photos = [newPhotoSrc];
           this.renderEditorList();
-        };
-        reader.readAsDataURL(file);
+        } catch (err) {
+          console.warn('Error compressing photo:', err);
+        }
       });
     });
 
