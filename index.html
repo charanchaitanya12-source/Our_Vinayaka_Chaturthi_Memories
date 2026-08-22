@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Our Vinayaka Chaturthi Memories • A Friendship Time Capsule</title>
+  <meta name="description" content="A cinematic digital memory documentary of our Vinayaka Chaturthi celebrations, brotherhood, laughter, and timeless friendship." />
+  <meta property="og:title" content="Our Vinayaka Chaturthi Memories" />
+  <meta property="og:description" content="Some festivals end, but some memories stay forever. Relive our Vinayaka Chaturthi journey." />
+  <meta property="og:type" content="website" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪔</text></svg>" />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/design-system.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+  <link rel="stylesheet" href="css/components.css" />
+</head>
+<body>
+
+  <!-- =========================================================================
+       1. STICKY HEADER & FLOATING CONTROLS
+       ========================================================================= -->
+  <header class="site-header" role="banner">
+    <div class="container nav-container">
+      <a href="#" class="brand-logo" aria-label="Our Vinayaka Chaturthi Memories Home">
+        <div class="brand-logo-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2C9.5 2 7.5 4 7.5 6.5C7.5 7.7 8 8.8 8.8 9.5C6.5 10.3 5 12.5 5 15C5 18.3 7.7 21 11 21C11.6 21 12.1 20.9 12.7 20.8C13.5 21.6 14.7 22 16 22C18.2 22 20 20.2 20 18C20 16.4 19.1 15 17.7 14.4C18.5 13.5 19 12.3 19 11C19 8.2 16.8 6 14 6H13V4C13 2.9 12.1 2 11 2H12Z" opacity="0.3"/>
+            <path d="M12 3C10.3 3 9 4.3 9 6C9 7.7 10.3 9 12 9C13.7 9 15 7.7 15 6C15 4.3 13.7 3 12 3ZM12 11C8.7 11 6 13.7 6 17C6 20.3 8.7 23 12 23C15.3 23 18 20.3 18 17C18 13.7 15.3 11 12 11Z"/>
+          </svg>
+        </div>
+        <div>
+          <span class="brand-name">Bappa & Friends</span>
+          <span class="brand-subtitle">Memories Forever</span>
+        </div>
+      </a>
+
+      <nav class="nav-links" aria-label="Main Navigation">
+        <a href="#beginning" class="nav-link">Beginning</a>
+        <a href="#timeline" class="nav-link">Journey</a>
+        <a href="#gallery" class="nav-link">Moments</a>
+        <a href="#jokes" class="nav-link">Inside Jokes</a>
+        <a href="#friends" class="nav-link">The Gang</a>
+        <a href="#tribute" class="nav-link">In Memory</a>
+        <a href="#stories" class="nav-link">Stories</a>
+        <a href="#videos" class="nav-link">Videos</a>
+        <a href="#memory-wall" class="nav-link">Memory Wall</a>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Pushpanjali Flower Shower Button -->
+        <button id="btn-shower-flowers" class="btn-flower-shower" title="Shower sacred marigold flowers on Bappa & The Gang">
+          🌸 <span>Pushpanjali</span>
+        </button>
+
+        <!-- Persistent Audio Controller Widget -->
+        <div class="audio-widget" title="Ambient Indian Instrumental Music">
+          <button id="audio-play-toggle" class="audio-play-btn" aria-label="Toggle Ambient Background Music">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+          </button>
+          <div class="audio-info">
+            <span class="audio-title">Sacred Ambience</span>
+            <span id="audio-status" class="audio-status">Music Off</span>
+          </div>
+          <div class="audio-visualizer" aria-hidden="true">
+            <div class="visualizer-bar"></div>
+            <div class="visualizer-bar"></div>
+            <div class="visualizer-bar"></div>
+            <div class="visualizer-bar"></div>
+          </div>
+          <input type="range" id="audio-volume" class="audio-volume-slider" min="0" max="1" step="0.05" value="0.6" title="Volume Slider" />
+        </div>
+
+        <!-- Add Gang Member Button -->
+        <button id="btn-nav-add-member" class="btn-add-member-nav" title="Add a new friend to The Gang">
+          ➕ <span>Add Member</span>
+        </button>
+
+        <!-- In-Browser Media & Photo Customizer Button -->
+        <button id="btn-open-customizer" class="btn-customize-nav" title="Replace photos and videos with your real memories">
+          ⚙️ <span>Add Photos & Videos</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       2. CINEMATIC HERO SECTION
+       ========================================================================= -->
+  <section class="hero-section" id="hero">
+    <div class="hero-background-wrapper">
+      <img id="hero-bg-image" class="hero-bg-img ken-burns" src="assets/images/real_gang_pandal_mandap.jpg" alt="Lord Ganesha and Our Gang in Mandap" />
+      <div class="hero-gradient-overlay"></div>
+    </div>
+
+    <!-- HTML5 Canvas for Floating Marigold Petals & Glowing Diya Embers -->
+    <canvas id="particle-canvas"></canvas>
+
+    <div class="hero-content">
+      <div class="hero-aura-badge sacred-glow">
+        <span>🪔</span>
+        <span>A Digital Time Capsule • Forever In Our Hearts</span>
+      </div>
+
+      <p id="hero-pretitle-quote" class="hero-quote">
+        “Some festivals end, but some memories stay forever.”
+      </p>
+
+      <h1 id="hero-main-title" class="hero-main-title">
+        <span class="gold-shimmer">Our Vinayaka Chaturthi Memories</span>
+      </h1>
+
+      <p id="hero-description-text" class="hero-description">
+        A nostalgic journey through the laughter, the midnight pandal talks, the grand aartis, and the unforgettable moments we created together with Lord Ganesha.
+      </p>
+
+      <div class="hero-cta-group">
+        <a href="#beginning" id="btn-enter-memories" class="btn-primary">
+          <span>Enter Our Memories</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+
+        <a href="#gallery" class="btn-secondary">
+          <span>Explore Gallery</span>
+          <span>🖼️</span>
+        </a>
+      </div>
+    </div>
+
+    <a href="#beginning" class="scroll-indicator" aria-label="Scroll Down">
+      <span>Scroll To Relive</span>
+      <div class="scroll-mouse"></div>
+    </a>
+  </section>
+
+  <!-- =========================================================================
+       3. "THE BEGINNING" SECTION (PREPARATIONS & EXCITEMENT)
+       ========================================================================= -->
+  <section class="section-padding" id="beginning">
+    <div class="container">
+      <div class="section-header reveal-item">
+        <span class="section-tag">Day 0 & The First Spark</span>
+        <h2 class="section-title">Where Every Beautiful Memory Began</h2>
+        <p class="section-subtitle">
+          Long before the first aarti was sung, our festival began with getting our hands dirty, shopping at dawn, and building a sanctum together.
+        </p>
+      </div>
+
+      <div class="beginning-grid">
+        <div class="beginning-narrative reveal-item reveal-delay-1">
+          <p id="prep-narrative-lead" class="story-lead">
+            Long before the dhol beat echoed and the first diya was lit, our festival began with heated WhatsApp discussions, late-night budget pooling, and boundless excitement.
+          </p>
+          <p id="prep-narrative-body" class="story-details">
+            From waking up at 5:00 AM to pick the perfect eco-friendly clay idol, to untangling hundreds of fairy lights, buying marigold garlands by the kilo, and transforming a simple street corner into a divine sanctum — our hands got dirty, but our hearts were completely full.
+          </p>
+
+          <div id="prep-features-grid" class="prep-features">
+            <!-- Dynamically populated from memoriesData -->
+          </div>
+        </div>
+
+        <div class="beginning-visuals reveal-scale reveal-delay-2">
+          <div class="visual-stack">
+            <img id="prep-main-img" src="assets/images/real_gang_pandal_wide.jpg" alt="Our Mandap and Pandal Setup" />
+            <div class="visual-overlay-caption">
+              <div id="prep-main-tag" class="visual-caption-tag">Pandal Setup • Day 0</div>
+              <div id="prep-main-title" class="visual-caption-text">Setting Up The Sacred Mandap with Marigolds</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       4. CHRONOLOGICAL TIMELINE ("THE FESTIVAL JOURNEY")
+       ========================================================================= -->
+  <section class="section-padding" id="timeline" style="background: radial-gradient(circle at 50% 50%, var(--bg-secondary) 0%, var(--bg-darkest) 100%);">
+    <div class="container">
+      <div class="section-header reveal-item">
+        <span class="section-tag">Chronological Chapter</span>
+        <h2 class="section-title">The Festival Journey</h2>
+        <p class="section-subtitle">
+          Step by step, from the initial midnight brainstorming to the emotional sunset farewell.
+        </p>
+      </div>
+
+      <div class="timeline-container">
+        <div class="timeline-spine"></div>
+        <div id="timeline-items-container">
+          <!-- Dynamically populated from memoriesData.timeline -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       5. MAIN MASONRY GALLERY ("THE MOMENTS WE DIDN'T PLAN")
+       ========================================================================= -->
+  <section class="section-padding" id="gallery">
+    <div class="container-wide">
+      <div class="section-header reveal-item">
+        <span class="section-tag">Unfiltered Gallery</span>
+        <h2 class="section-title">The Moments We Didn’t Plan</h2>
+        <p class="section-subtitle">
+          Candid laughs, messy rangolis, delicious modaks, and our special Visarjan video memory.
+        </p>
+      </div>
+
+      <!-- Filter Buttons -->
+      <div id="gallery-filter-buttons" class="gallery-filters reveal-item">
+        <!-- Dynamically populated -->
+      </div>
+
+      <!-- Masonry Grid -->
+      <div id="masonry-gallery-grid" class="masonry-grid">
+        <!-- Dynamically populated from memoriesData.gallery -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       6. FULLSCREEN LIGHTBOX MODAL (VIDEO & PHOTO)
+       ========================================================================= -->
+  <div id="lightbox-modal" class="lightbox-modal" role="dialog" aria-modal="true" aria-label="Media Lightbox">
+    <div class="lightbox-container">
+      <div class="lightbox-body">
+        <button id="lightbox-close" class="lightbox-close-btn" aria-label="Close Lightbox">✕</button>
+        <button id="lightbox-prev" class="lightbox-nav-btn lightbox-prev" aria-label="Previous Media">❮</button>
+        
+        <img id="lightbox-img" class="lightbox-image" src="" alt="Enlarged Memory Photo" />
+        <video id="lightbox-video" class="lightbox-video" controls playsinline></video>
+
+        <button id="lightbox-next" class="lightbox-nav-btn lightbox-next" aria-label="Next Media">❯</button>
+      </div>
+      <div class="lightbox-footer">
+        <div class="lightbox-meta">
+          <span id="lightbox-category" class="lightbox-category-tag">CATEGORY</span>
+          <h3 id="lightbox-title" class="lightbox-title">Media Title</h3>
+          <p id="lightbox-desc" class="lightbox-desc">Media Caption</p>
+        </div>
+        <button id="lightbox-replace-shortcut" class="lightbox-quick-replace" onclick="document.getElementById('btn-open-customizer').click()">
+          📷 Replace Media
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       7. INSIDE JOKES ("THINGS ONLY WE UNDERSTAND")
+       ========================================================================= -->
+  <section class="section-padding jokes-section" id="jokes">
+    <div class="container">
+      <div class="section-header reveal-item">
+        <span class="section-tag">Unforgettable Banter</span>
+        <h2 class="section-title">Things Only We Understand</h2>
+        <p class="section-subtitle">
+          The short circuits, the 2:00 AM chai debates, the rangoli disaster, and the mistakes we still laugh about.
+        </p>
+      </div>
+
+      <div id="jokes-grid-container" class="jokes-grid">
+        <!-- Dynamically populated from memoriesData.insideJokes -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       8. FRIEND SPOTLIGHT ("THE GANG")
+       ========================================================================= -->
+  <section class="section-padding" id="friends">
+    <div class="container">
+      <div class="section-header reveal-item">
+        <span class="section-tag">Brotherhood & Bonds</span>
+        <h2 class="section-title">The Gang</h2>
+        <p class="section-subtitle">
+          The faces and souls that made every single moment of our celebrations unforgettable.
+        </p>
+        <div class="gang-section-header-actions">
+          <button id="btn-open-add-member" class="btn-primary" style="font-size: 0.85rem; padding: 0.55rem 1.4rem;" title="Add a new person to The Gang">
+            ➕ <span>Add Member</span>
+          </button>
+          <button id="btn-edit-friends" class="btn-manage-media" title="Edit friend names, adjust photos or remove cards">
+            ✏️ <span>Edit Gang</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="friends-grid-container" class="friends-grid">
+        <!-- Dynamically populated from friendsSpotlight.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       8B. FOREVER PART OF OUR MEMORIES (TRIBUTE SECTION)
+       ========================================================================= -->
+  <section class="section-padding tribute-section" id="tribute">
+    <div class="container">
+      <div class="tribute-wrapper reveal-scale">
+        <div class="tribute-ambient-glow" aria-hidden="true"></div>
+        
+        <div class="tribute-header reveal-item">
+          <span class="tribute-badge">
+            <span>✨</span>
+            <span>In Loving Memory • Sai Nikhil Raj Muppana</span>
+          </span>
+          <h2 class="tribute-title">Forever Part of Our Memories</h2>
+          <p class="tribute-lead-quote">
+            “Some people become memories. Some memories become a part of who we are.”
+          </p>
+        </div>
+
+        <div class="tribute-content-grid">
+          <!-- Tribute Photo / Media Collage Sequence -->
+          <div class="tribute-media-showcase reveal-item reveal-delay-1">
+            <div id="tribute-photos-container" class="tribute-photos-grid">
+              <!-- Dynamically populated from memoriesData.tribute -->
+            </div>
+          </div>
+
+          <!-- Tribute Narrative & Message -->
+          <div class="tribute-message-card reveal-item reveal-delay-2">
+            <div class="tribute-message-body">
+              <p class="tribute-text-highlight">
+                Sai Nikhil may no longer be with us, but the moments we shared with him will always remain an inseparable part of who we are.
+              </p>
+              <p class="tribute-text">
+                Every laugh, every celebration, every road trip, and every little memory reminds us that some people leave a permanent place in our hearts.
+              </p>
+              <p class="tribute-text">
+                This celebration is also for the memories we created together. Sai Nikhil, you will always be a part of our story, our brotherhood, and our celebrations.
+              </p>
+            </div>
+            
+            <div class="tribute-salutation-footer">
+              <div class="tribute-diya-icon">🪔</div>
+              <div class="tribute-farewell-text">Forever remembered. Forever our brother. Forever Sai Nikhil.</div>
+            </div>
+
+            <!-- Interactive Diya Lighting for Sai Nikhil -->
+            <div class="diya-interactive-widget" style="width: 100%; margin-top: 1.5rem;">
+              <div class="diya-lamp-container">
+                <div class="diya-flame-glow"></div>
+                <svg class="diya-base-svg" viewBox="0 0 100 50">
+                  <path d="M10 20 Q50 48 90 20 Q80 42 50 46 Q20 42 10 20 Z" fill="#d48b19" stroke="#ffd56b" stroke-width="1.5"/>
+                  <ellipse cx="50" cy="20" rx="40" ry="10" fill="#f5b842" stroke="#ffd56b" stroke-width="1.5"/>
+                  <ellipse cx="50" cy="20" rx="34" ry="7" fill="#8c3b0d"/>
+                </svg>
+              </div>
+              <div class="diya-counter-box">
+                <span>🔥</span>
+                <span class="diya-counter-number">108</span>
+                <span>Diyas lit in remembrance</span>
+              </div>
+              <button type="button" class="btn-light-diya" title="Light a sacred diya in loving memory">
+                <span>🪔</span>
+                <span>Light a Diya for Sai Nikhil</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       9. EMOTIONAL STORYTELLING ("IF YOU REMEMBER THIS...")
+       ========================================================================= -->
+  <section class="storytelling-section" id="stories">
+    <div class="container">
+      <div class="section-header reveal-item">
+        <span class="section-tag">A Walk Down Memory Lane</span>
+        <h2 class="section-title">If You Remember This…</h2>
+        <p class="section-subtitle">
+          Some ordinary moments quietly became the most cherished memories of our youth.
+        </p>
+      </div>
+
+      <div id="storytelling-container">
+        <!-- Dynamically populated from memoriesData.emotionalStories -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       10. VIDEO MEMORIES SECTION ("MOTION & MELODIES")
+       ========================================================================= -->
+  <section class="section-padding" id="videos" style="background: radial-gradient(circle at 50% 50%, var(--bg-surface) 0%, var(--bg-darkest) 100%);">
+    <div class="container">
+      <div class="section-header reveal-item">
+        <span class="section-tag">Cinematic Reels</span>
+        <h2 class="section-title">Motion & Melodies</h2>
+        <p class="section-subtitle">
+          Short video clips capturing the thunderous aagman dhol, the peaceful aartis, and the final farewell.
+        </p>
+        <div class="video-section-header-actions">
+          <button id="btn-manage-videos" class="btn-manage-media" title="Add new videos or edit existing vectors">
+            ⚙️ <span>Manage & Add Videos</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="video-grid-container" class="video-grid">
+        <!-- Dynamically populated from videoMemories.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       11. MEMORY WALL (INTERACTIVE GUESTBOOK WITH DELETE)
+       ========================================================================= -->
+  <section class="section-padding" id="memory-wall">
+    <div class="container">
+      <div class="section-header reveal-item">
+        <span class="section-tag">Interactive Guestbook</span>
+        <h2 class="section-title">Our Sacred Memory Wall</h2>
+        <p class="section-subtitle">
+          Leave a message, share your favorite incident, or write what we must do next year!
+        </p>
+      </div>
+
+      <div class="memory-wall-layout">
+        <!-- Submission Form -->
+        <div class="memory-form-card reveal-item">
+          <h3 class="memory-form-title">Leave Your Memory ✍️</h3>
+          <p class="memory-form-desc">Messages are saved directly in your browser and can be deleted anytime.</p>
+
+          <form id="memory-wall-form">
+            <div class="form-group">
+              <label class="form-label" for="memory-author-name">Your Name *</label>
+              <input type="text" id="memory-author-name" class="form-input" placeholder="e.g. Rahul, Sneha, Charan..." required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="memory-author-role">Your Role / Nickname</label>
+              <input type="text" id="memory-author-role" class="form-input" placeholder="e.g. Modak Finisher, Dhol Player..." />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="memory-category">Memory Type</label>
+              <select id="memory-category" class="form-select">
+                <option value="Favorite Moment">Favorite Moment ✨</option>
+                <option value="Funniest Incident">Funniest Incident 😂</option>
+                <option value="Wish For Next Year">Wish For Next Year 🪔</option>
+                <option value="Message to Gang">Message to the Gang ❤️</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Pick A Festive Sticker</label>
+              <div class="sticker-selector">
+                <button type="button" class="sticker-opt selected" data-sticker="🙏">🙏</button>
+                <button type="button" class="sticker-opt" data-sticker="🪔">🪔</button>
+                <button type="button" class="sticker-opt" data-sticker="🥟">🥟</button>
+                <button type="button" class="sticker-opt" data-sticker="🥁">🥁</button>
+                <button type="button" class="sticker-opt" data-sticker="❤️">❤️</button>
+                <button type="button" class="sticker-opt" data-sticker="✨">✨</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="memory-message-text">Your Memory / Note *</label>
+              <textarea id="memory-message-text" class="form-textarea" placeholder="Remember when we..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 0.5rem;">
+              <span>Post to Memory Wall</span>
+              <span>🪔</span>
+            </button>
+          </form>
+
+          <div style="display: flex; gap: 0.75rem; margin-top: 1.25rem;">
+            <button id="btn-export-memories" class="btn-secondary" style="flex: 1; font-size: 0.8rem;">
+              💾 Export JSON
+            </button>
+            <button id="btn-import-memories" class="btn-secondary" style="flex: 1; font-size: 0.8rem;">
+              📂 Import JSON
+            </button>
+            <input type="file" id="import-file-input" accept=".json" style="display:none;" />
+          </div>
+        </div>
+
+        <!-- Posts List -->
+        <div id="wall-posts-container" class="wall-posts-container reveal-item reveal-delay-1">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       12. THE EMOTIONAL FINALE & REPLAY
+       ========================================================================= -->
+  <section class="finale-section" id="finale">
+    <div class="finale-bg-wrapper">
+      <img id="finale-bg-img" class="finale-bg-img" src="assets/images/real_gang_pandal_mandap.jpg" alt="Final Group Memory Photo" />
+      <div class="finale-gradient-overlay"></div>
+    </div>
+
+    <div class="finale-content">
+      <div id="finale-lines-container" class="finale-lines reveal-item">
+        <!-- Dynamically populated from memoriesData.finale.lines -->
+      </div>
+
+      <div class="finale-salutation reveal-item reveal-delay-1">Until the next Chaturthi…</div>
+      <div class="finale-mantra gold-shimmer reveal-item reveal-delay-2">Ganpati Bappa Morya 🙏</div>
+
+      <div style="margin-top: 2.5rem; display: flex; justify-content: center; gap: 1.25rem; flex-wrap: wrap;" class="reveal-item reveal-delay-3">
+        <button id="btn-open-capsule" class="btn-secondary" style="border-color: var(--gold-400); color: var(--gold-300); font-weight: 600;">
+          📜 <span>Our Digital Time Capsule</span>
+        </button>
+        <button id="btn-replay-memories" class="btn-primary">
+          <span>Replay Our Memories</span>
+          <span>↺</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       13. FOOTER
+       ========================================================================= -->
+  <footer class="site-footer" role="contentinfo">
+    <div class="container">
+      <p class="footer-text">
+        Created with love & devotion for our incredible friendship gang.
+      </p>
+      <p class="footer-quote">
+        “May Lord Ganesha always bless our bond with laughter, strength, and endless memories.”
+      </p>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       14. FRIEND EDITOR MODAL (THE GANG)
+       ========================================================================= -->
+  <div id="friend-editor-modal" class="customizer-modal" role="dialog" aria-modal="true" aria-label="Edit Friends & Gang">
+    <div class="customizer-dialog" style="max-width: 800px;">
+      <div class="customizer-header">
+        <div>
+          <h3 class="customizer-header-title">👥 Edit The Gang & Friends</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Change names, add multiple photos per card, or add new friends.</p>
+        </div>
+        <button id="friend-editor-close" class="lightbox-close-btn" style="position: static;" aria-label="Close Friend Editor">✕</button>
+      </div>
+
+      <div class="customizer-body">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <button id="btn-add-new-friend" type="button" class="btn-secondary" style="font-size: 0.85rem;">
+            ➕ Add Another Person/Card
+          </button>
+          <button id="btn-save-friends" type="button" class="btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1.4rem;">
+            💾 Save Changes
+          </button>
+        </div>
+
+        <div id="friend-editor-list" style="margin-top: 1rem;">
+          <!-- Dynamically populated from friendsSpotlight.js -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       14B. ADD MEMBER MODAL (THE GANG)
+       ========================================================================= -->
+  <div id="add-member-modal" class="customizer-modal" role="dialog" aria-modal="true" aria-label="Add Gang Member">
+    <div class="customizer-dialog" style="max-width: 520px;">
+      <div class="customizer-header">
+        <div>
+          <h3 class="customizer-header-title">👥 Add Member to The Gang</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Enter their name and upload a photo to generate a profile card.</p>
+        </div>
+        <button id="add-member-modal-close" class="lightbox-close-btn" style="position: static;" aria-label="Close Add Member Modal">✕</button>
+      </div>
+
+      <div class="customizer-body">
+        <form id="add-member-form">
+          <!-- Live Profile Card Preview -->
+          <div class="add-member-preview-container">
+            <div class="add-member-avatar-preview-box">
+              <img id="add-member-preview-img" src="assets/images/gang/gang_member_1.jpg" alt="Member Photo Preview" />
+              <div class="preview-badge">Preview</div>
+            </div>
+            <div class="add-member-preview-info">
+              <h4 id="add-member-preview-name" class="add-member-preview-name">New Member</h4>
+              <span id="add-member-preview-role" class="add-member-preview-role">✨ The Gang</span>
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-top: 1.25rem;">
+            <label class="form-label" for="input-add-member-name">Member Name *</label>
+            <input type="text" id="input-add-member-name" class="form-input" placeholder="e.g. Harish, Charan, Rahul..." required autocomplete="off" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="input-add-member-role">Nickname / Title (Optional)</label>
+            <input type="text" id="input-add-member-role" class="form-input" placeholder="e.g. Dhol Legend, Chef, Bhai..." autocomplete="off" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Upload Member Photo *</label>
+            <div id="add-member-dropzone" class="add-member-dropzone">
+              <input type="file" id="input-add-member-file" accept="image/*" style="display:none;" />
+              <div class="dropzone-content" id="dropzone-trigger-btn">
+                <span class="dropzone-icon">📷</span>
+                <span class="dropzone-text">Click to choose or drag & drop photo</span>
+                <span class="dropzone-subtext">JPG, PNG, WEBP (Square style)</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem;">
+            <button type="button" id="btn-cancel-add-member" class="btn-secondary" style="font-size: 0.85rem;">
+              Cancel
+            </button>
+            <button type="submit" id="btn-submit-add-member" class="btn-primary" style="font-size: 0.85rem; padding: 0.6rem 1.6rem;">
+              <span>Add to The Gang</span>
+              <span>✨</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       15. VIDEO & MEDIA SETTINGS MODAL
+       ========================================================================= -->
+  <div id="video-settings-modal" class="customizer-modal" role="dialog" aria-modal="true" aria-label="Video & Media Settings">
+    <div class="customizer-dialog" style="max-width: 780px;">
+      <div class="customizer-header">
+        <div>
+          <h3 class="customizer-header-title">🎬 Motion & Melodies Settings</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Add new video memories or edit existing media vectors.</p>
+        </div>
+        <button id="video-settings-close" class="lightbox-close-btn" style="position: static;" aria-label="Close Video Settings">✕</button>
+      </div>
+
+      <div class="customizer-body">
+        <!-- Add Video Form -->
+        <form id="video-add-form" style="background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: var(--radius-lg); padding: 1.5rem;">
+          <h4 style="font-family: var(--font-display); color: var(--gold-300); margin-bottom: 1rem;">Add New Video Memory</h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+            <div>
+              <label class="form-label" for="video-add-title">Video Title *</label>
+              <input type="text" id="video-add-title" class="form-input" placeholder="e.g. Visarjan Dhol Dance" required />
+            </div>
+            <div>
+              <label class="form-label" for="video-add-duration">Duration</label>
+              <input type="text" id="video-add-duration" class="form-input" placeholder="e.g. 03:20" />
+            </div>
+          </div>
+          <div style="margin-bottom: 1rem;">
+            <label class="form-label" for="video-add-desc">Description</label>
+            <input type="text" id="video-add-desc" class="form-input" placeholder="Short description of this video moment..." />
+          </div>
+          <div style="margin-bottom: 1rem;">
+            <label class="form-label" for="video-add-file">Upload Local MP4 / Video File</label>
+            <input type="file" id="video-add-file" class="form-input" accept="video/mp4,video/webm,video/quicktime" />
+          </div>
+          <button type="submit" class="btn-primary" style="font-size: 0.85rem; padding: 0.6rem 1.5rem;">
+            <span>Add Video to Motion & Melodies</span>
+          </button>
+        </form>
+
+        <h4 style="font-family: var(--font-display); color: var(--text-primary); margin-top: 1rem;">Existing Video Memories</h4>
+        <div id="video-settings-list">
+          <!-- Dynamically populated from videoMemories.js -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       16. PHOTO & MEDIA CUSTOMIZER MODAL
+       ========================================================================= -->
+  <div id="customizer-modal" class="customizer-modal" role="dialog" aria-modal="true" aria-label="Photo & Video Customizer">
+    <div class="customizer-dialog">
+      <div class="customizer-header">
+        <div>
+          <h3 class="customizer-header-title">📷 Photo & Video Customizer</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Replace any placeholder photo or video directly in your browser.</p>
+        </div>
+        <button id="customizer-close" class="lightbox-close-btn" style="position: static;" aria-label="Close Customizer">✕</button>
+      </div>
+
+      <div class="customizer-body">
+        <p style="font-size: 0.875rem; color: var(--gold-300); background: rgba(245, 184, 66, 0.08); padding: 0.75rem 1rem; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+          💡 <strong>Tip:</strong> Click "Replace Photo / Thumbnail" or "Upload Video" on any slot below to choose files from your device. It updates the website immediately!
+        </p>
+
+        <div id="customizer-slots-container" class="customizer-slot-grid">
+          <!-- Dynamically populated from photoManager.js -->
+        </div>
+      </div>
+
+      <div class="customizer-footer">
+        <button id="btn-export-config" class="btn-primary" style="font-size: 0.875rem; padding: 0.6rem 1.4rem;">
+          💾 Export Customized Config
+        </button>
+        <button onclick="document.getElementById('customizer-modal').classList.remove('active'); document.body.style.overflow='';" class="btn-secondary" style="font-size: 0.875rem;">
+          Done
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       17. DIGITAL TIME CAPSULE KEEPSAKE MODAL
+       ========================================================================= -->
+  <div id="capsule-modal" class="capsule-modal" role="dialog" aria-modal="true" aria-label="Digital Time Capsule">
+    <div class="capsule-card">
+      <button id="capsule-modal-close" class="capsule-modal-close" aria-label="Close Keepsake">✕</button>
+      
+      <div class="capsule-header">
+        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛕 ✨ 🪔</div>
+        <h2 class="capsule-title">Our Vinayaka Chaturthi Time Capsule</h2>
+        <p class="capsule-subtitle">A permanent keepsake of brotherhood, devotion, and timeless friendship</p>
+      </div>
+
+      <div class="capsule-photos-row">
+        <div class="capsule-photo-item">
+          <img src="assets/images/real_gang_pandal_mandap.jpg" alt="The Gang with Bappa" />
+        </div>
+        <div class="capsule-photo-item">
+          <img src="assets/images/tribute/tribute_group_ganesha_celebration.jpg" alt="Brotherhood Celebration" />
+        </div>
+        <div class="capsule-photo-item">
+          <img src="assets/images/real_gang_selfie_bappa.jpg" alt="Bappa & The Boys Selfie" />
+        </div>
+      </div>
+
+      <div class="capsule-vows">
+        <p>“Some people become memories. Some memories become a part of who we are.”</p>
+        <p style="margin-top: 0.75rem; font-size: 0.95rem; color: var(--gold-300);">
+          In loving remembrance of <strong>Sai Nikhil Raj Muppana</strong> — forever our brother, forever in our hearts.
+        </p>
+      </div>
+
+      <div style="text-align: center; margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;">
+        <p>No matter where life takes each of us in the years ahead, we promise to carry these memories with pride and joy.</p>
+        <p style="margin-top: 0.5rem; font-family: var(--font-display); color: var(--gold-400); font-weight: 700;">Ganpati Bappa Morya 🙏 Pudhchya Varshi Lavkar Ya!</p>
+      </div>
+
+      <div class="capsule-actions">
+        <button id="btn-print-capsule" type="button" class="btn-primary">
+          🖨️ <span>Print / Save Keepsake PDF</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main JavaScript App Entrypoint (ES Module) -->
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

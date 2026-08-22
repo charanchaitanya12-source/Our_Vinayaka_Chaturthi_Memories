@@ -1,0 +1,343 @@
+/* ==========================================================================
+   OUR VINAYAKA CHATURTHI MEMORIES - DESIGN SYSTEM
+   Theme: Cinematic, Nostalgic, Warm, Elegant, Emotional
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;800;900&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Caveat:wght@500;700&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Core Color Palette: Dark Obsidian, Rich Maroon, Golden Saffron, Warm Cream */
+  --bg-darkest: #070504;
+  --bg-primary: #0d0908;
+  --bg-secondary: #160f0d;
+  --bg-surface: #1f1512;
+  --bg-card: rgba(28, 19, 16, 0.78);
+  --bg-card-hover: rgba(40, 26, 22, 0.9);
+  --bg-glass: rgba(22, 15, 13, 0.65);
+  --bg-glass-gold: rgba(245, 184, 66, 0.06);
+
+  /* Regal Accent Colors */
+  --gold-300: #ffe494;
+  --gold-400: #ffd56b;
+  --gold-500: #f5b842;
+  --gold-600: #d99726;
+  --gold-700: #ad7213;
+
+  --saffron-400: #ffa65e;
+  --saffron-500: #ff8c38;
+  --saffron-600: #e66a15;
+
+  --maroon-600: #681523;
+  --maroon-700: #4a0d17;
+  --maroon-800: #30080f;
+  --maroon-900: #1d0408;
+
+  --vermillion: #d93829;
+  --marigold: #fca311;
+  --turmeric: #f7b731;
+
+  /* Typography Colors */
+  --text-primary: #fbf8f2;
+  --text-secondary: #e6ded3;
+  --text-muted: #b0a497;
+  --text-dim: #7a6e63;
+  --text-gold: #ffd56b;
+  --text-saffron: #ffa65e;
+
+  /* Borders & Glows */
+  --border-subtle: rgba(245, 184, 66, 0.12);
+  --border-medium: rgba(245, 184, 66, 0.28);
+  --border-highlight: rgba(245, 184, 66, 0.55);
+  --border-maroon: rgba(104, 21, 35, 0.4);
+
+  --glow-gold-sm: 0 0 15px rgba(245, 184, 66, 0.25);
+  --glow-gold-md: 0 0 30px rgba(245, 184, 66, 0.35);
+  --glow-gold-lg: 0 0 60px rgba(245, 184, 66, 0.45);
+  --glow-diya: 0 0 25px rgba(255, 140, 56, 0.5), 0 0 50px rgba(245, 184, 66, 0.3);
+  --glow-maroon: 0 0 35px rgba(104, 21, 35, 0.6);
+
+  /* Shadows */
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.6);
+  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.8);
+  --shadow-card: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 0 1px var(--border-subtle);
+  --shadow-polaroid: 0 12px 32px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.4);
+
+  /* Typography Families */
+  --font-display: 'Cinzel', 'Playfair Display', serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', 'Outfit', system-ui, -apple-system, sans-serif;
+  --font-handwriting: 'Caveat', cursive, sans-serif;
+
+  /* Spacing */
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2.5rem;
+  --space-2xl: 4rem;
+  --space-3xl: 6rem;
+  --space-4xl: 8rem;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-cinematic: 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+
+  /* Layout Containers */
+  --container-max: 1280px;
+  --container-narrow: 900px;
+  --container-wide: 1440px;
+}
+
+/* Base Styles & Global Resets */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+  background-color: var(--bg-darkest);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 0%, var(--maroon-900) 0%, var(--bg-primary) 35%, var(--bg-darkest) 100%);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* Custom Selection */
+::selection {
+  background-color: rgba(245, 184, 66, 0.3);
+  color: var(--gold-300);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-darkest);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--gold-600), var(--maroon-700));
+  border-radius: var(--radius-full);
+  border: 2px solid var(--bg-darkest);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--gold-500);
+}
+
+/* Typography Utility Classes */
+.font-display { font-family: var(--font-display); }
+.font-serif { font-family: var(--font-serif); }
+.font-sans { font-family: var(--font-sans); }
+.font-handwriting { font-family: var(--font-handwriting); }
+
+.text-gold {
+  color: var(--gold-400);
+  background: linear-gradient(135deg, #ffe494 0%, #f5b842 50%, #e68d1a 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-glow {
+  text-shadow: 0 0 20px rgba(245, 184, 66, 0.4);
+}
+
+.text-saffron {
+  color: var(--saffron-400);
+}
+
+/* Layout Utilities */
+.container {
+  width: 100%;
+  max-width: var(--container-max);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
+}
+
+.container-narrow {
+  width: 100%;
+  max-width: var(--container-narrow);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
+}
+
+.container-wide {
+  width: 100%;
+  max-width: var(--container-wide);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-lg);
+  padding-right: var(--space-lg);
+}
+
+/* Glassmorphism Card Style */
+.glass-panel {
+  background: var(--bg-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  transition: all var(--transition-normal);
+}
+
+.glass-panel:hover {
+  border-color: var(--border-medium);
+  box-shadow: var(--shadow-card), var(--glow-gold-sm);
+}
+
+/* Section Header Styles */
+.section-header {
+  text-align: center;
+  margin-bottom: var(--space-3xl);
+  position: relative;
+}
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.825rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  font-weight: 600;
+  color: var(--gold-400);
+  background: rgba(245, 184, 66, 0.08);
+  border: 1px solid var(--border-medium);
+  padding: 0.35rem 1.1rem;
+  border-radius: var(--radius-full);
+  margin-bottom: var(--space-md);
+  box-shadow: var(--glow-gold-sm);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3.25rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
+}
+
+.section-subtitle {
+  font-size: clamp(1rem, 1.5vw, 1.15rem);
+  color: var(--text-muted);
+  max-width: 680px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.7;
+}
+
+/* Buttons */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: linear-gradient(135deg, var(--gold-400), var(--gold-600));
+  color: #1a0f07;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 0.9rem 2.2rem;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--glow-gold-md), 0 4px 15px rgba(0, 0, 0, 0.4);
+  transition: all var(--transition-normal);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(
+    45deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 80%
+  );
+  transform: translateX(-100%) rotate(45deg);
+  transition: transform 0.75s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: var(--glow-gold-lg), 0 8px 25px rgba(245, 184, 66, 0.4);
+}
+
+.btn-primary:hover::after {
+  transform: translateX(100%) rotate(45deg);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: rgba(30, 20, 16, 0.85);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 0.75rem 1.6rem;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-medium);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  text-decoration: none;
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+  background: rgba(45, 30, 24, 0.95);
+  color: var(--gold-300);
+  border-color: var(--gold-400);
+  box-shadow: var(--glow-gold-sm);
+  transform: translateY(-1px);
+}
+
+/* Subtle Diya SVG Ornament */
+.diya-icon {
+  display: inline-block;
+  vertical-align: middle;
+  width: 1.25em;
+  height: 1.25em;
+  fill: currentColor;
+}
