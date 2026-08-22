@@ -41,12 +41,38 @@ export class FriendsController {
     this.saveAllBtn = document.getElementById('btn-save-friends');
 
     // Storage Keys
-    this.storageKey = 'vinayaka_gang_profiles_v9';
-    this.deletedKey = 'vinayaka_deleted_friend_ids_v9';
+    this.customStorageKey = 'vinayaka_custom_gang_members_v10';
+    this.overridesStorageKey = 'vinayaka_friend_overrides_v10';
+    this.deletedKey = 'vinayaka_deleted_friend_ids_v10';
     this.currentUploadedPhoto = null;
     this.friends = [];
 
+    // Purge any old stale localStorage keys from earlier versions so mobile devices always see correct photos
+    this.purgeLegacyCaches();
+
     this.init();
+  }
+
+  purgeLegacyCaches() {
+    const legacyKeys = [
+      'vinayaka_gang_profiles',
+      'vinayaka_gang_profiles_v1',
+      'vinayaka_gang_profiles_v2',
+      'vinayaka_gang_profiles_v3',
+      'vinayaka_gang_profiles_v4',
+      'vinayaka_gang_profiles_v5',
+      'vinayaka_gang_profiles_v6',
+      'vinayaka_gang_profiles_v7',
+      'vinayaka_gang_profiles_v8',
+      'vinayaka_gang_profiles_v9'
+    ];
+    legacyKeys.forEach(k => {
+      try {
+        localStorage.removeItem(k);
+      } catch (e) {
+        // ignore
+      }
+    });
   }
 
   init() {
@@ -56,7 +82,10 @@ export class FriendsController {
     this.setupEditorEvents();
 
     // Re-render when external refresh requested
-    window.addEventListener('refresh-friends', () => this.render());
+    window.addEventListener('refresh-friends', () => {
+      this.loadFriends();
+      this.render();
+    });
   }
 
   getDeletedIds() {
@@ -84,49 +113,57 @@ export class FriendsController {
   loadFriends() {
     const deletedIds = this.getDeletedIds();
 
-    try {
-      const stored = localStorage.getItem(this.storageKey);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          const hasOldPlaceholders = parsed.some(f => f.name && f.name.startsWith('Friend '));
-          if (!hasOldPlaceholders) {
-            this.friends = parsed.filter(f => !deletedIds.includes(f.id));
-            return;
-          }
-        }
-      }
-    } catch (e) {
-      console.warn('Error reading stored friends data:', e);
-    }
-
-    // Default to the curated memoriesData.friends
-    this.friends = memoriesData.friends.filter(f => !deletedIds.includes(f.id)).map(f => {
-      if (f.id === 'friend-sai-nikhil' || f.name.toLowerCase().includes('sai nikhil')) {
+    // 1. Base Canonical Friends directly from memoriesData.js (always accurate source of truth)
+    const baseFriends = (memoriesData.friends || []).map(f => {
+      if (f.id === 'friend-sai-nikhil' || (f.name && f.name.toLowerCase().includes('sai nikhil'))) {
         return {
-          ...f,
-          photos: f.photos && f.photos.length >= 3 ? f.photos : [
+          id: f.id || 'friend-sai-nikhil',
+          name: f.name || 'Sai Nikhil Raj Muppana',
+          nickname: f.nickname || 'Sai Nikhil',
+          photos: (f.photos && f.photos.length >= 3) ? [...f.photos] : [
             'assets/images/tribute/tribute_solo_smile_pines.jpg',
             'assets/images/tribute/tribute_solo_night_smile.jpg',
             'assets/images/tribute/tribute_group_araku_pinery.jpg'
-          ]
-        };
-      } else {
-        return {
-          ...f,
-          photos: [f.photos ? f.photos[0] : 'assets/images/gang/gang_member_1.jpg']
+          ],
+          taggedMoments: f.taggedMoments || ['gal-1', 'gal-2'],
+          isDefault: true
         };
       }
+      return {
+        id: f.id,
+        name: f.name,
+        nickname: f.nickname || undefined,
+        photos: (f.photos && f.photos.length > 0) ? [...f.photos] : ['assets/images/gang/gang_member_ramesh.jpg'],
+        taggedMoments: f.taggedMoments || ['gal-1', 'gal-2'],
+        isDefault: true
+      };
     });
 
-    this.saveFriends();
+    // 2. Custom members added by user through "+ Add Member" modal
+    let customFriends = [];
+    try {
+      const customStored = localStorage.getItem(this.customStorageKey);
+      if (customStored) {
+        const parsed = JSON.parse(customStored);
+        if (Array.isArray(parsed)) {
+          customFriends = parsed.filter(f => f && f.isCustom && !deletedIds.includes(f.id));
+        }
+      }
+    } catch (e) {
+      console.warn('Error reading custom friends data:', e);
+    }
+
+    // 3. Combine base canonical friends + user-added custom friends
+    this.friends = [...baseFriends, ...customFriends].filter(f => !deletedIds.includes(f.id));
   }
 
   saveFriends() {
     try {
-      localStorage.setItem(this.storageKey, JSON.stringify(this.friends));
+      // Save only custom friends to localStorage so canonical friends are never corrupted or duplicated
+      const customOnly = this.friends.filter(f => f.isCustom);
+      localStorage.setItem(this.customStorageKey, JSON.stringify(customOnly));
     } catch (e) {
-      console.warn('Could not save friends data to localStorage:', e);
+      console.warn('Could not save custom friends data to localStorage:', e);
     }
   }
 
@@ -385,7 +422,7 @@ export class FriendsController {
 
     // Reset Form
     if (this.addMemberForm) this.addMemberForm.reset();
-    this.currentUploadedPhoto = 'assets/images/gang/gang_member_1.jpg';
+    this.currentUploadedPhoto = 'assets/images/gang/gang_member_ramesh.jpg';
     if (this.addMemberPreviewImg) {
       this.addMemberPreviewImg.src = this.currentUploadedPhoto;
     }
@@ -421,15 +458,16 @@ export class FriendsController {
       return;
     }
 
-    const photo = this.currentUploadedPhoto || 'assets/images/gang/gang_member_1.jpg';
-    const newId = 'friend-member-' + Date.now();
+    const photo = this.currentUploadedPhoto || 'assets/images/gang/gang_member_ramesh.jpg';
+    const newId = 'friend-custom-' + Date.now();
 
     const newMember = {
       id: newId,
       name: name,
       nickname: nickname || undefined,
       photos: [photo],
-      taggedMoments: ['gal-1', 'gal-2']
+      taggedMoments: ['gal-1', 'gal-2'],
+      isCustom: true
     };
 
     // Add to friends list
