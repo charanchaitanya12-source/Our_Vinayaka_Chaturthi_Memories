@@ -41,8 +41,8 @@ export class FriendsController {
     this.saveAllBtn = document.getElementById('btn-save-friends');
 
     // Storage Keys
-    this.storageKey = 'vinayaka_gang_profiles_v8';
-    this.deletedKey = 'vinayaka_deleted_friend_ids_v8';
+    this.storageKey = 'vinayaka_gang_profiles_v9';
+    this.deletedKey = 'vinayaka_deleted_friend_ids_v9';
     this.currentUploadedPhoto = null;
     this.friends = [];
 

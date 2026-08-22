@@ -347,21 +347,57 @@ export const memoriesData = {
   // 6. FRIEND SPOTLIGHT ("THE GANG")
   friends: [
     {
-      id: "friend-narendra",
-      name: "Narendra",
-      photos: ["assets/images/gang/gang_member_1.jpg"],
+      id: "friend-ramesh",
+      name: "Ramesh",
+      photos: ["assets/images/gang/gang_member_ramesh.jpg"],
       taggedMoments: ["gal-1", "gal-2", "gal-13"]
     },
     {
       id: "friend-sai",
       name: "Sai",
-      photos: ["assets/images/gang/gang_member_2.jpg"],
+      photos: ["assets/images/gang/gang_member_sai.jpg"],
       taggedMoments: ["gal-1", "gal-2"]
     },
     {
-      id: "friend-ramesh",
-      name: "Ramesh",
-      photos: ["assets/images/gang/gang_member_3.jpg"],
+      id: "friend-charan",
+      name: "Charan",
+      photos: ["assets/images/gang/gang_member_charan.jpg"],
+      taggedMoments: ["gal-1", "gal-2"]
+    },
+    {
+      id: "friend-pradeep",
+      name: "Pradeep",
+      photos: ["assets/images/gang/gang_member_pradeep.jpg"],
+      taggedMoments: ["gal-1", "gal-2"]
+    },
+    {
+      id: "friend-chinna",
+      name: "Chinna",
+      photos: ["assets/images/gang/gang_member_chinna.jpg"],
+      taggedMoments: ["gal-1", "gal-2"]
+    },
+    {
+      id: "friend-narendra",
+      name: "Narendra",
+      photos: ["assets/images/gang/gang_member_narendra.jpg"],
+      taggedMoments: ["gal-1", "gal-2"]
+    },
+    {
+      id: "friend-teja",
+      name: "Teja",
+      photos: ["assets/images/gang/gang_member_teja.jpg"],
+      taggedMoments: ["gal-1", "gal-2"]
+    },
+    {
+      id: "friend-hamu",
+      name: "Hamu",
+      photos: ["assets/images/gang/gang_member_hamu.jpg"],
+      taggedMoments: ["gal-1", "gal-2"]
+    },
+    {
+      id: "friend-committee",
+      name: "Committee",
+      photos: ["assets/images/gang/gang_member_committee.jpg"],
       taggedMoments: ["gal-1", "gal-2"]
     },
     {
@@ -373,18 +409,6 @@ export const memoriesData = {
         "assets/images/tribute/tribute_solo_night_smile.jpg",
         "assets/images/tribute/tribute_group_araku_pinery.jpg"
       ],
-      taggedMoments: ["gal-1", "gal-2"]
-    },
-    {
-      id: "friend-pradeep",
-      name: "Pradeep",
-      photos: ["assets/images/gang/gang_member_5.jpg"],
-      taggedMoments: ["gal-1", "gal-2"]
-    },
-    {
-      id: "friend-chinna",
-      name: "Chinna",
-      photos: ["assets/images/gang/gang_member_6.jpg"],
       taggedMoments: ["gal-1", "gal-2"]
     }
   ],
