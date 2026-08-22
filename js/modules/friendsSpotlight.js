@@ -9,7 +9,8 @@
  * 2. Standalone Tall Vertical Column for Sai Nikhil Raj Muppana (3 stacked photos).
  */
 
-import { memoriesData } from '../data/memoriesData.js';
+import { memoriesData } from '../data/memoriesData.js?v=2.4';
+import { CloudSyncService } from '../services/cloudSyncService.js?v=2.4';
 
 export class FriendsController {
   constructor(containerId = 'friends-grid-container') {
@@ -110,13 +111,33 @@ export class FriendsController {
     });
   }
 
-  init() {
+  async init() {
     this.loadFriends();
     this.render();
     this.setupAddMemberEvents();
     this.setupEditorEvents();
 
-    // Cross-tab / cross-window realtime broadcast sync
+    // 1. Initial Cloud Sync: fetch latest real-time updates from other devices
+    try {
+      const cloudData = await CloudSyncService.fetchGang();
+      if (cloudData && Array.isArray(cloudData.friends) && cloudData.friends.length > 0) {
+        const deletedIds = this.getDeletedIds();
+        this.friends = cloudData.friends.filter(f => f && f.id && !deletedIds.includes(f.id));
+        this.render();
+      }
+    } catch (e) {
+      console.warn('Initial cloud sync error:', e);
+    }
+
+    // 2. Start Live Background Cloud Sync (polls when tab is active)
+    CloudSyncService.startLiveSync((updatedFriends) => {
+      const deletedIds = this.getDeletedIds();
+      this.friends = updatedFriends.filter(f => f && f.id && !deletedIds.includes(f.id));
+      this.render();
+      this.showToast("☁️ Gang synced live across devices!");
+    });
+
+    // 3. Cross-tab / cross-window realtime broadcast sync
     if (window.BroadcastChannel) {
       try {
         this.channel = new BroadcastChannel('vinayaka_gang_sync_channel');
@@ -129,11 +150,15 @@ export class FriendsController {
       } catch (e) {}
     }
 
-    // Auto-reload on page visibility change (when switching back to browser tab on mobile or laptop)
-    document.addEventListener('visibilitychange', () => {
+    // 4. Auto-reload on page visibility change
+    document.addEventListener('visibilitychange', async () => {
       if (document.visibilityState === 'visible') {
-        this.loadFriends();
-        this.render();
+        const cloudData = await CloudSyncService.fetchGang();
+        if (cloudData && Array.isArray(cloudData.friends) && cloudData.friends.length > 0) {
+          const deletedIds = this.getDeletedIds();
+          this.friends = cloudData.friends.filter(f => f && f.id && !deletedIds.includes(f.id));
+          this.render();
+        }
       }
     });
 
@@ -223,6 +248,8 @@ export class FriendsController {
       if (this.channel) {
         this.channel.postMessage({ type: 'GANG_UPDATED', timestamp: Date.now() });
       }
+      // Push to shared Cloud Database for all other devices
+      CloudSyncService.saveGang(this.friends);
     } catch (e) {
       console.warn('Could not save friends data to localStorage:', e);
     }
@@ -235,7 +262,8 @@ export class FriendsController {
     } catch (e) {}
     this.loadFriends();
     this.render();
-    this.showToast("↺ Reset gang members back to defaults!");
+    CloudSyncService.saveGang(this.friends);
+    this.showToast("↺ Reset gang members back to defaults & synced!");
   }
 
   showToast(message) {
