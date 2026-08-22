@@ -252,6 +252,7 @@
   width: 42px;
   height: 3px;
   -webkit-appearance: none;
+  appearance: none;
   background: rgba(255, 255, 255, 0.2);
   border-radius: 2px;
   outline: none;
@@ -260,6 +261,7 @@
 
 .audio-volume-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
+  appearance: none;
   width: 8px;
   height: 8px;
   border-radius: 50%;
@@ -2457,6 +2459,7 @@
   margin-bottom: 1rem;
   background: linear-gradient(135deg, #fff7d6 0%, #f5b842 50%, #d48b19 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
