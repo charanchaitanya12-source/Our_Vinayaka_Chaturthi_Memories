@@ -7,6 +7,9 @@
  */
 
 export const memoriesData = {
+  version: "2026.08.22.1530",
+  lastUpdated: "2026-08-22T15:30:00+05:30",
+
   // 1. HERO SECTION CONFIGURATION
   hero: {
     badge: "A Digital Time Capsule • Forever In Our Hearts",

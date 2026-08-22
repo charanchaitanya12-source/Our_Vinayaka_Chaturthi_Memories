@@ -84,6 +84,27 @@ export class FriendsController {
     this.setupAddMemberEvents();
     this.setupEditorEvents();
 
+    // Cross-tab / cross-window realtime broadcast sync
+    if (window.BroadcastChannel) {
+      try {
+        this.channel = new BroadcastChannel('vinayaka_gang_sync_channel');
+        this.channel.onmessage = (event) => {
+          if (event.data && event.data.type === 'GANG_UPDATED') {
+            this.loadFriends();
+            this.render();
+          }
+        };
+      } catch (e) {}
+    }
+
+    // Auto-reload on page visibility change (when switching back to browser tab on mobile or laptop)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        this.loadFriends();
+        this.render();
+      }
+    });
+
     // Re-render when external refresh requested
     window.addEventListener('refresh-friends', () => {
       this.render();
@@ -114,6 +135,16 @@ export class FriendsController {
 
   loadFriends() {
     const deletedIds = this.getDeletedIds();
+    const currentCodeVersion = memoriesData.version || '2026.08.22.1530';
+    const lastSeenVersion = localStorage.getItem('vinayaka_app_data_version');
+
+    // If code version changed on GitHub/server, automatically sync to latest canonical memoriesData.friends across all devices!
+    if (lastSeenVersion !== currentCodeVersion) {
+      try {
+        localStorage.removeItem(this.storageKey);
+        localStorage.setItem('vinayaka_app_data_version', currentCodeVersion);
+      } catch (e) {}
+    }
 
     // 1. Try loading user-saved modifications from localStorage
     try {
@@ -157,6 +188,9 @@ export class FriendsController {
   saveFriends() {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(this.friends));
+      if (this.channel) {
+        this.channel.postMessage({ type: 'GANG_UPDATED', timestamp: Date.now() });
+      }
     } catch (e) {
       console.warn('Could not save friends data to localStorage:', e);
     }
