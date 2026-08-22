@@ -179,8 +179,8 @@ export class FriendsController {
 
     // 1. Render Grid of Smaller Square Cards
     const standardCardsHtml = standardFriends.map((friend, idx) => {
-      const photos = friend.photos || (friend.avatar ? [friend.avatar] : ['assets/images/gang/gang_member_1.jpg']);
-      const photoSrc = photos[0] || 'assets/images/gang/gang_member_1.jpg';
+      const photos = (friend.photos && friend.photos.length > 0) ? friend.photos : (friend.avatar ? [friend.avatar] : ['assets/images/gang/gang_member_ramesh.jpg']);
+      const photoSrc = photos[0] || 'assets/images/gang/gang_member_ramesh.jpg';
 
       return `
         <div class="friend-card standard-square-card reveal-item reveal-delay-${(idx % 3) + 1}" data-friend-id="${friend.id}" id="card-${friend.id}">
@@ -275,7 +275,7 @@ export class FriendsController {
         const friendId = btn.getAttribute('data-friend-id');
         const friend = this.friends.find(f => f.id === friendId);
         if (friend) {
-          const firstPhoto = (friend.photos && friend.photos[0]) || 'assets/images/gang/gang_member_1.jpg';
+          const firstPhoto = (friend.photos && friend.photos[0]) || 'assets/images/gang/gang_member_ramesh.jpg';
           window.dispatchEvent(new CustomEvent('open-lightbox', {
             detail: {
               src: firstPhoto,

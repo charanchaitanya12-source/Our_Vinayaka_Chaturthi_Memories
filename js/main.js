@@ -4,19 +4,19 @@
  * ============================================================================
  */
 
-import { memoriesData } from './data/memoriesData.js';
-import { AmbientAudioEngine } from './modules/ambientAudio.js';
-import { ParticleEngine } from './modules/particleCanvas.js';
-import { TimelineController } from './modules/timeline.js';
-import { GalleryController } from './modules/gallery.js';
-import { InsideJokesController } from './modules/insideJokes.js';
-import { FriendsController } from './modules/friendsSpotlight.js';
-import { StorytellingController } from './modules/storytelling.js';
-import { VideoMemoriesController } from './modules/videoMemories.js';
-import { MemoryWallController } from './modules/memoryWall.js';
-import { PhotoManagerController } from './modules/photoManager.js';
-import { TributeController } from './modules/tribute.js';
-import { FestiveInteractions } from './modules/festiveInteractions.js';
+import { memoriesData } from './data/memoriesData.js?v=2.2';
+import { AmbientAudioEngine } from './modules/ambientAudio.js?v=2.2';
+import { ParticleEngine } from './modules/particleCanvas.js?v=2.2';
+import { TimelineController } from './modules/timeline.js?v=2.2';
+import { GalleryController } from './modules/gallery.js?v=2.2';
+import { InsideJokesController } from './modules/insideJokes.js?v=2.2';
+import { FriendsController } from './modules/friendsSpotlight.js?v=2.2';
+import { StorytellingController } from './modules/storytelling.js?v=2.2';
+import { VideoMemoriesController } from './modules/videoMemories.js?v=2.2';
+import { MemoryWallController } from './modules/memoryWall.js?v=2.2';
+import { PhotoManagerController } from './modules/photoManager.js?v=2.2';
+import { TributeController } from './modules/tribute.js?v=2.2';
+import { FestiveInteractions } from './modules/festiveInteractions.js?v=2.2';
 
 class App {
   constructor() {
