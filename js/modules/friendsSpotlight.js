@@ -117,24 +117,39 @@ export class FriendsController {
     this.setupAddMemberEvents();
     this.setupEditorEvents();
 
+    const localUpdatedStr = localStorage.getItem('vinayaka_gang_last_updated');
+    const localUpdated = localUpdatedStr ? parseInt(localUpdatedStr, 10) : 0;
+
     // 1. Initial Cloud Sync: fetch latest real-time updates from other devices
     try {
       const cloudData = await CloudSyncService.fetchGang();
       if (cloudData && Array.isArray(cloudData.friends) && cloudData.friends.length > 0) {
-        const deletedIds = this.getDeletedIds();
-        this.friends = cloudData.friends.filter(f => f && f.id && !deletedIds.includes(f.id));
-        this.render();
+        if (cloudData.updatedAt > localUpdated) {
+          const deletedIds = this.getDeletedIds();
+          this.friends = cloudData.friends.filter(f => f && f.id && !deletedIds.includes(f.id));
+          localStorage.setItem(this.storageKey, JSON.stringify(this.friends));
+          localStorage.setItem('vinayaka_gang_last_updated', cloudData.updatedAt.toString());
+          this.render();
+        } else if (localUpdated > cloudData.updatedAt && this.friends.length > 0) {
+          CloudSyncService.saveGang(this.friends);
+        }
       }
     } catch (e) {
       console.warn('Initial cloud sync error:', e);
     }
 
-    // 2. Start Live Background Cloud Sync (polls when tab is active)
-    CloudSyncService.startLiveSync((updatedFriends) => {
-      const deletedIds = this.getDeletedIds();
-      this.friends = updatedFriends.filter(f => f && f.id && !deletedIds.includes(f.id));
-      this.render();
-      this.showToast("☁️ Gang synced live across devices!");
+    // 2. Start Live Background Cloud Sync
+    CloudSyncService.startLiveSync((updatedFriends, cloudTimestamp) => {
+      const curLocalStr = localStorage.getItem('vinayaka_gang_last_updated');
+      const curLocal = curLocalStr ? parseInt(curLocalStr, 10) : 0;
+      if (cloudTimestamp > curLocal) {
+        const deletedIds = this.getDeletedIds();
+        this.friends = updatedFriends.filter(f => f && f.id && !deletedIds.includes(f.id));
+        localStorage.setItem(this.storageKey, JSON.stringify(this.friends));
+        localStorage.setItem('vinayaka_gang_last_updated', cloudTimestamp.toString());
+        this.render();
+        this.showToast("☁️ Gang synced live across devices!");
+      }
     });
 
     // 3. Cross-tab / cross-window realtime broadcast sync
@@ -153,11 +168,17 @@ export class FriendsController {
     // 4. Auto-reload on page visibility change
     document.addEventListener('visibilitychange', async () => {
       if (document.visibilityState === 'visible') {
+        const curLocalStr = localStorage.getItem('vinayaka_gang_last_updated');
+        const curLocal = curLocalStr ? parseInt(curLocalStr, 10) : 0;
         const cloudData = await CloudSyncService.fetchGang();
         if (cloudData && Array.isArray(cloudData.friends) && cloudData.friends.length > 0) {
-          const deletedIds = this.getDeletedIds();
-          this.friends = cloudData.friends.filter(f => f && f.id && !deletedIds.includes(f.id));
-          this.render();
+          if (cloudData.updatedAt > curLocal) {
+            const deletedIds = this.getDeletedIds();
+            this.friends = cloudData.friends.filter(f => f && f.id && !deletedIds.includes(f.id));
+            localStorage.setItem(this.storageKey, JSON.stringify(this.friends));
+            localStorage.setItem('vinayaka_gang_last_updated', cloudData.updatedAt.toString());
+            this.render();
+          }
         }
       }
     });
@@ -192,16 +213,6 @@ export class FriendsController {
 
   loadFriends() {
     const deletedIds = this.getDeletedIds();
-    const currentCodeVersion = memoriesData.version || '2026.08.22.1530';
-    const lastSeenVersion = localStorage.getItem('vinayaka_app_data_version');
-
-    // If code version changed on GitHub/server, automatically sync to latest canonical memoriesData.friends across all devices!
-    if (lastSeenVersion !== currentCodeVersion) {
-      try {
-        localStorage.removeItem(this.storageKey);
-        localStorage.setItem('vinayaka_app_data_version', currentCodeVersion);
-      } catch (e) {}
-    }
 
     // 1. Try loading user-saved modifications from localStorage
     try {
@@ -244,9 +255,12 @@ export class FriendsController {
 
   saveFriends() {
     try {
+      const now = Date.now();
       localStorage.setItem(this.storageKey, JSON.stringify(this.friends));
+      localStorage.setItem('vinayaka_gang_last_updated', now.toString());
+
       if (this.channel) {
-        this.channel.postMessage({ type: 'GANG_UPDATED', timestamp: Date.now() });
+        this.channel.postMessage({ type: 'GANG_UPDATED', timestamp: now });
       }
       // Push to shared Cloud Database for all other devices
       CloudSyncService.saveGang(this.friends);

@@ -9,7 +9,6 @@
 const CLOUD_SYNC_URL = 'https://extendsclass.com/api/json-storage/bin/bcfcaac';
 
 export class CloudSyncService {
-  static lastSyncedTimestamp = 0;
   static syncIntervalId = null;
 
   /**
@@ -29,7 +28,6 @@ export class CloudSyncService {
 
       const data = await response.json();
       if (data && Array.isArray(data.friends) && data.friends.length > 0) {
-        this.lastSyncedTimestamp = data.updatedAt || Date.now();
         return {
           friends: data.friends,
           updatedAt: data.updatedAt || 0,
@@ -48,12 +46,11 @@ export class CloudSyncService {
    */
   static async saveGang(friendsList) {
     const timestamp = Date.now();
-    this.lastSyncedTimestamp = timestamp;
 
     const payload = {
       friends: friendsList,
       updatedAt: timestamp,
-      version: '2026.08.22.1540'
+      version: '2026.08.22.1550'
     };
 
     // 1. Save locally for instant offline UI responsiveness
@@ -93,17 +90,19 @@ export class CloudSyncService {
     const checkForUpdates = async () => {
       if (document.hidden) return; // Don't poll when tab is backgrounded to save battery
 
+      const localUpdatedStr = localStorage.getItem('vinayaka_gang_last_updated');
+      const localUpdated = localUpdatedStr ? parseInt(localUpdatedStr, 10) : 0;
+
       const cloudData = await this.fetchGang();
-      if (cloudData && cloudData.updatedAt > this.lastSyncedTimestamp) {
-        this.lastSyncedTimestamp = cloudData.updatedAt;
+      if (cloudData && cloudData.updatedAt > localUpdated) {
         if (typeof onUpdateCallback === 'function') {
-          onUpdateCallback(cloudData.friends);
+          onUpdateCallback(cloudData.friends, cloudData.updatedAt);
         }
       }
     };
 
-    // Poll cloud every 8 seconds when active
-    this.syncIntervalId = setInterval(checkForUpdates, 8000);
+    // Poll cloud every 5 seconds when active
+    this.syncIntervalId = setInterval(checkForUpdates, 5000);
 
     // Sync immediately on tab focus or visibility change
     window.addEventListener('focus', checkForUpdates);
