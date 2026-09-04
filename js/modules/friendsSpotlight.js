@@ -9,8 +9,8 @@
  * 2. Standalone Tall Vertical Column for Sai Nikhil Raj Muppana (3 stacked photos).
  */
 
-import { memoriesData } from '../data/memoriesData.js?v=2.4';
-import { CloudSyncService } from '../services/cloudSyncService.js?v=2.4';
+import { memoriesData } from '../data/memoriesData.js?v=4.4';
+import { CloudSyncService } from '../services/cloudSyncService.js?v=4.4';
 
 export class FriendsController {
   constructor(containerId = 'friends-grid-container') {
@@ -42,8 +42,8 @@ export class FriendsController {
     this.saveAllBtn = document.getElementById('btn-save-friends');
 
     // Storage Keys
-    this.storageKey = 'vinayaka_saved_gang_v12';
-    this.deletedKey = 'vinayaka_deleted_friend_ids_v12';
+    this.storageKey = 'vinayaka_saved_gang_v14';
+    this.deletedKey = 'vinayaka_deleted_friend_ids_v14';
     this.currentUploadedPhoto = null;
     this.friends = [];
 
@@ -89,100 +89,20 @@ export class FriendsController {
   }
 
   purgeLegacyCaches() {
-    const legacyKeys = [
-      'vinayaka_gang_profiles',
-      'vinayaka_gang_profiles_v1',
-      'vinayaka_gang_profiles_v2',
-      'vinayaka_gang_profiles_v3',
-      'vinayaka_gang_profiles_v4',
-      'vinayaka_gang_profiles_v5',
-      'vinayaka_gang_profiles_v6',
-      'vinayaka_gang_profiles_v7',
-      'vinayaka_gang_profiles_v8',
-      'vinayaka_gang_profiles_v9',
-      'vinayaka_custom_gang_members_v10',
-      'vinayaka_friend_overrides_v10',
-      'vinayaka_deleted_friend_ids_v10'
-    ];
-    legacyKeys.forEach(k => {
-      try {
-        localStorage.removeItem(k);
-      } catch (e) {}
-    });
+    try {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const key = localStorage.key(i);
+        if (key && (key.includes('gang') || key.includes('friend') || key.startsWith('vinayaka_'))) {
+          localStorage.removeItem(key);
+        }
+      }
+    } catch (e) {}
   }
 
   async init() {
-    this.checkForUrlSync();
+    this.purgeLegacyCaches();
     this.loadFriends();
     this.render();
-    this.setupAddMemberEvents();
-    this.setupEditorEvents();
-
-    const localUpdatedStr = localStorage.getItem('vinayaka_gang_last_updated');
-    const localUpdated = localUpdatedStr ? parseInt(localUpdatedStr, 10) : 0;
-
-    // 1. Initial Cloud Sync: fetch latest real-time updates from other devices
-    try {
-      const cloudData = await CloudSyncService.fetchGang();
-      if (cloudData && Array.isArray(cloudData.friends) && cloudData.friends.length > 0) {
-        if (cloudData.updatedAt > localUpdated) {
-          const deletedIds = this.getDeletedIds();
-          this.friends = cloudData.friends.filter(f => f && f.id && !deletedIds.includes(f.id));
-          localStorage.setItem(this.storageKey, JSON.stringify(this.friends));
-          localStorage.setItem('vinayaka_gang_last_updated', cloudData.updatedAt.toString());
-          this.render();
-        } else if (localUpdated > cloudData.updatedAt && this.friends.length > 0) {
-          CloudSyncService.saveGang(this.friends);
-        }
-      }
-    } catch (e) {
-      console.warn('Initial cloud sync error:', e);
-    }
-
-    // 2. Start Live Background Cloud Sync
-    CloudSyncService.startLiveSync((updatedFriends, cloudTimestamp) => {
-      const curLocalStr = localStorage.getItem('vinayaka_gang_last_updated');
-      const curLocal = curLocalStr ? parseInt(curLocalStr, 10) : 0;
-      if (cloudTimestamp > curLocal) {
-        const deletedIds = this.getDeletedIds();
-        this.friends = updatedFriends.filter(f => f && f.id && !deletedIds.includes(f.id));
-        localStorage.setItem(this.storageKey, JSON.stringify(this.friends));
-        localStorage.setItem('vinayaka_gang_last_updated', cloudTimestamp.toString());
-        this.render();
-        this.showToast("☁️ Gang synced live across devices!");
-      }
-    });
-
-    // 3. Cross-tab / cross-window realtime broadcast sync
-    if (window.BroadcastChannel) {
-      try {
-        this.channel = new BroadcastChannel('vinayaka_gang_sync_channel');
-        this.channel.onmessage = (event) => {
-          if (event.data && event.data.type === 'GANG_UPDATED') {
-            this.loadFriends();
-            this.render();
-          }
-        };
-      } catch (e) {}
-    }
-
-    // 4. Auto-reload on page visibility change
-    document.addEventListener('visibilitychange', async () => {
-      if (document.visibilityState === 'visible') {
-        const curLocalStr = localStorage.getItem('vinayaka_gang_last_updated');
-        const curLocal = curLocalStr ? parseInt(curLocalStr, 10) : 0;
-        const cloudData = await CloudSyncService.fetchGang();
-        if (cloudData && Array.isArray(cloudData.friends) && cloudData.friends.length > 0) {
-          if (cloudData.updatedAt > curLocal) {
-            const deletedIds = this.getDeletedIds();
-            this.friends = cloudData.friends.filter(f => f && f.id && !deletedIds.includes(f.id));
-            localStorage.setItem(this.storageKey, JSON.stringify(this.friends));
-            localStorage.setItem('vinayaka_gang_last_updated', cloudData.updatedAt.toString());
-            this.render();
-          }
-        }
-      }
-    });
 
     // Re-render when external refresh requested
     window.addEventListener('refresh-friends', () => {
@@ -191,46 +111,13 @@ export class FriendsController {
   }
 
   getDeletedIds() {
-    try {
-      const stored = localStorage.getItem(this.deletedKey);
-      return stored ? JSON.parse(stored) : [];
-    } catch (e) {
-      return [];
-    }
+    return [];
   }
 
-  markDeleted(id) {
-    if (!id) return;
-    try {
-      const deleted = this.getDeletedIds();
-      if (!deleted.includes(id)) {
-        deleted.push(id);
-        localStorage.setItem(this.deletedKey, JSON.stringify(deleted));
-      }
-    } catch (e) {
-      console.warn('Could not save deleted friend id:', e);
-    }
-  }
+  markDeleted(id) {}
 
   loadFriends() {
-    const deletedIds = this.getDeletedIds();
-
-    // 1. Try loading user-saved modifications from localStorage
-    try {
-      const stored = localStorage.getItem(this.storageKey);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          this.friends = parsed.filter(f => f && f.id && !deletedIds.includes(f.id));
-          return;
-        }
-      }
-    } catch (e) {
-      console.warn('Error reading saved friends data:', e);
-    }
-
-    // 2. Default canonical list directly from memoriesData.js
-    this.friends = (memoriesData.friends || []).filter(f => !deletedIds.includes(f.id)).map(f => {
+    this.friends = (memoriesData.friends || []).map(f => {
       if (f.id === 'friend-sai-nikhil' || (f.name && f.name.toLowerCase().includes('sai nikhil'))) {
         return {
           id: f.id || 'friend-sai-nikhil',
@@ -244,10 +131,103 @@ export class FriendsController {
           taggedMoments: f.taggedMoments || ['gal-1', 'gal-2']
         };
       }
+      if (f.id === 'friend-pradeep' || (f.name && f.name.toLowerCase().includes('pradeep'))) {
+        return {
+          id: 'friend-pradeep',
+          name: 'Pradeep',
+          nickname: f.nickname || 'The Gang',
+          photos: (f.photos && f.photos.length > 0) ? [...f.photos] : [
+            'assets/images/gang/gang_member_pradeep.jpg',
+            'assets/images/gang/real_gang_pradeep.jpg'
+          ],
+          taggedMoments: f.taggedMoments || ['gal-1', 'gal-2']
+        };
+      }
+      if (f.id === 'friend-ramesh' || (f.name && f.name.toLowerCase().includes('ramesh'))) {
+        return {
+          id: 'friend-ramesh',
+          name: 'Ramesh',
+          nickname: f.nickname || 'The Gang',
+          photos: (f.photos && f.photos.length > 0) ? [...f.photos] : ['assets/images/gang/gang_member_ramesh.jpg'],
+          taggedMoments: f.taggedMoments || ['gal-1', 'gal-2', 'gal-13']
+        };
+      }
+      if (f.id === 'friend-teja' || (f.name && f.name.toLowerCase().includes('teja'))) {
+        return {
+          id: 'friend-teja',
+          name: 'Teja',
+          nickname: f.nickname || 'The Gang',
+          photos: (f.photos && f.photos.length > 0) ? [...f.photos] : [
+            'assets/images/gang/gang_member_teja.jpg',
+            'assets/images/gang/real_gang_teja.jpg'
+          ],
+          taggedMoments: f.taggedMoments || ['gal-1', 'gal-2', 'gal-12']
+        };
+      }
+      if (f.id === 'friend-charan' || (f.name && f.name.toLowerCase().includes('charan'))) {
+        return {
+          id: 'friend-charan',
+          name: 'Charan',
+          nickname: f.nickname || 'The Gang',
+          photos: (f.photos && f.photos.length > 0) ? [...f.photos] : [
+            'assets/images/gang/gang_member_charan.jpg',
+            'assets/images/gang/real_gang_charan.jpg'
+          ],
+          taggedMoments: f.taggedMoments || ['gal-1', 'gal-2', 'gal-11']
+        };
+      }
+      if (f.id === 'friend-hamu' || (f.name && f.name.toLowerCase().includes('hamu'))) {
+        return {
+          id: 'friend-hamu',
+          name: 'Hamu',
+          nickname: f.nickname || 'The Gang',
+          photos: (f.photos && f.photos.length > 0) ? [...f.photos] : [
+            'assets/images/gang/gang_member_hamu.jpg',
+            'assets/images/gang/real_gang_hamu.jpg'
+          ],
+          taggedMoments: f.taggedMoments || ['gal-1', 'gal-2']
+        };
+      }
+      if (f.id === 'friend-narendra' || (f.name && f.name.toLowerCase().includes('narendra'))) {
+        return {
+          id: 'friend-narendra',
+          name: 'Narendra',
+          nickname: f.nickname || 'The Gang',
+          photos: (f.photos && f.photos.length > 0) ? [...f.photos] : [
+            'assets/images/gang/gang_member_narendra.jpg',
+            'assets/images/gang/real_gang_narendra.jpg'
+          ],
+          taggedMoments: f.taggedMoments || ['gal-1', 'gal-2', 'gal-3']
+        };
+      }
+      if (f.id === 'friend-chinna' || (f.name && f.name.toLowerCase().includes('chinna'))) {
+        return {
+          id: 'friend-chinna',
+          name: 'Chinna',
+          nickname: f.nickname || 'The Gang',
+          photos: (f.photos && f.photos.length > 0) ? [...f.photos] : [
+            'assets/images/gang/gang_member_chinna.jpg',
+            'assets/images/gang/real_gang_chinna.jpg'
+          ],
+          taggedMoments: f.taggedMoments || ['gal-1', 'gal-2', 'gal-7']
+        };
+      }
+      if (f.id === 'friend-committee' || (f.name && f.name.toLowerCase().includes('committee'))) {
+        return {
+          id: 'friend-committee',
+          name: 'Committee',
+          nickname: f.nickname || 'Utsav Committee',
+          photos: (f.photos && f.photos.length > 0) ? [...f.photos] : [
+            'assets/images/gang/gang_member_committee.jpg',
+            'assets/images/gang/real_gang_committee.jpg'
+          ],
+          taggedMoments: f.taggedMoments || ['gal-1', 'gal-2', 'gal-3', 'gal-14']
+        };
+      }
       return {
         id: f.id,
         name: f.name,
-        nickname: f.nickname || undefined,
+        nickname: f.nickname || 'The Gang',
         photos: (f.photos && f.photos.length > 0) ? [...f.photos] : ['assets/images/gang/gang_member_ramesh.jpg'],
         taggedMoments: f.taggedMoments || ['gal-1', 'gal-2']
       };
@@ -263,7 +243,6 @@ export class FriendsController {
       if (this.channel) {
         this.channel.postMessage({ type: 'GANG_UPDATED', timestamp: now });
       }
-      // Push to shared Cloud Database for all other devices
       CloudSyncService.saveGang(this.friends);
     } catch (e) {
       console.warn('Could not save friends data to localStorage:', e);
@@ -300,11 +279,10 @@ export class FriendsController {
   render() {
     if (!this.container) return;
 
-    const deletedIds = this.getDeletedIds();
-    const visibleFriends = this.friends.filter(f => !deletedIds.includes(f.id));
+    const visibleFriends = this.friends;
 
     // Separate Sai Nikhil from standard square members
-    const saiNikhil = visibleFriends.find(f => f.id === 'friend-sai-nikhil' || f.name.toLowerCase().includes('sai nikhil'));
+    const saiNikhil = visibleFriends.find(f => f.id === 'friend-sai-nikhil' || (f.name && f.name.toLowerCase().includes('sai nikhil')));
     const standardFriends = visibleFriends.filter(f => f !== saiNikhil);
 
     // 1. Render Grid of Smaller Square Cards
@@ -315,7 +293,7 @@ export class FriendsController {
       return `
         <div class="friend-card standard-square-card reveal-item reveal-delay-${(idx % 3) + 1}" data-friend-id="${friend.id}" id="card-${friend.id}">
           <div class="square-photo-wrapper">
-            <img class="square-friend-avatar" src="${photoSrc}" alt="${friend.name}" loading="lazy" />
+            <img class="square-friend-avatar" src="${photoSrc}?v=4.4" alt="${friend.name}" loading="lazy" />
           </div>
           <div class="square-card-content">
             <h4 class="square-friend-name" title="${friend.name}">${friend.name}</h4>
@@ -330,23 +308,7 @@ export class FriendsController {
       `;
     }).join('');
 
-    // 2. Permanent '+ Add' Button formatted as an empty square card in the grid
-    const addMemberSquareCardHtml = `
-      <div class="friend-card standard-square-card add-member-square-card reveal-item reveal-delay-3" id="card-add-new-member" role="button" tabindex="0" title="Add a new member to The Gang">
-        <div class="add-square-icon-box">
-          <span class="add-square-plus">➕</span>
-        </div>
-        <div class="square-card-content">
-          <h4 class="square-friend-name" style="color: var(--gold-300);">Add Member</h4>
-          <div class="square-friend-subnames" style="color: var(--text-muted);">+ New Person</div>
-          <button type="button" class="btn-primary square-btn-add" style="margin-top: 0.35rem; font-size: 0.72rem; padding: 0.25rem 0.75rem;">
-            <span>+ Add</span>
-          </button>
-        </div>
-      </div>
-    `;
-
-    // 3. Standalone Tall Vertical Column for Sai Nikhil
+    // 2. Standalone Showcase for Sai Nikhil
     const saiPhotos = (saiNikhil && saiNikhil.photos && saiNikhil.photos.length >= 3)
       ? saiNikhil.photos
       : [
@@ -358,60 +320,84 @@ export class FriendsController {
     const saiNickname = (saiNikhil && saiNikhil.nickname) || 'Sai Nikhil';
     const saiId = saiNikhil ? saiNikhil.id : 'friend-sai-nikhil';
 
-    const tallColumnHtml = `
-      <div class="tall-sai-column-wrapper reveal-item reveal-delay-2">
-        <div class="friend-card tall-sai-card" data-friend-id="${saiId}" id="card-${saiId}">
-          <div class="tall-sai-badge"><span>✨</span> In Loving Memory</div>
-          <div class="tall-sai-photos-stack">
-            ${saiPhotos.map((p, pIdx) => `
-              <div class="tall-sai-photo-item">
-                <img class="tall-sai-avatar" src="${p}" alt="${saiName} Photo ${pIdx + 1}" loading="lazy" />
-              </div>
-            `).join('')}
-          </div>
-          <div class="tall-sai-card-content">
-            <h4 class="tall-sai-name">${saiName}</h4>
-            <div class="tall-sai-subnames">✨ ${saiNickname}</div>
-            <button class="btn-view-moments tall-sai-btn-moments" data-friend-id="${saiId}">
-              View Moments (${(saiNikhil && saiNikhil.taggedMoments ? saiNikhil.taggedMoments.length : 2)})
-            </button>
-          </div>
-        </div>
-      </div>
-    `;
-
-    // 4. Main 2-Area Layout
-    this.container.innerHTML = `
-      <div class="gang-split-layout">
-        <!-- Area 1: Standard Members Square Grid -->
-        <div class="gang-grid-side">
-          <div class="standard-members-grid">
-            ${standardCardsHtml}
-            ${addMemberSquareCardHtml}
+    if (standardFriends.length > 0) {
+      const tallColumnHtml = `
+        <div class="tall-sai-column-wrapper reveal-item reveal-delay-2">
+          <div class="friend-card tall-sai-card" data-friend-id="${saiId}" id="card-${saiId}">
+            <div class="tall-sai-badge"><span>✨</span> In Loving Memory</div>
+            <div class="tall-sai-photos-stack">
+              ${saiPhotos.map((p, pIdx) => `
+                <div class="tall-sai-photo-item">
+                  <img class="tall-sai-avatar" src="${p}?v=4.4" alt="${saiName} Photo ${pIdx + 1}" loading="lazy" />
+                </div>
+              `).join('')}
+            </div>
+            <div class="tall-sai-card-content">
+              <h4 class="tall-sai-name">${saiName}</h4>
+              <div class="tall-sai-subnames">✨ ${saiNickname}</div>
+              <button class="btn-view-moments tall-sai-btn-moments" data-friend-id="${saiId}">
+                View Moments (${(saiNikhil && saiNikhil.taggedMoments ? saiNikhil.taggedMoments.length : 2)})
+              </button>
+            </div>
           </div>
         </div>
+      `;
 
-        <!-- Area 2: Standalone Tall Vertical Column -->
-        <div class="gang-tall-side">
-          ${tallColumnHtml}
+      this.container.innerHTML = `
+        <div class="gang-split-layout">
+          <!-- Area 1: Standard Members Square Grid -->
+          <div class="gang-grid-side">
+            <div class="standard-members-grid">
+              ${standardCardsHtml}
+            </div>
+          </div>
+
+          <!-- Area 2: Standalone Tall Vertical Column -->
+          <div class="gang-tall-side">
+            ${tallColumnHtml}
+          </div>
         </div>
-      </div>
-    `;
+      `;
+    } else {
+      // Single-member fallback
+      this.container.innerHTML = `
+        <div class="gang-single-member-showcase reveal-item reveal-delay-1">
+          <div class="friend-card tall-sai-card single-hero-card" data-friend-id="${saiId}" id="card-${saiId}">
+            <div class="tall-sai-badge"><span>✨</span> In Loving Memory • Forever In Our Hearts</div>
+            
+            <div class="tall-sai-photos-horizontal">
+              ${saiPhotos.map((p, pIdx) => `
+                <div class="tall-sai-photo-item hero-photo-item">
+                  <img class="tall-sai-avatar" src="${p}" alt="${saiName} Photo ${pIdx + 1}" loading="lazy" />
+                </div>
+              `).join('')}
+            </div>
 
-    // Attach click events for "View Moments" (Lightbox trigger)
-    this.container.querySelectorAll('.btn-view-moments').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const friendId = btn.getAttribute('data-friend-id');
-        const friend = this.friends.find(f => f.id === friendId);
+            <div class="tall-sai-card-content">
+              <h3 class="tall-sai-name" style="font-size: 1.65rem; color: var(--gold-300); margin-bottom: 0.35rem;">${saiName}</h3>
+              <div class="tall-sai-subnames" style="font-size: 1.05rem; margin-bottom: 0.75rem;">✨ ${saiNickname}</div>
+              <button class="btn-view-moments tall-sai-btn-moments" data-friend-id="${saiId}" style="font-size: 0.88rem; padding: 0.5rem 1.4rem;">
+                View Moments (${(saiNikhil && saiNikhil.taggedMoments ? saiNikhil.taggedMoments.length : 2)})
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Attach click events for cards & "View Moments" (Lightbox trigger)
+    this.container.querySelectorAll('.friend-card').forEach(card => {
+      card.addEventListener('click', (e) => {
+        const friendId = card.getAttribute('data-friend-id');
+        const friend = this.friends.find(f => f.id === friendId) || this.friends[0];
         if (friend) {
-          const firstPhoto = (friend.photos && friend.photos[0]) || 'assets/images/gang/gang_member_ramesh.jpg';
+          const firstPhoto = (friend.photos && friend.photos[0]) || 'assets/images/tribute/tribute_solo_smile_pines.jpg';
           window.dispatchEvent(new CustomEvent('open-lightbox', {
             detail: {
               src: firstPhoto,
               type: 'image',
               title: `${friend.name}'s Memories`,
-              caption: `Cherished festival moments and lifelong brotherhood with ${friend.name}.`,
+              caption: `Cherished festival moments and timeless remembrance of ${friend.name}.`,
               category: 'The Gang'
             }
           }));
@@ -419,17 +405,25 @@ export class FriendsController {
       });
     });
 
-    // Attach click events on the Add Member Square Card
-    const addCard = document.getElementById('card-add-new-member');
-    if (addCard) {
-      addCard.addEventListener('click', () => this.openAddMemberModal());
-      addCard.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          this.openAddMemberModal();
+    this.container.querySelectorAll('.btn-view-moments').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const friendId = btn.getAttribute('data-friend-id');
+        const friend = this.friends.find(f => f.id === friendId) || this.friends[0];
+        if (friend) {
+          const firstPhoto = (friend.photos && friend.photos[0]) || 'assets/images/tribute/tribute_solo_smile_pines.jpg';
+          window.dispatchEvent(new CustomEvent('open-lightbox', {
+            detail: {
+              src: firstPhoto,
+              type: 'image',
+              title: `${friend.name}'s Memories`,
+              caption: `Cherished festival moments and timeless remembrance of ${friend.name}.`,
+              category: 'The Gang'
+            }
+          }));
         }
       });
-    }
+    });
 
     // Refresh scroll reveals
     window.dispatchEvent(new CustomEvent('refresh-reveals'));

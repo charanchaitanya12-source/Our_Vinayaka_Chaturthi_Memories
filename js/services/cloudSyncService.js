@@ -14,7 +14,7 @@ export class CloudSyncService {
   static async fetchGang() {
     // Return local storage data as source of truth for the device
     try {
-      const stored = localStorage.getItem('vinayaka_saved_gang_v12');
+      const stored = localStorage.getItem('vinayaka_saved_gang_v14');
       const timestampStr = localStorage.getItem('vinayaka_gang_last_updated');
       if (stored) {
         const parsed = JSON.parse(stored);
@@ -39,7 +39,7 @@ export class CloudSyncService {
     const timestamp = Date.now();
 
     try {
-      localStorage.setItem('vinayaka_saved_gang_v12', JSON.stringify(friendsList));
+      localStorage.setItem('vinayaka_saved_gang_v14', JSON.stringify(friendsList));
       localStorage.setItem('vinayaka_gang_last_updated', timestamp.toString());
       return true;
     } catch (e) {
@@ -55,7 +55,7 @@ export class CloudSyncService {
     if (this.syncIntervalId) return;
 
     window.addEventListener('storage', (e) => {
-      if (e.key === 'vinayaka_saved_gang_v12' && e.newValue) {
+      if (e.key === 'vinayaka_saved_gang_v14' && e.newValue) {
         try {
           const parsed = JSON.parse(e.newValue);
           const timestampStr = localStorage.getItem('vinayaka_gang_last_updated');

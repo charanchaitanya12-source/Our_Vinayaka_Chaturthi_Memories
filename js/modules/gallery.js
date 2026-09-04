@@ -170,6 +170,12 @@ export class GalleryController {
         if (item.videoUrl) {
           this.lightboxVideo.src = item.videoUrl;
           this.lightboxVideo.load();
+          const playPromise = this.lightboxVideo.play();
+          if (playPromise !== undefined) {
+            playPromise.catch((err) => {
+              console.log('Autoplay prevented by browser; player controls ready for user interaction.', err);
+            });
+          }
         } else {
           this.lightboxVideo.src = "";
         }
@@ -177,6 +183,7 @@ export class GalleryController {
     } else {
       if (this.lightboxVideo) {
         this.lightboxVideo.pause();
+        this.lightboxVideo.removeAttribute('src');
         this.lightboxVideo.style.display = 'none';
       }
       if (this.lightboxImg) {
@@ -213,7 +220,11 @@ export class GalleryController {
 
   closeLightbox() {
     if (!this.lightboxModal) return;
-    if (this.lightboxVideo) this.lightboxVideo.pause();
+    if (this.lightboxVideo) {
+      this.lightboxVideo.pause();
+      this.lightboxVideo.removeAttribute('src');
+      this.lightboxVideo.load();
+    }
     this.lightboxModal.classList.remove('active');
     document.body.style.overflow = '';
   }

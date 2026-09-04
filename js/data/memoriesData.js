@@ -352,56 +352,79 @@ export const memoriesData = {
     {
       id: "friend-ramesh",
       name: "Ramesh",
+      nickname: "The Gang",
       photos: ["assets/images/gang/gang_member_ramesh.jpg"],
       taggedMoments: ["gal-1", "gal-2", "gal-13"]
     },
     {
-      id: "friend-sai",
-      name: "Sai",
-      photos: ["assets/images/gang/gang_member_sai.jpg"],
-      taggedMoments: ["gal-1", "gal-2"]
-    },
-    {
-      id: "friend-charan",
-      name: "Charan",
-      photos: ["assets/images/gang/gang_member_charan.jpg"],
-      taggedMoments: ["gal-1", "gal-2"]
-    },
-    {
       id: "friend-pradeep",
       name: "Pradeep",
-      photos: ["assets/images/gang/gang_member_pradeep.jpg"],
-      taggedMoments: ["gal-1", "gal-2"]
-    },
-    {
-      id: "friend-chinna",
-      name: "Chinna",
-      photos: ["assets/images/gang/gang_member_chinna.jpg"],
-      taggedMoments: ["gal-1", "gal-2"]
-    },
-    {
-      id: "friend-narendra",
-      name: "Narendra",
-      photos: ["assets/images/gang/gang_member_narendra.jpg"],
+      nickname: "The Gang",
+      photos: [
+        "assets/images/gang/gang_member_pradeep.jpg",
+        "assets/images/gang/real_gang_pradeep.jpg"
+      ],
       taggedMoments: ["gal-1", "gal-2"]
     },
     {
       id: "friend-teja",
       name: "Teja",
-      photos: ["assets/images/gang/gang_member_teja.jpg"],
-      taggedMoments: ["gal-1", "gal-2"]
+      nickname: "The Gang",
+      photos: [
+        "assets/images/gang/gang_member_teja.jpg",
+        "assets/images/gang/real_gang_teja.jpg"
+      ],
+      taggedMoments: ["gal-1", "gal-2", "gal-12"]
+    },
+    {
+      id: "friend-charan",
+      name: "Charan",
+      nickname: "The Gang",
+      photos: [
+        "assets/images/gang/gang_member_charan.jpg",
+        "assets/images/gang/real_gang_charan.jpg"
+      ],
+      taggedMoments: ["gal-1", "gal-2", "gal-11"]
     },
     {
       id: "friend-hamu",
       name: "Hamu",
-      photos: ["assets/images/gang/gang_member_hamu.jpg"],
+      nickname: "The Gang",
+      photos: [
+        "assets/images/gang/gang_member_hamu.jpg",
+        "assets/images/gang/real_gang_hamu.jpg"
+      ],
       taggedMoments: ["gal-1", "gal-2"]
+    },
+    {
+      id: "friend-narendra",
+      name: "Narendra",
+      nickname: "The Gang",
+      photos: [
+        "assets/images/gang/gang_member_narendra.jpg",
+        "assets/images/gang/real_gang_narendra.jpg"
+      ],
+      taggedMoments: ["gal-1", "gal-2", "gal-3"]
+    },
+    {
+      id: "friend-chinna",
+      name: "Chinna",
+      nickname: "The Gang",
+      photos: [
+        "assets/images/gang/gang_member_chinna.jpg",
+        "assets/images/gang/real_gang_chinna.jpg"
+      ],
+      taggedMoments: ["gal-1", "gal-2", "gal-7"]
     },
     {
       id: "friend-committee",
       name: "Committee",
-      photos: ["assets/images/gang/gang_member_committee.jpg"],
-      taggedMoments: ["gal-1", "gal-2"]
+      nickname: "Utsav Committee",
+      photos: [
+        "assets/images/gang/gang_member_committee.jpg",
+        "assets/images/gang/real_gang_committee.jpg"
+      ],
+      taggedMoments: ["gal-1", "gal-2", "gal-3", "gal-14"]
     },
     {
       id: "friend-sai-nikhil",

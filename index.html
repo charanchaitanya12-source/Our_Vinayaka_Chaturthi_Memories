@@ -12,10 +12,22 @@
   <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪔</text></svg>" />
 
+  <!-- Cache Clear Guard for Gang Data -->
+  <script>
+    try {
+      for (let i = localStorage.length - 1; i >= 0; i--) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith('vinayaka_') || k.includes('gang') || k.includes('friend'))) {
+          localStorage.removeItem(k);
+        }
+      }
+    } catch (e) {}
+  </script>
+
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="css/design-system.css?v=2.4" />
-  <link rel="stylesheet" href="css/animations.css?v=2.4" />
-  <link rel="stylesheet" href="css/components.css?v=2.4" />
+  <link rel="stylesheet" href="css/design-system.css?v=4.4" />
+  <link rel="stylesheet" href="css/animations.css?v=4.4" />
+  <link rel="stylesheet" href="css/components.css?v=5.2" />
 </head>
 <body>
 
@@ -45,8 +57,7 @@
         <a href="#friends" class="nav-link">The Gang</a>
         <a href="#tribute" class="nav-link">In Memory</a>
         <a href="#stories" class="nav-link">Stories</a>
-        <a href="#videos" class="nav-link">Videos</a>
-        <a href="#memory-wall" class="nav-link">Memory Wall</a>
+        <a href="#our-memories" class="nav-link">Our Memories</a>
       </nav>
 
       <div class="nav-actions">
@@ -74,11 +85,6 @@
           </div>
           <input type="range" id="audio-volume" class="audio-volume-slider" min="0" max="1" step="0.05" value="0.6" title="Volume Slider" />
         </div>
-
-        <!-- Add Gang Member Button -->
-        <button id="btn-nav-add-member" class="btn-add-member-nav" title="Add a new friend to The Gang">
-          ➕ <span>Add Member</span>
-        </button>
 
         <!-- In-Browser Media & Photo Customizer Button -->
         <button id="btn-open-customizer" class="btn-customize-nav" title="Replace photos and videos with your real memories">
@@ -285,9 +291,6 @@
           The faces and souls that made every single moment of our celebrations unforgettable.
         </p>
         <div class="gang-section-header-actions">
-          <button id="btn-open-add-member" class="btn-primary" style="font-size: 0.85rem; padding: 0.55rem 1.4rem;" title="Add a new person to The Gang">
-            ➕ <span>Add Member</span>
-          </button>
           <button id="btn-edit-friends" class="btn-manage-media" title="Edit friend names, adjust photos or remove cards">
             ✏️ <span>Edit Gang</span>
           </button>
@@ -295,7 +298,154 @@
       </div>
 
       <div id="friends-grid-container" class="friends-grid">
-        <!-- Dynamically populated from friendsSpotlight.js -->
+        <div class="gang-split-layout">
+          <!-- Area 1: Standard Members Square Grid -->
+          <div class="gang-grid-side">
+            <div class="standard-members-grid">
+              
+              <!-- Ramesh Card -->
+              <div class="friend-card standard-square-card reveal-item reveal-delay-1" data-friend-id="friend-ramesh" id="card-friend-ramesh">
+                <div class="square-photo-wrapper">
+                  <img class="square-friend-avatar" src="assets/images/gang/gang_member_ramesh.jpg?v=4.3" alt="Ramesh" loading="lazy" />
+                </div>
+                <div class="square-card-content">
+                  <h4 class="square-friend-name" title="Ramesh">Ramesh</h4>
+                  <div class="square-friend-subnames" title="The Gang">✨ The Gang</div>
+                  <button class="btn-view-moments square-btn-moments" data-friend-id="friend-ramesh">
+                    Moments (3)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Pradeep Card -->
+              <div class="friend-card standard-square-card reveal-item reveal-delay-2" data-friend-id="friend-pradeep" id="card-friend-pradeep">
+                <div class="square-photo-wrapper">
+                  <img class="square-friend-avatar" src="assets/images/gang/gang_member_pradeep.jpg?v=4.3" alt="Pradeep" loading="lazy" />
+                </div>
+                <div class="square-card-content">
+                  <h4 class="square-friend-name" title="Pradeep">Pradeep</h4>
+                  <div class="square-friend-subnames" title="The Gang">✨ The Gang</div>
+                  <button class="btn-view-moments square-btn-moments" data-friend-id="friend-pradeep">
+                    Moments (2)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Teja Card -->
+              <div class="friend-card standard-square-card reveal-item reveal-delay-3" data-friend-id="friend-teja" id="card-friend-teja">
+                <div class="square-photo-wrapper">
+                  <img class="square-friend-avatar" src="assets/images/gang/gang_member_teja.jpg?v=4.3" alt="Teja" loading="lazy" />
+                </div>
+                <div class="square-card-content">
+                  <h4 class="square-friend-name" title="Teja">Teja</h4>
+                  <div class="square-friend-subnames" title="The Gang">✨ The Gang</div>
+                  <button class="btn-view-moments square-btn-moments" data-friend-id="friend-teja">
+                    Moments (2)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Charan Card -->
+              <div class="friend-card standard-square-card reveal-item reveal-delay-1" data-friend-id="friend-charan" id="card-friend-charan">
+                <div class="square-photo-wrapper">
+                  <img class="square-friend-avatar" src="assets/images/gang/gang_member_charan.jpg?v=4.3" alt="Charan" loading="lazy" />
+                </div>
+                <div class="square-card-content">
+                  <h4 class="square-friend-name" title="Charan">Charan</h4>
+                  <div class="square-friend-subnames" title="The Gang">✨ The Gang</div>
+                  <button class="btn-view-moments square-btn-moments" data-friend-id="friend-charan">
+                    Moments (2)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Hamu Card -->
+              <div class="friend-card standard-square-card reveal-item reveal-delay-2" data-friend-id="friend-hamu" id="card-friend-hamu">
+                <div class="square-photo-wrapper">
+                  <img class="square-friend-avatar" src="assets/images/gang/gang_member_hamu.jpg?v=4.3" alt="Hamu" loading="lazy" />
+                </div>
+                <div class="square-card-content">
+                  <h4 class="square-friend-name" title="Hamu">Hamu</h4>
+                  <div class="square-friend-subnames" title="The Gang">✨ The Gang</div>
+                  <button class="btn-view-moments square-btn-moments" data-friend-id="friend-hamu">
+                    Moments (2)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Narendra Card -->
+              <div class="friend-card standard-square-card reveal-item reveal-delay-3" data-friend-id="friend-narendra" id="card-friend-narendra">
+                <div class="square-photo-wrapper">
+                  <img class="square-friend-avatar" src="assets/images/gang/gang_member_narendra.jpg?v=4.4" alt="Narendra" loading="lazy" />
+                </div>
+                <div class="square-card-content">
+                  <h4 class="square-friend-name" title="Narendra">Narendra</h4>
+                  <div class="square-friend-subnames" title="The Gang">✨ The Gang</div>
+                  <button class="btn-view-moments square-btn-moments" data-friend-id="friend-narendra">
+                    Moments (3)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Chinna Card -->
+              <div class="friend-card standard-square-card reveal-item reveal-delay-1" data-friend-id="friend-chinna" id="card-friend-chinna">
+                <div class="square-photo-wrapper">
+                  <img class="square-friend-avatar" src="assets/images/gang/gang_member_chinna.jpg?v=4.4" alt="Chinna" loading="lazy" />
+                </div>
+                <div class="square-card-content">
+                  <h4 class="square-friend-name" title="Chinna">Chinna</h4>
+                  <div class="square-friend-subnames" title="The Gang">✨ The Gang</div>
+                  <button class="btn-view-moments square-btn-moments" data-friend-id="friend-chinna">
+                    Moments (3)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Committee Card -->
+              <div class="friend-card standard-square-card reveal-item reveal-delay-2" data-friend-id="friend-committee" id="card-friend-committee">
+                <div class="square-photo-wrapper">
+                  <img class="square-friend-avatar" src="assets/images/gang/gang_member_committee.jpg?v=4.4" alt="Committee" loading="lazy" />
+                </div>
+                <div class="square-card-content">
+                  <h4 class="square-friend-name" title="Committee">Committee</h4>
+                  <div class="square-friend-subnames" title="Utsav Committee">✨ Utsav Committee</div>
+                  <button class="btn-view-moments square-btn-moments" data-friend-id="friend-committee">
+                    Moments (4)
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Area 2: Standalone Tall Vertical Column for Sai Nikhil -->
+          <div class="gang-tall-side">
+            <div class="tall-sai-column-wrapper reveal-item reveal-delay-2">
+              <div class="friend-card tall-sai-card" data-friend-id="friend-sai-nikhil" id="card-friend-sai-nikhil">
+                <div class="tall-sai-badge"><span>✨</span> In Loving Memory</div>
+                <div class="tall-sai-photos-stack">
+                  <div class="tall-sai-photo-item">
+                    <img class="tall-sai-avatar" src="assets/images/tribute/tribute_solo_smile_pines.jpg" alt="Sai Nikhil Raj Muppana Photo 1" loading="lazy" />
+                  </div>
+                  <div class="tall-sai-photo-item">
+                    <img class="tall-sai-avatar" src="assets/images/tribute/tribute_solo_night_smile.jpg" alt="Sai Nikhil Raj Muppana Photo 2" loading="lazy" />
+                  </div>
+                  <div class="tall-sai-photo-item">
+                    <img class="tall-sai-avatar" src="assets/images/tribute/tribute_group_araku_pinery.jpg" alt="Sai Nikhil Raj Muppana Photo 3" loading="lazy" />
+                  </div>
+                </div>
+                <div class="tall-sai-card-content">
+                  <h4 class="tall-sai-name">Sai Nikhil Raj Muppana</h4>
+                  <div class="tall-sai-subnames">✨ Sai Nikhil</div>
+                  <button class="btn-view-moments tall-sai-btn-moments" data-friend-id="friend-sai-nikhil">
+                    View Moments (2)
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   </section>
@@ -392,107 +542,34 @@
   </section>
 
   <!-- =========================================================================
-       10. VIDEO MEMORIES SECTION ("MOTION & MELODIES")
+       10. OUR MEMORIES SECTION (VIDEO TIME CAPSULE)
        ========================================================================= -->
-  <section class="section-padding" id="videos" style="background: radial-gradient(circle at 50% 50%, var(--bg-surface) 0%, var(--bg-darkest) 100%);">
+  <section class="section-padding" id="our-memories" style="background: radial-gradient(circle at 50% 50%, var(--bg-surface) 0%, var(--bg-darkest) 100%);">
     <div class="container">
       <div class="section-header reveal-item">
-        <span class="section-tag">Cinematic Reels</span>
-        <h2 class="section-title">Motion & Melodies</h2>
+        <span class="section-tag">Cinematic Video Memories</span>
+        <h2 class="section-title">Our Memories</h2>
         <p class="section-subtitle">
-          Short video clips capturing the thunderous aagman dhol, the peaceful aartis, and the final farewell.
+          Relive our unforgettable festival moments in motion — from the highway journey and dhol dances to the sacred visarjan immersion.
         </p>
-        <div class="video-section-header-actions">
-          <button id="btn-manage-videos" class="btn-manage-media" title="Add new videos or edit existing vectors">
+
+        <!-- Replacement Quick Guide & Video Management Actions -->
+        <div class="video-section-header-actions" style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
+          <button id="btn-manage-videos" class="btn-manage-media" title="Add new videos or edit existing entries">
             ⚙️ <span>Manage & Add Videos</span>
           </button>
+          <button id="btn-reset-videos-default" class="btn-manage-media" style="color: #ff9e9e; border-color: rgba(255, 100, 100, 0.35);" title="Reset all videos back to default sample clips">
+            ↺ <span>Reset to Default</span>
+          </button>
+        </div>
+
+        <div class="video-replace-guide-pill">
+          <span>💡 <strong>Persistent Video Memories:</strong> Click <strong>"🔄 Replace Video"</strong> on any card to choose your video — it stays saved even when you refresh! You can also remove any unwanted cards using <strong>"🗑️ Delete"</strong>.</span>
         </div>
       </div>
 
       <div id="video-grid-container" class="video-grid">
-        <!-- Dynamically populated from videoMemories.js -->
-      </div>
-    </div>
-  </section>
-
-  <!-- =========================================================================
-       11. MEMORY WALL (INTERACTIVE GUESTBOOK WITH DELETE)
-       ========================================================================= -->
-  <section class="section-padding" id="memory-wall">
-    <div class="container">
-      <div class="section-header reveal-item">
-        <span class="section-tag">Interactive Guestbook</span>
-        <h2 class="section-title">Our Sacred Memory Wall</h2>
-        <p class="section-subtitle">
-          Leave a message, share your favorite incident, or write what we must do next year!
-        </p>
-      </div>
-
-      <div class="memory-wall-layout">
-        <!-- Submission Form -->
-        <div class="memory-form-card reveal-item">
-          <h3 class="memory-form-title">Leave Your Memory ✍️</h3>
-          <p class="memory-form-desc">Messages are saved directly in your browser and can be deleted anytime.</p>
-
-          <form id="memory-wall-form">
-            <div class="form-group">
-              <label class="form-label" for="memory-author-name">Your Name *</label>
-              <input type="text" id="memory-author-name" class="form-input" placeholder="e.g. Rahul, Sneha, Charan..." required />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="memory-author-role">Your Role / Nickname</label>
-              <input type="text" id="memory-author-role" class="form-input" placeholder="e.g. Modak Finisher, Dhol Player..." />
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="memory-category">Memory Type</label>
-              <select id="memory-category" class="form-select">
-                <option value="Favorite Moment">Favorite Moment ✨</option>
-                <option value="Funniest Incident">Funniest Incident 😂</option>
-                <option value="Wish For Next Year">Wish For Next Year 🪔</option>
-                <option value="Message to Gang">Message to the Gang ❤️</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label">Pick A Festive Sticker</label>
-              <div class="sticker-selector">
-                <button type="button" class="sticker-opt selected" data-sticker="🙏">🙏</button>
-                <button type="button" class="sticker-opt" data-sticker="🪔">🪔</button>
-                <button type="button" class="sticker-opt" data-sticker="🥟">🥟</button>
-                <button type="button" class="sticker-opt" data-sticker="🥁">🥁</button>
-                <button type="button" class="sticker-opt" data-sticker="❤️">❤️</button>
-                <button type="button" class="sticker-opt" data-sticker="✨">✨</button>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label class="form-label" for="memory-message-text">Your Memory / Note *</label>
-              <textarea id="memory-message-text" class="form-textarea" placeholder="Remember when we..." required></textarea>
-            </div>
-
-            <button type="submit" class="btn-primary" style="width: 100%; margin-top: 0.5rem;">
-              <span>Post to Memory Wall</span>
-              <span>🪔</span>
-            </button>
-          </form>
-
-          <div style="display: flex; gap: 0.75rem; margin-top: 1.25rem;">
-            <button id="btn-export-memories" class="btn-secondary" style="flex: 1; font-size: 0.8rem;">
-              💾 Export JSON
-            </button>
-            <button id="btn-import-memories" class="btn-secondary" style="flex: 1; font-size: 0.8rem;">
-              📂 Import JSON
-            </button>
-            <input type="file" id="import-file-input" accept=".json" style="display:none;" />
-          </div>
-        </div>
-
-        <!-- Posts List -->
-        <div id="wall-posts-container" class="wall-posts-container reveal-item reveal-delay-1">
-          <!-- Dynamically populated -->
-        </div>
+        <!-- Dynamically populated with sample videos from videoMemories.js -->
       </div>
     </div>
   </section>
@@ -631,7 +708,7 @@
           <!-- Live Profile Card Preview -->
           <div class="add-member-preview-container">
             <div class="add-member-avatar-preview-box">
-              <img id="add-member-preview-img" src="assets/images/gang/gang_member_ramesh.jpg" alt="Member Photo Preview" />
+              <img id="add-member-preview-img" src="assets/images/tribute/tribute_solo_smile_pines.jpg" alt="Member Photo Preview" />
               <div class="preview-badge">Preview</div>
             </div>
             <div class="add-member-preview-info">
@@ -683,8 +760,8 @@
     <div class="customizer-dialog" style="max-width: 780px;">
       <div class="customizer-header">
         <div>
-          <h3 class="customizer-header-title">🎬 Motion & Melodies Settings</h3>
-          <p style="font-size: 0.8rem; color: var(--text-muted);">Add new video memories or edit existing media vectors.</p>
+          <h3 class="customizer-header-title">🎬 Our Memories - Video Settings</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Add new video memories or edit existing media entries.</p>
         </div>
         <button id="video-settings-close" class="lightbox-close-btn" style="position: static;" aria-label="Close Video Settings">✕</button>
       </div>
@@ -712,7 +789,7 @@
             <input type="file" id="video-add-file" class="form-input" accept="video/mp4,video/webm,video/quicktime" />
           </div>
           <button type="submit" class="btn-primary" style="font-size: 0.85rem; padding: 0.6rem 1.5rem;">
-            <span>Add Video to Motion & Melodies</span>
+            <span>Add Video to Our Memories</span>
           </button>
         </form>
 
@@ -804,6 +881,6 @@
   </div>
 
   <!-- Main JavaScript App Entrypoint (ES Module) -->
-  <script type="module" src="js/main.js?v=2.5"></script>
+  <script type="module" src="js/main.js?v=5.2"></script>
 </body>
 </html>

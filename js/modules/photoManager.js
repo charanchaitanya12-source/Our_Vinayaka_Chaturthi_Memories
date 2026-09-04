@@ -123,7 +123,7 @@ export class PhotoManagerController {
       ...memoriesData.videos.map((v, idx) => ({
         id: `video-memory-${v.id}`,
         label: `Video: ${v.title}`,
-        section: 'Motion & Melodies',
+        section: 'Our Memories',
         type: 'video',
         src: v.thumb,
         videoUrl: v.videoUrl || '',

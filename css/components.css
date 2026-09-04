@@ -1123,8 +1123,8 @@
 
 .standard-members-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.25rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
   width: 100%;
 }
 
@@ -1133,7 +1133,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: 1.15rem 0.9rem;
+  padding: 1.05rem 0.65rem;
   text-align: center;
   box-shadow: var(--shadow-card);
   backdrop-filter: blur(12px);
@@ -1144,7 +1144,8 @@
   justify-content: space-between;
   position: relative;
   overflow: hidden;
-  min-height: 220px;
+  min-height: 215px;
+  cursor: pointer;
 }
 
 .standard-square-card:hover {
@@ -1155,8 +1156,8 @@
 
 .square-photo-wrapper {
   position: relative;
-  width: 96px;
-  height: 96px;
+  width: 92px;
+  height: 92px;
   aspect-ratio: 1/1;
   margin-bottom: 0.5rem;
   display: flex;
@@ -1169,8 +1170,9 @@
   height: 100%;
   border-radius: var(--radius-md);
   object-fit: cover;
+  object-position: center center;
   border: 2px solid var(--gold-400);
-  box-shadow: 0 0 12px rgba(245, 184, 66, 0.3);
+  box-shadow: 0 0 14px rgba(245, 184, 66, 0.35);
   transition: transform var(--transition-normal);
 }
 
@@ -1392,6 +1394,74 @@
   color: var(--gold-300);
   border-color: var(--gold-400);
 }
+
+/* Single Hero Member Showcase for Sai Nikhil */
+.gang-single-member-showcase {
+  max-width: 760px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.tall-sai-card.single-hero-card {
+  padding: 2.25rem 2rem;
+  background: radial-gradient(circle at 50% 0%, rgba(245, 184, 66, 0.14), var(--bg-card) 75%);
+  border: 1px solid rgba(245, 184, 66, 0.4);
+  box-shadow: var(--shadow-card), 0 0 35px rgba(245, 184, 66, 0.15);
+  border-radius: var(--radius-xl);
+}
+
+.tall-sai-photos-horizontal {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  width: 100%;
+  max-width: 660px;
+  margin: 1.25rem auto 1.5rem auto;
+}
+
+.tall-sai-photo-item.hero-photo-item {
+  width: 100%;
+  max-width: 100%;
+  aspect-ratio: 1/1;
+  position: relative;
+}
+
+.tall-sai-photo-item.hero-photo-item img {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  border: 2px solid var(--gold-400);
+  box-shadow: 0 0 16px rgba(245, 184, 66, 0.35);
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.tall-sai-card.single-hero-card:hover .tall-sai-photo-item.hero-photo-item img {
+  box-shadow: 0 0 22px rgba(245, 184, 66, 0.5);
+}
+
+.tall-sai-photo-item.hero-photo-item:hover img {
+  transform: scale(1.05);
+  border-color: #ffd700;
+}
+
+.gang-sai-lead-text {
+  max-width: 540px;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.65;
+  margin: 0.35rem auto 1.25rem auto;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .tall-sai-photos-horizontal {
+    grid-template-columns: 1fr;
+    max-width: 220px;
+    gap: 1rem;
+  }
+}
+
 
 /* Responsive Rules for Gang Section */
 @media (max-width: 1080px) {
@@ -1757,6 +1827,9 @@
   overflow: hidden;
   box-shadow: var(--shadow-card);
   transition: all var(--transition-normal);
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none;
 }
 
 .video-card:hover {
@@ -1832,6 +1905,229 @@
   font-size: 0.85rem;
   color: var(--text-muted);
   line-height: 1.5;
+}
+
+/* Our Memories Quick Guide Banner */
+.video-replace-guide-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(245, 184, 66, 0.08);
+  border: 1px solid rgba(245, 184, 66, 0.25);
+  border-radius: var(--radius-full);
+  padding: 0.65rem 1.4rem;
+  margin-top: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--gold-200);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  text-align: left;
+  line-height: 1.5;
+}
+
+.video-replace-guide-pill strong {
+  color: #fff;
+}
+
+/* Video Card Badge (Sample vs Original) */
+.video-status-tag {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  z-index: 2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.video-status-tag.sample {
+  background: rgba(18, 12, 8, 0.85);
+  color: var(--gold-400);
+  border: 1px solid rgba(245, 184, 66, 0.35);
+  backdrop-filter: blur(4px);
+}
+
+.video-status-tag.custom {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
+}
+
+/* Video Actions Row */
+.video-actions-bar {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1.15rem;
+  align-items: center;
+}
+
+.btn-video-card-play {
+  flex: 1.1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  background: linear-gradient(135deg, var(--gold-400), var(--gold-600));
+  color: #1a0f07;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0.58rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: 0 3px 12px rgba(245, 184, 66, 0.3);
+}
+
+.btn-video-card-play:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(245, 184, 66, 0.5);
+  filter: brightness(1.08);
+}
+
+.btn-video-card-replace {
+  flex: 1.25;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(245, 184, 66, 0.35);
+  color: var(--gold-300);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 0.58rem 0.85rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.btn-video-card-replace:hover {
+  background: rgba(245, 184, 66, 0.18);
+  border-color: var(--gold-400);
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(245, 184, 66, 0.25);
+}
+
+.btn-video-card-delete {
+  flex: 0.85;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  background: rgba(220, 38, 38, 0.08);
+  border: 1px solid rgba(220, 38, 38, 0.3);
+  color: #ff7b7b;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.82rem;
+  padding: 0.58rem 0.75rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-align: center;
+}
+
+.btn-video-card-delete:hover {
+  background: rgba(220, 38, 38, 0.22);
+  border-color: #ef4444;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.25);
+}
+
+.video-loaded-indicator {
+  margin-top: 0.75rem;
+  font-size: 0.76rem;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.video-loaded-indicator .indicator-text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.video-loaded-indicator .indicator-badge {
+  background: rgba(16, 185, 129, 0.25);
+  color: #a7f3d0;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.video-file-hint {
+  margin-top: 0.75rem;
+  font-size: 0.74rem;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.video-file-hint code {
+  color: var(--gold-300);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
+}
+
+/* Toast feedback popup for video replacement */
+.video-feedback-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: rgba(20, 15, 12, 0.95);
+  border: 1px solid var(--gold-400);
+  color: #fff;
+  padding: 0.85rem 1.4rem;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8), var(--glow-gold-sm);
+  z-index: 10000;
+  font-size: 0.88rem;
+  backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.video-feedback-toast.show {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+@media (max-width: 640px) {
+  .video-actions-bar {
+    flex-direction: column;
+  }
+  .btn-video-card-play,
+  .btn-video-card-replace,
+  .btn-video-card-delete {
+    width: 100%;
+  }
 }
 
 /* Video Settings Modal */
