@@ -1,0 +1,13 @@
+{
+  "name": "our-vinayaka-chaturthi-memories",
+  "version": "1.0.0",
+  "description": "Our Vinayaka Chaturthi Memories Web App",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'Static assets ready'",
+    "start": "serve . -l $PORT"
+  },
+  "dependencies": {
+    "serve": "^14.2.4"
+  }
+}
