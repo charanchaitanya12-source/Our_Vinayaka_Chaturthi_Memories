@@ -16,7 +16,7 @@ import { VideoMemoriesController } from './modules/videoMemories.js?v=6.0';
 import { MemoryWallController } from './modules/memoryWall.js?v=6.0';
 import { PhotoManagerController } from './modules/photoManager.js?v=6.0';
 import { TributeController } from './modules/tribute.js?v=6.0';
-import { FestiveInteractions } from './modules/festiveInteractions.js?v=6.0';
+import { FestiveInteractions } from './modules/festiveInteractions.js?v=6.9';
 import { ShareManagerController } from './modules/shareManager.js?v=6.1';
 
 class App {

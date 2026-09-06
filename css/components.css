@@ -3521,23 +3521,238 @@
   gap: 1.25rem;
 }
 
+.capsule-closing-note {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+
+.capsule-closing-note .mantra-text {
+  margin-top: 0.5rem;
+  font-family: var(--font-display);
+  color: var(--gold-400);
+  font-weight: 700;
+}
+
+body.capsule-modal-open {
+  overflow: hidden !important;
+}
+
+/* --------------------------------------------------------------------------
+   PRINT STYLESHEET: TIME CAPSULE KEEPSAKE CERTIFICATE
+   Guarantees clean 1-page output and completely eliminates trailing blank pages
+   -------------------------------------------------------------------------- */
+@page {
+  size: A4 portrait;
+  margin: 8mm 10mm;
+}
+
 @media print {
-  body * {
-    visibility: hidden;
+  /* 1. Global Reset & Canvas Configuration */
+  html, body {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #1a0f05 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
-  #capsule-modal, #capsule-modal * {
-    visibility: visible;
-  }
-  #capsule-modal {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: auto;
-    background: none;
-  }
-  .capsule-modal-close, .capsule-actions {
+
+  /* 2. COMPLETELY HIDE all elements except the capsule modal to prevent blank pages */
+  body > *:not(#capsule-modal) {
     display: none !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  /* Explicitly suppress all main sections, navigation, headers, footers and widgets */
+  header, footer, main, section, nav, aside, canvas,
+  .site-header, .site-footer, .hero-section, .section-padding,
+  .mobile-subnav-track, .audio-widget, .festive-toast,
+  #hero, #beginning, #timeline, #gallery, #jokes, #friends,
+  #tribute, #stories, #our-memories, #memory-wall, #finale,
+  #lightbox-modal, #photo-manager-modal, #friend-editor-modal,
+  #customizer-modal, #add-member-modal, #add-video-modal,
+  #video-manager-modal, #qr-modal, #share-modal, #share-toast {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* 3. Make #capsule-modal the sole printable document root */
+  #capsule-modal {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    page-break-before: avoid !important;
+    page-break-after: avoid !important;
+    page-break-inside: avoid !important;
+    break-before: avoid !important;
+    break-after: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* 4. Elegant Keepsake Certificate Card (Fits precisely on 1 sheet of paper) */
+  #capsule-modal .capsule-card {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 700px !important;
+    margin: 0 auto !important;
+    padding: 24px 28px !important;
+    background: #fffdf8 !important;
+    background-color: #fffdf8 !important;
+    color: #1f140e !important;
+    border: 3px double #d4a34b !important;
+    border-radius: 14px !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    max-height: none !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Certificate Header */
+  #capsule-modal .capsule-header {
+    border-bottom: 2px solid #ecd59b !important;
+    padding-bottom: 12px !important;
+    margin-bottom: 16px !important;
+    text-align: center !important;
+  }
+
+  #capsule-modal .capsule-header div:first-child {
+    font-size: 1.6rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  #capsule-modal .capsule-title {
+    color: #8b1e1e !important;
+    font-family: Georgia, 'Cinzel', serif !important;
+    font-size: 1.85rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.02em !important;
+    margin-bottom: 4px !important;
+    text-shadow: none !important;
+  }
+
+  #capsule-modal .capsule-subtitle {
+    color: #634735 !important;
+    font-size: 0.92rem !important;
+    font-weight: 500 !important;
+  }
+
+  /* 3-Photo Row */
+  #capsule-modal .capsule-photos-row {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 12px !important;
+    margin-bottom: 16px !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  #capsule-modal .capsule-photo-item {
+    border: 1.5px solid #d4a34b !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    aspect-ratio: 4 / 3 !important;
+    background: #fbf5e8 !important;
+  }
+
+  #capsule-modal .capsule-photo-item img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+
+  /* Vows & Remembrance Box */
+  #capsule-modal .capsule-vows {
+    background: #fdf8ed !important;
+    background-color: #fdf8ed !important;
+    border: 1.5px dashed #c69437 !important;
+    border-radius: 10px !important;
+    padding: 14px 18px !important;
+    margin-bottom: 14px !important;
+    color: #2b170c !important;
+    font-family: Georgia, 'Cinzel', serif !important;
+    font-size: 0.96rem !important;
+    font-style: italic !important;
+    line-height: 1.55 !important;
+    text-align: center !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  #capsule-modal .capsule-vows p {
+    color: #2b170c !important;
+    margin: 0 !important;
+  }
+
+  #capsule-modal .capsule-vows p + p {
+    margin-top: 6px !important;
+    font-size: 0.9rem !important;
+  }
+
+  #capsule-modal .capsule-vows strong {
+    color: #8b1e1e !important;
+    font-weight: 700 !important;
+  }
+
+  /* Closing Note & Mantra */
+  #capsule-modal .capsule-closing-note {
+    text-align: center !important;
+    margin-bottom: 0 !important;
+    color: #4a3328 !important;
+    font-size: 0.86rem !important;
+    line-height: 1.5 !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  #capsule-modal .capsule-closing-note p {
+    color: #4a3328 !important;
+    margin: 0 !important;
+  }
+
+  #capsule-modal .capsule-closing-note .mantra-text {
+    font-family: Georgia, 'Cinzel', serif !important;
+    color: #a16207 !important;
+    font-weight: 700 !important;
+    font-size: 1rem !important;
+    margin-top: 6px !important;
+  }
+
+  /* Hide print trigger buttons and close cross */
+  .capsule-modal-close,
+  .capsule-actions,
+  #btn-print-capsule {
+    display: none !important;
+    visibility: hidden !important;
   }
 }
 

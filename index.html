@@ -19,7 +19,7 @@
   <!-- Stylesheets -->
   <link rel="stylesheet" href="css/design-system.css?v=4.4" />
   <link rel="stylesheet" href="css/animations.css?v=4.4" />
-  <link rel="stylesheet" href="css/components.css?v=6.0" />
+  <link rel="stylesheet" href="css/components.css?v=6.9" />
 </head>
 <body>
 
@@ -51,6 +51,7 @@
         <a href="#stories" class="nav-link">Stories</a>
         <a href="#our-memories" class="nav-link">Our Memories</a>
         <a href="#memory-wall" class="nav-link">Memory Wall</a>
+        <button type="button" class="nav-link btn-capsule-trigger" id="btn-nav-capsule" style="background: none; border: none; cursor: pointer; color: var(--gold-300); font-weight: 600;" title="Open Our Digital Time Capsule Keepsake">Time Capsule 📜</button>
       </nav>
 
       <div class="nav-actions">
@@ -103,6 +104,7 @@
       <a href="#stories" class="mobile-subnav-pill">Stories</a>
       <a href="#our-memories" class="mobile-subnav-pill">Videos 🎬</a>
       <a href="#memory-wall" class="mobile-subnav-pill">Memory Wall ✍️</a>
+      <button type="button" class="mobile-subnav-pill btn-capsule-trigger" id="btn-mobile-capsule" style="background: rgba(245, 184, 66, 0.18); border-color: rgba(245, 184, 66, 0.5); cursor: pointer;" title="Open Our Digital Time Capsule Keepsake">Capsule 📜</button>
     </div>
   </header>
 
@@ -168,6 +170,15 @@
               <span class="btn-hero-sub">వీడియోలు చూడండి</span>
             </span>
           </a>
+
+          <!-- Digital Time Capsule Keepsake Button in Hero -->
+          <button type="button" id="btn-hero-capsule" class="btn-hero-action btn-capsule-trigger" style="border-color: var(--gold-400); background: rgba(245, 184, 66, 0.12);" title="Open Digital Time Capsule Keepsake • డిజిటల్ టైమ్ క్యాప్సూల్">
+            <span class="btn-hero-icon">📜</span>
+            <span class="btn-hero-text-wrap">
+              <span class="btn-hero-title">TIME CAPSULE</span>
+              <span class="btn-hero-sub">టైమ్ క్యాప్సూల్ సర్టిఫికెట్</span>
+            </span>
+          </button>
 
           <!-- Easy Share Memories Button -->
           <button type="button" id="btn-hero-share" class="btn-hero-action btn-hero-share btn-share-trigger" title="Share Memories with friends and family • మన జ్ఞాపకాలను పంచుకోండి">
@@ -629,6 +640,9 @@
           <button id="btn-export-videos-code" class="btn-manage-media" title="Copy exact code to update js/data/memoriesData.js permanently">
             💾 <span>Export to Website Code</span>
           </button>
+          <button type="button" class="btn-manage-media btn-capsule-trigger" style="color: var(--gold-300); border-color: rgba(245, 184, 66, 0.45); font-weight: 600;" title="Open Digital Time Capsule Keepsake Certificate">
+            📜 <span>Time Capsule Keepsake</span>
+          </button>
           <button id="btn-reset-videos-default" class="btn-manage-media" style="color: #ff9e9e; border-color: rgba(255, 100, 100, 0.35);" title="Reset all videos back to default sample clips">
             ↺ <span>Reset to Default</span>
           </button>
@@ -646,7 +660,7 @@
         <div class="inline-add-video-card" id="inline-video-card-wrapper">
           <div class="inline-add-video-header">
             <div class="inline-add-header-left">
-              <span class="inline-add-badge">✨ Video Time Capsule</span>
+              <span class="inline-add-badge">🎬 Festival Video Moments</span>
               <h3 class="inline-add-title">Add a New Video to Our Memories</h3>
               <p class="inline-add-desc">Upload a celebration video clip from your device (MP4, WebM, MOV) or enter a video link. Saved permanently in your browser!</p>
             </div>
@@ -913,7 +927,7 @@
       <div class="finale-mantra gold-shimmer reveal-item reveal-delay-2">గణపతి బప్పా మోరియా • Ganpati Bappa Morya 🙏</div>
 
       <div style="margin-top: 2.5rem; display: flex; justify-content: center; gap: 1.25rem; flex-wrap: wrap;" class="reveal-item reveal-delay-3">
-        <button id="btn-open-capsule" class="btn-secondary" style="border-color: var(--gold-400); color: var(--gold-300); font-weight: 600;">
+        <button type="button" id="btn-open-capsule" class="btn-secondary btn-capsule-trigger" style="border-color: var(--gold-400); color: var(--gold-300); font-weight: 600;" title="Open Our Digital Time Capsule Keepsake Certificate">
           📜 <span>Our Digital Time Capsule</span>
         </button>
         <button id="btn-replay-memories" class="btn-primary">
@@ -1356,9 +1370,9 @@
         </p>
       </div>
 
-      <div style="text-align: center; margin-bottom: 2rem; color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7;">
+      <div class="capsule-closing-note">
         <p>No matter where life takes each of us in the years ahead, we promise to carry these memories with pride and joy.</p>
-        <p style="margin-top: 0.5rem; font-family: var(--font-display); color: var(--gold-400); font-weight: 700;">Ganpati Bappa Morya 🙏 Pudhchya Varshi Lavkar Ya!</p>
+        <p class="mantra-text">Ganpati Bappa Morya 🙏 Pudhchya Varshi Lavkar Ya!</p>
       </div>
 
       <div class="capsule-actions">
@@ -1381,6 +1395,6 @@
   </aside>
 
   <!-- Main JavaScript App Entrypoint (ES Module) -->
-  <script type="module" src="js/main.js?v=6.8"></script>
+  <script type="module" src="js/main.js?v=6.9"></script>
 </body>
 </html>

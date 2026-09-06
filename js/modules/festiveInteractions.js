@@ -135,37 +135,58 @@ export class FestiveInteractions {
      4. DIGITAL TIME CAPSULE KEEPSAKE MODAL
      -------------------------------------------------------------------------- */
   initTimeCapsule() {
-    const capsuleBtn = document.getElementById('btn-open-capsule');
     const modal = document.getElementById('capsule-modal');
     const closeBtn = document.getElementById('capsule-modal-close');
     const printBtn = document.getElementById('btn-print-capsule');
 
     if (!modal) return;
 
-    if (capsuleBtn) {
-      capsuleBtn.addEventListener('click', () => {
-        modal.classList.add('is-active');
-        document.body.style.overflow = 'hidden';
-        if (this.particles) this.particles.burstFlowers(35);
-      });
-    }
+    const openCapsule = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      modal.classList.add('is-active');
+      document.body.classList.add('capsule-modal-open');
+      if (this.particles) this.particles.burstFlowers(35);
+    };
+
+    const closeCapsule = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      modal.classList.remove('is-active');
+      document.body.classList.remove('capsule-modal-open');
+    };
+
+    // Attach to all capsule triggers (navbar, hero, finale, video section)
+    document.querySelectorAll('.btn-capsule-trigger, #btn-open-capsule, #btn-nav-capsule, #btn-mobile-capsule, #btn-hero-capsule').forEach(btn => {
+      btn.addEventListener('click', openCapsule);
+    });
 
     if (closeBtn) {
-      closeBtn.addEventListener('click', () => {
-        modal.classList.remove('is-active');
-        document.body.style.overflow = '';
-      });
+      closeBtn.addEventListener('click', closeCapsule);
     }
 
     modal.addEventListener('click', (e) => {
       if (e.target === modal) {
-        modal.classList.remove('is-active');
-        document.body.style.overflow = '';
+        closeCapsule(e);
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('is-active')) {
+        closeCapsule(e);
       }
     });
 
     if (printBtn) {
-      printBtn.addEventListener('click', () => {
+      printBtn.addEventListener('click', (e) => {
+        if (e) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
         window.print();
       });
     }
