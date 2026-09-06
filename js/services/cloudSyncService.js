@@ -22,7 +22,7 @@ export class CloudSyncService {
           return {
             friends: parsed,
             updatedAt: timestampStr ? parseInt(timestampStr, 10) : Date.now(),
-            version: '2026.08.22.1600'
+            version: '6.1.0'
           };
         }
       }

@@ -7,8 +7,8 @@
  */
 
 export const memoriesData = {
-  version: "2026.08.22.1530",
-  lastUpdated: "2026-08-22T15:30:00+05:30",
+  version: "6.1.0",
+  lastUpdated: "Festival Season",
 
   // 1. HERO SECTION CONFIGURATION
   hero: {

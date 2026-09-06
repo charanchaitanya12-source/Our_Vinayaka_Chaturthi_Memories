@@ -64,10 +64,10 @@
   --shadow-polaroid: 0 12px 32px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.4);
 
   /* Typography Families */
-  --font-display: 'Cinzel', 'Playfair Display', serif;
-  --font-serif: 'Playfair Display', Georgia, serif;
-  --font-sans: 'Plus Jakarta Sans', 'Outfit', system-ui, -apple-system, sans-serif;
-  --font-handwriting: 'Caveat', cursive, sans-serif;
+  --font-display: 'Cinzel', 'Playfair Display', 'Nirmala UI', 'Gautami', serif;
+  --font-serif: 'Playfair Display', Georgia, 'Nirmala UI', 'Gautami', serif;
+  --font-sans: 'Plus Jakarta Sans', 'Outfit', 'Nirmala UI', 'Gautami', system-ui, -apple-system, sans-serif;
+  --font-handwriting: 'Caveat', cursive, 'Nirmala UI', sans-serif;
 
   /* Spacing */
   --space-xs: 0.25rem;
@@ -107,6 +107,7 @@
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: clamp(68px, 12vw, 115px);
   font-size: 16px;
   background-color: var(--bg-darkest);
   color: var(--text-primary);
