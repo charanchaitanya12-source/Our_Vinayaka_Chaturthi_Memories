@@ -2761,6 +2761,36 @@
   font-size: 0.95rem;
 }
 
+.footer-bottom-corner {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(245, 184, 66, 0.12);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.footer-creator-credit {
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-dim);
+  letter-spacing: 0.03em;
+  text-align: right;
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .footer-bottom-corner {
+    justify-content: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+  }
+  .footer-creator-credit {
+    text-align: center;
+    font-size: 0.76rem;
+  }
+}
+
 /* --------------------------------------------------------------------------
    14. PHOTO & MEDIA CUSTOMIZER / REPLACEMENT MODAL
    -------------------------------------------------------------------------- */

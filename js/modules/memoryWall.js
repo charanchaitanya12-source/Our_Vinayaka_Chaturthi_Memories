@@ -51,27 +51,24 @@ export class MemoryWallController {
   }
 
   loadPosts() {
+    const demoIds = new Set(['msg-1', 'msg-2', 'msg-3', 'msg-4', 'msg-5']);
     const saved = localStorage.getItem(this.storageKey);
     if (saved) {
       try {
-        this.posts = JSON.parse(saved);
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          // Remove all demo messages while preserving any real user-submitted posts
+          this.posts = parsed.filter(p => p && !demoIds.has(p.id) && !p.isDemo);
+        } else {
+          this.posts = [];
+        }
       } catch (e) {
-        this.posts = [...memoriesData.memoryWallInitial];
+        this.posts = [];
       }
     } else {
-      // Check for v2 migration if available
-      const oldV2 = localStorage.getItem('vinayaka_chat_memories_wall_v2');
-      if (oldV2) {
-        try {
-          this.posts = JSON.parse(oldV2);
-        } catch (e) {
-          this.posts = [...memoriesData.memoryWallInitial];
-        }
-      } else {
-        this.posts = [...memoriesData.memoryWallInitial];
-      }
-      this.savePosts();
+      this.posts = [];
     }
+    this.savePosts();
   }
 
   savePosts() {
