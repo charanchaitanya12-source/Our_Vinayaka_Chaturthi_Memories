@@ -2761,71 +2761,71 @@
   font-size: 0.95rem;
 }
 
-.footer-bottom-corner {
-  margin-top: 2.25rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid rgba(245, 184, 66, 0.18);
+/* First Page (Hero Section) Bottom at Middle Creator Credit */
+.hero-bottom-credit-wrap {
+  margin-top: 1.75rem;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 4;
+  width: 100%;
 }
 
-.footer-creator-credit {
+.hero-creator-credit {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  background: linear-gradient(135deg, rgba(245, 184, 66, 0.12) 0%, rgba(104, 21, 35, 0.3) 100%);
-  border: 1.5px solid rgba(245, 184, 66, 0.45);
+  justify-content: center;
+  gap: 0.55rem;
+  background: linear-gradient(135deg, rgba(245, 184, 66, 0.16) 0%, rgba(104, 21, 35, 0.42) 100%);
+  border: 1.5px solid rgba(245, 184, 66, 0.55);
   border-radius: var(--radius-full);
-  padding: 0.55rem 1.25rem;
+  padding: 0.55rem 1.45rem;
   font-family: var(--font-sans);
-  font-size: 0.86rem;
-  color: var(--text-secondary);
+  font-size: 0.9rem;
+  color: #fff4cc;
   letter-spacing: 0.02em;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45), 0 0 16px rgba(245, 184, 66, 0.18);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 22px rgba(0, 0, 0, 0.6), 0 0 20px rgba(245, 184, 66, 0.25);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   transition: all var(--transition-normal);
   margin: 0;
 }
 
-.footer-creator-credit:hover {
+.hero-creator-credit:hover {
   border-color: var(--gold-400);
-  background: linear-gradient(135deg, rgba(245, 184, 66, 0.2) 0%, rgba(104, 21, 35, 0.4) 100%);
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6), 0 0 24px rgba(245, 184, 66, 0.4);
+  background: linear-gradient(135deg, rgba(245, 184, 66, 0.25) 0%, rgba(104, 21, 35, 0.55) 100%);
+  box-shadow: 0 6px 28px rgba(0, 0, 0, 0.7), 0 0 28px rgba(245, 184, 66, 0.45);
   transform: translateY(-2px);
 }
 
-.footer-creator-credit .creator-sparkle {
+.hero-creator-credit .creator-sparkle {
   color: var(--gold-400);
-  font-size: 1rem;
+  font-size: 1.05rem;
   line-height: 1;
-  filter: drop-shadow(0 0 6px rgba(245, 184, 66, 0.6));
+  filter: drop-shadow(0 0 6px rgba(245, 184, 66, 0.7));
 }
 
-.footer-creator-credit .creator-highlight {
+.hero-creator-credit .creator-highlight {
   color: #fff4cc;
   font-weight: 700;
   background: linear-gradient(135deg, #ffffff 0%, #ffd768 45%, #f5b842 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 0 12px rgba(245, 184, 66, 0.45);
+  text-shadow: 0 0 12px rgba(245, 184, 66, 0.5);
 }
 
 @media (max-width: 640px) {
-  .footer-bottom-corner {
-    justify-content: center;
-    margin-top: 1.75rem;
-    padding-top: 1.25rem;
+  .hero-bottom-credit-wrap {
+    margin-top: 1.25rem;
   }
-  .footer-creator-credit {
-    font-size: 0.78rem;
-    padding: 0.45rem 0.95rem;
+  .hero-creator-credit {
+    font-size: 0.8rem;
+    padding: 0.45rem 1rem;
     text-align: center;
-    justify-content: center;
     flex-wrap: wrap;
-    width: 100%;
-    max-width: 380px;
+    max-width: 90%;
   }
 }
 
@@ -3652,6 +3652,19 @@ body.capsule-modal-open {
   font-size: 0.96rem;
 }
 
+.capsule-page-1-credit {
+  text-align: center;
+  margin: 0.5rem auto 1.25rem;
+  font-size: 0.85rem;
+  color: var(--gold-300);
+  letter-spacing: 0.02em;
+}
+
+.capsule-page-1-credit .capsule-creator-name {
+  color: #fff5d6;
+  font-weight: 700;
+}
+
 /* --- PAGE 2: TIMELINE & JOURNEY --- */
 .capsule-timeline-grid {
   display: grid;
@@ -4356,6 +4369,19 @@ body.capsule-modal-open {
     font-weight: 700 !important;
     font-size: 0.98rem !important;
     margin-top: 6px !important;
+  }
+
+  .capsule-page-1 .capsule-page-1-credit {
+    text-align: center !important;
+    margin: 4px auto 6px !important;
+    font-size: 0.76rem !important;
+    color: #8b5212 !important;
+    font-weight: 600 !important;
+  }
+
+  .capsule-page-1 .capsule-page-1-credit .capsule-creator-name {
+    color: #781919 !important;
+    font-weight: 700 !important;
   }
 
   /* Page 2 Print Details (Timeline) */
