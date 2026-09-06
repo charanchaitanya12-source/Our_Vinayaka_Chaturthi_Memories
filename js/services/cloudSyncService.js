@@ -24,7 +24,7 @@ export class CloudSyncService {
   static CACHE_KEYS = {
     VIDEOS: 'bappa_saved_videos_v2',
     MEMORIES: 'vinayaka_chat_memories_wall_v3',
-    GANG: 'vinayaka_saved_gang_v14',
+    GANG: 'vinayaka_saved_gang_v15',
     GANG_TIMESTAMP: 'vinayaka_gang_last_updated',
     DIYAS: 'vinayaka_lit_diyas_count',
     LAST_CLOUD_SYNC: 'vinayaka_last_cloud_sync_time'
@@ -331,6 +331,11 @@ export class CloudSyncService {
         const snapshot = await this.database.ref(this.DB_PATHS.GANG).once('value');
         const val = snapshot.val();
         if (val && Array.isArray(val)) {
+          val.forEach(f => {
+            if (f && (f.id === 'friend-hamu' || (f.name && (f.name.toLowerCase().includes('hamu') || f.name.toLowerCase().includes('hemu'))))) {
+              f.name = 'Hemu';
+            }
+          });
           localStorage.setItem(this.CACHE_KEYS.GANG, JSON.stringify(val));
           return {
             friends: val,
@@ -349,6 +354,11 @@ export class CloudSyncService {
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
+          parsed.forEach(f => {
+            if (f && (f.id === 'friend-hamu' || (f.name && (f.name.toLowerCase().includes('hamu') || f.name.toLowerCase().includes('hemu'))))) {
+              f.name = 'Hemu';
+            }
+          });
           return {
             friends: parsed,
             updatedAt: timestampStr ? parseInt(timestampStr, 10) : Date.now(),
@@ -366,6 +376,11 @@ export class CloudSyncService {
    */
   static async saveGang(friendsList) {
     if (!Array.isArray(friendsList)) return false;
+    friendsList.forEach(f => {
+      if (f && (f.id === 'friend-hamu' || (f.name && (f.name.toLowerCase().includes('hamu') || f.name.toLowerCase().includes('hemu'))))) {
+        f.name = 'Hemu';
+      }
+    });
     const now = Date.now();
 
     try {
@@ -401,6 +416,11 @@ export class CloudSyncService {
       this.database.ref(this.DB_PATHS.GANG).on('value', (snapshot) => {
         const val = snapshot.val();
         if (val && Array.isArray(val)) {
+          val.forEach(f => {
+            if (f && (f.id === 'friend-hamu' || (f.name && (f.name.toLowerCase().includes('hamu') || f.name.toLowerCase().includes('hemu'))))) {
+              f.name = 'Hemu';
+            }
+          });
           localStorage.setItem(this.CACHE_KEYS.GANG, JSON.stringify(val));
           callback(val, Date.now());
         }

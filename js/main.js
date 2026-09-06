@@ -4,13 +4,13 @@
  * ============================================================================
  */
 
-import { memoriesData } from './data/memoriesData.js?v=6.0';
+import { memoriesData } from './data/memoriesData.js?v=6.8';
 import { AmbientAudioEngine } from './modules/ambientAudio.js?v=6.0';
 import { ParticleEngine } from './modules/particleCanvas.js?v=6.0';
 import { TimelineController } from './modules/timeline.js?v=6.0';
 import { GalleryController } from './modules/gallery.js?v=6.0';
 import { InsideJokesController } from './modules/insideJokes.js?v=6.0';
-import { FriendsController } from './modules/friendsSpotlight.js?v=6.0';
+import { FriendsController } from './modules/friendsSpotlight.js?v=6.8';
 import { StorytellingController } from './modules/storytelling.js?v=6.0';
 import { VideoMemoriesController } from './modules/videoMemories.js?v=6.0';
 import { MemoryWallController } from './modules/memoryWall.js?v=6.0';

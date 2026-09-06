@@ -9,8 +9,8 @@
  * 2. Standalone Tall Vertical Column for Sai Nikhil Raj Muppana (3 stacked photos).
  */
 
-import { memoriesData } from '../data/memoriesData.js?v=4.4';
-import { CloudSyncService } from '../services/cloudSyncService.js?v=4.4';
+import { memoriesData } from '../data/memoriesData.js?v=6.8';
+import { CloudSyncService } from '../services/cloudSyncService.js?v=6.8';
 
 export class FriendsController {
   constructor(containerId = 'friends-grid-container') {
@@ -42,8 +42,8 @@ export class FriendsController {
     this.saveAllBtn = document.getElementById('btn-save-friends');
 
     // Storage Keys
-    this.storageKey = 'vinayaka_saved_gang_v14';
-    this.deletedKey = 'vinayaka_deleted_friend_ids_v14';
+    this.storageKey = CloudSyncService.CACHE_KEYS?.GANG || 'vinayaka_saved_gang_v15';
+    this.deletedKey = 'vinayaka_deleted_friend_ids_v15';
     this.currentUploadedPhoto = null;
     this.friends = [];
 
@@ -90,10 +90,23 @@ export class FriendsController {
 
   purgeLegacyCaches() {
     try {
-      // Only purge deprecated legacy keys (v1 to v5), preserve active v14 and cloud sync keys
-      const legacyKeys = ['vinayaka_gang_v1', 'vinayaka_gang_v2', 'vinayaka_saved_gang_v1', 'vinayaka_saved_gang_v2'];
+      // Purge deprecated legacy keys including v14 to prevent stale name overrides
+      const legacyKeys = [
+        'vinayaka_gang_v1', 'vinayaka_gang_v2', 'vinayaka_saved_gang_v1', 'vinayaka_saved_gang_v2',
+        'vinayaka_saved_gang_v10', 'vinayaka_saved_gang_v11', 'vinayaka_saved_gang_v12',
+        'vinayaka_saved_gang_v13', 'vinayaka_saved_gang_v14', 'vinayaka_deleted_friend_ids_v14'
+      ];
       legacyKeys.forEach(k => localStorage.removeItem(k));
     } catch (e) {}
+  }
+
+  normalizeFriends() {
+    if (!Array.isArray(this.friends)) return;
+    this.friends.forEach(f => {
+      if (f && (f.id === 'friend-hamu' || (f.name && (f.name.toLowerCase().includes('hamu') || f.name.toLowerCase().includes('hemu'))))) {
+        f.name = 'Hemu';
+      }
+    });
   }
 
   async init() {
@@ -105,6 +118,7 @@ export class FriendsController {
     CloudSyncService.subscribeGang((gang) => {
       if (Array.isArray(gang) && gang.length > 0) {
         this.friends = gang;
+        this.normalizeFriends();
         this.render();
       }
     });
@@ -126,6 +140,7 @@ export class FriendsController {
     const cloudGang = await CloudSyncService.fetchGang();
     if (cloudGang && Array.isArray(cloudGang.friends) && cloudGang.friends.length > 0) {
       this.friends = cloudGang.friends;
+      this.normalizeFriends();
       return;
     }
 
@@ -136,6 +151,7 @@ export class FriendsController {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
           this.friends = parsed;
+          this.normalizeFriends();
           return;
         }
       } catch (e) {}
@@ -256,10 +272,12 @@ export class FriendsController {
         taggedMoments: f.taggedMoments || ['gal-1', 'gal-2']
       };
     });
+    this.normalizeFriends();
   }
 
   saveFriends() {
     try {
+      this.normalizeFriends();
       const now = Date.now();
       localStorage.setItem(this.storageKey, JSON.stringify(this.friends));
       localStorage.setItem('vinayaka_gang_last_updated', now.toString());
@@ -303,6 +321,7 @@ export class FriendsController {
   render() {
     if (!this.container) return;
 
+    this.normalizeFriends();
     const visibleFriends = this.friends;
 
     // Separate Sai Nikhil from standard square members
@@ -311,16 +330,17 @@ export class FriendsController {
 
     // 1. Render Grid of Smaller Square Cards
     const standardCardsHtml = standardFriends.map((friend, idx) => {
+      const displayName = (friend.id === 'friend-hamu' || (friend.name && (friend.name.toLowerCase().includes('hamu') || friend.name.toLowerCase().includes('hemu')))) ? 'Hemu' : friend.name;
       const photos = (friend.photos && friend.photos.length > 0) ? friend.photos : (friend.avatar ? [friend.avatar] : ['assets/images/gang/gang_member_ramesh.jpg']);
       const photoSrc = photos[0] || 'assets/images/gang/gang_member_ramesh.jpg';
 
       return `
         <div class="friend-card standard-square-card reveal-item reveal-delay-${(idx % 3) + 1}" data-friend-id="${friend.id}" id="card-${friend.id}">
           <div class="square-photo-wrapper">
-            <img class="square-friend-avatar" src="${photoSrc}?v=4.4" alt="${friend.name}" loading="lazy" />
+            <img class="square-friend-avatar" src="${photoSrc}?v=4.4" alt="${displayName}" loading="lazy" />
           </div>
           <div class="square-card-content">
-            <h4 class="square-friend-name" title="${friend.name}">${friend.name}</h4>
+            <h4 class="square-friend-name" title="${displayName}">${displayName}</h4>
             ${friend.nickname ? `
               <div class="square-friend-subnames" title="${friend.nickname}">✨ ${friend.nickname}</div>
             ` : ''}
