@@ -137,7 +137,6 @@ export class FestiveInteractions {
   initTimeCapsule() {
     const modal = document.getElementById('capsule-modal');
     const closeBtn = document.getElementById('capsule-modal-close');
-    const printBtn = document.getElementById('btn-print-capsule');
 
     if (!modal) return;
 
@@ -181,15 +180,43 @@ export class FestiveInteractions {
       }
     });
 
+    const printBtn = document.getElementById('btn-print-capsule');
+    const printBottomBtn = document.getElementById('btn-print-capsule-bottom');
+    const printCertOnlyBtn = document.getElementById('btn-print-cert-only');
+
+    const triggerFullPrint = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      document.body.classList.remove('print-cert-only');
+      window.print();
+    };
+
+    const triggerCertOnlyPrint = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      document.body.classList.add('print-cert-only');
+      window.print();
+    };
+
     if (printBtn) {
-      printBtn.addEventListener('click', (e) => {
-        if (e) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-        window.print();
-      });
+      printBtn.addEventListener('click', triggerFullPrint);
     }
+
+    if (printBottomBtn) {
+      printBottomBtn.addEventListener('click', triggerFullPrint);
+    }
+
+    if (printCertOnlyBtn) {
+      printCertOnlyBtn.addEventListener('click', triggerCertOnlyPrint);
+    }
+
+    window.addEventListener('afterprint', () => {
+      document.body.classList.remove('print-cert-only');
+    });
   }
 
   /* --------------------------------------------------------------------------

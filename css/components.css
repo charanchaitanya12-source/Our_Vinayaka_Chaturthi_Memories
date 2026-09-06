@@ -3400,25 +3400,23 @@
 }
 
 /* --------------------------------------------------------------------------
-   19. TIME CAPSULE MODAL & KEEPSAKE CERTIFICATE
+   19. TIME CAPSULE MODAL & 7-PAGE COMMEMORATIVE KEEPSAKE BOOK
    -------------------------------------------------------------------------- */
 .capsule-modal {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
   height: 100vh;
   z-index: 10000;
-  background: rgba(8, 5, 4, 0.88);
+  background: rgba(8, 5, 4, 0.94);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 1.5rem;
+  flex-direction: column;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
+  overflow: hidden;
 }
 
 .capsule-modal.is-active {
@@ -3426,24 +3424,70 @@
   pointer-events: auto;
 }
 
-.capsule-card {
-  position: relative;
-  width: 100%;
-  max-width: 820px;
-  max-height: 90vh;
-  overflow-y: auto;
-  background: radial-gradient(circle at 50% 20%, #2a1512 0%, #120907 100%);
-  border: 2px solid var(--gold-500);
-  border-radius: var(--radius-2xl);
-  padding: 3rem;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.8), 0 0 50px rgba(245, 184, 66, 0.15);
-  color: var(--text-primary);
+body.capsule-modal-open {
+  overflow: hidden !important;
+}
+
+/* Top control bar (Sticky / Fixed at top of modal) */
+.capsule-modal-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.9rem 1.75rem;
+  background: rgba(22, 11, 8, 0.96);
+  border-bottom: 1px solid rgba(245, 184, 66, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  flex-shrink: 0;
+  z-index: 20;
+  gap: 1rem;
+}
+
+.capsule-topbar-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.capsule-topbar-badge {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--gold-300);
+  letter-spacing: 0.02em;
+}
+
+.capsule-topbar-sub {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.capsule-topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.capsule-topbar-actions .btn-print-full {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--gold-400), var(--gold-600));
+  color: #1a0f05;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(245, 184, 66, 0.3);
+  transition: all var(--transition-fast);
+}
+
+.capsule-topbar-actions .btn-print-full:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 184, 66, 0.45);
 }
 
 .capsule-modal-close {
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
   background: rgba(245, 184, 66, 0.15);
   border: 1px solid var(--gold-400);
   color: var(--gold-300);
@@ -3455,6 +3499,8 @@
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-fast);
+  font-size: 1rem;
+  flex-shrink: 0;
 }
 
 .capsule-modal-close:hover {
@@ -3462,87 +3508,603 @@
   color: #1a0f05;
 }
 
-.capsule-header {
+/* Scrollable Container for all 7 Pages */
+.capsule-book-scroll-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2.25rem 1.5rem 4.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3rem;
+  scroll-behavior: smooth;
+}
+
+/* Shared Page Card Container */
+.capsule-page {
+  position: relative;
+  width: 100%;
+  max-width: 820px;
+  background: radial-gradient(circle at 50% 15%, #261310 0%, #110705 100%);
+  border: 2px solid var(--gold-500);
+  border-radius: var(--radius-2xl);
+  padding: 2.5rem 2.5rem 2rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 40px rgba(245, 184, 66, 0.12);
+  color: var(--text-primary);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* Page Header */
+.capsule-page-header {
   text-align: center;
   border-bottom: 1px solid rgba(245, 184, 66, 0.25);
-  padding-bottom: 1.5rem;
-  margin-bottom: 2rem;
+  padding-bottom: 1.25rem;
+  margin-bottom: 1.75rem;
+}
+
+.capsule-emblem {
+  font-size: 1.75rem;
+  margin-bottom: 0.35rem;
 }
 
 .capsule-title {
   font-family: var(--font-display);
-  font-size: 2.2rem;
+  font-size: 2rem;
   color: var(--gold-300);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.02em;
 }
 
 .capsule-subtitle {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
 }
 
+/* Page Footer */
+.capsule-page-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.25rem;
+  margin-top: auto;
+  border-top: 1px solid rgba(245, 184, 66, 0.2);
+  font-size: 0.8rem;
+  color: var(--gold-400);
+  letter-spacing: 0.05em;
+  font-family: var(--font-display);
+}
+
+/* --- PAGE 1 ELEMENTS --- */
 .capsule-photos-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1.75rem;
 }
 
 .capsule-photo-item {
   border-radius: var(--radius-md);
   overflow: hidden;
-  border: 1px solid rgba(245, 184, 66, 0.3);
+  border: 1px solid rgba(245, 184, 66, 0.35);
   aspect-ratio: 4 / 3;
+  position: relative;
+  background: #190a07;
 }
 
 .capsule-photo-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+}
+
+.capsule-photo-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(14, 6, 4, 0.75);
+  font-size: 0.75rem;
+  padding: 4px 6px;
+  text-align: center;
+  color: var(--gold-200);
 }
 
 .capsule-vows {
   background: rgba(245, 184, 66, 0.05);
   border: 1px dashed rgba(245, 184, 66, 0.35);
   border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: #fff5d6;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
   text-align: center;
 }
 
+.capsule-vow-lead {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #fff5d6;
+  margin-bottom: 0.5rem;
+}
+
+.capsule-vow-dedication {
+  font-size: 0.92rem;
+  color: var(--gold-300);
+  line-height: 1.5;
+}
+
+.capsule-closing-note {
+  text-align: center;
+  margin-bottom: 1.25rem;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.65;
+}
+
+.capsule-closing-note .mantra-text {
+  margin-top: 0.4rem;
+  font-family: var(--font-display);
+  color: var(--gold-400);
+  font-weight: 700;
+  font-size: 0.96rem;
+}
+
+/* --- PAGE 2: TIMELINE & JOURNEY --- */
+.capsule-timeline-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.capsule-timeline-card {
+  display: flex;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(245, 184, 66, 0.22);
+  border-radius: var(--radius-md);
+  padding: 0.8rem 0.9rem;
+  align-items: flex-start;
+}
+
+.capsule-step-badge {
+  background: linear-gradient(135deg, var(--gold-600), var(--gold-400));
+  color: #1a0f05;
+  font-weight: 800;
+  font-size: 0.78rem;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.capsule-step-content h4 {
+  font-size: 0.9rem;
+  color: var(--gold-200);
+  margin-bottom: 2px;
+  font-weight: 600;
+}
+
+.capsule-step-date {
+  display: block;
+  font-size: 0.74rem;
+  color: var(--gold-400);
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.capsule-step-content p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.capsule-mini-photos-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.mini-strip-item {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border: 1px solid rgba(245, 184, 66, 0.3);
+  background: #190a07;
+}
+
+.mini-strip-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* --- PAGE 3: GANG & BROTHERHOOD --- */
+.capsule-gang-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.capsule-gang-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(245, 184, 66, 0.25);
+  border-radius: var(--radius-md);
+  padding: 0.85rem 0.5rem;
+}
+
+.capsule-gang-avatar-wrap {
+  width: 68px;
+  height: 68px;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 2px solid var(--gold-400);
+  margin-bottom: 0.5rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  background: #2a1512;
+}
+
+.capsule-gang-avatar-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.capsule-gang-info h4 {
+  font-size: 0.92rem;
+  color: var(--gold-100);
+  margin-bottom: 2px;
+  font-weight: 700;
+}
+
+.capsule-gang-info span {
+  font-size: 0.72rem;
+  color: var(--gold-400);
+  font-weight: 500;
+}
+
+.capsule-brotherhood-vow {
+  background: rgba(245, 184, 66, 0.06);
+  border-left: 3px solid var(--gold-500);
+  padding: 0.85rem 1.25rem;
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  margin-bottom: 1.25rem;
+  font-style: italic;
+  font-size: 0.88rem;
+  color: #fff1d0;
+  line-height: 1.55;
+}
+
+/* --- PAGE 4: TRIBUTE TO SAI NIKHIL --- */
+.capsule-tribute-photos-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tribute-photo-frame {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1.5px solid rgba(245, 184, 66, 0.45);
+  aspect-ratio: 4 / 3;
+  position: relative;
+  background: #140907;
+}
+
+.tribute-photo-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.tribute-photo-frame span {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(14, 6, 4, 0.8);
+  font-size: 0.75rem;
+  padding: 4px 6px;
+  text-align: center;
+  color: var(--gold-200);
+  font-style: italic;
+}
+
+.capsule-tribute-box {
+  background: rgba(245, 184, 66, 0.05);
+  border: 1.5px dashed rgba(245, 184, 66, 0.4);
+  border-radius: var(--radius-lg);
+  padding: 1.4rem 1.5rem;
+  margin-bottom: 1.25rem;
+  text-align: center;
+}
+
+.tribute-quote-badge {
+  display: inline-block;
+  background: rgba(245, 184, 66, 0.15);
+  color: var(--gold-300);
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
+  margin-bottom: 0.85rem;
+  letter-spacing: 0.04em;
+}
+
+.tribute-main-quote {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: #fff8e8;
+  margin: 0 0 0.85rem 0;
+  line-height: 1.5;
+}
+
+.tribute-body-text {
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0 0 0.65rem 0;
+}
+
+.tribute-farewell-mantra {
+  font-family: var(--font-display);
+  color: var(--gold-400);
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-top: 0.85rem;
+  letter-spacing: 0.03em;
+}
+
+/* --- PAGE 5: GALLERY HIGHLIGHTS --- */
+.capsule-gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.capsule-gallery-item {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1.5px solid rgba(245, 184, 66, 0.3);
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.capsule-gallery-item img {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-caption-bar {
+  padding: 0.65rem 0.85rem;
+  background: rgba(20, 10, 8, 0.88);
+}
+
+.gallery-caption-bar strong {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--gold-200);
+  margin-bottom: 2px;
+}
+
+.gallery-caption-bar span {
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+  line-height: 1.35;
+  display: block;
+}
+
+/* --- PAGE 6: JOKES & STORIES --- */
+.capsule-jokes-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.capsule-joke-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(245, 184, 66, 0.25);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.joke-card-icon {
+  font-size: 1.35rem;
+  margin-bottom: 0.35rem;
+}
+
+.capsule-joke-card h4 {
+  font-size: 0.92rem;
+  color: var(--gold-200);
+  margin-bottom: 0.35rem;
+  font-weight: 700;
+}
+
+.capsule-joke-card p {
+  font-style: italic;
+  font-size: 0.82rem;
+  color: #fdf5e2;
+  line-height: 1.5;
+  margin: 0 0 0.65rem 0;
+  flex: 1;
+}
+
+.joke-card-stamp {
+  align-self: flex-start;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--gold-400);
+  background: rgba(245, 184, 66, 0.12);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* --- PAGE 7: VIDEOS CATALOG & GRAND FINALE --- */
+.capsule-videos-catalog {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.65rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.capsule-video-row {
+  display: flex;
+  gap: 0.65rem;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 2.5px solid var(--gold-500);
+  padding: 0.45rem 0.65rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
+
+.vid-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--gold-400);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.vid-detail strong {
+  font-size: 0.82rem;
+  color: var(--gold-100);
+  display: block;
+  line-height: 1.3;
+}
+
+.vid-detail p {
+  font-size: 0.74rem;
+  color: var(--text-secondary);
+  margin: 2px 0 0 0;
+  line-height: 1.35;
+}
+
+.capsule-grand-finale-box {
+  background: linear-gradient(135deg, rgba(50, 18, 14, 0.9) 0%, rgba(26, 12, 10, 0.96) 100%);
+  border: 2px solid var(--gold-400);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  text-align: center;
+  margin-bottom: 1rem;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+.finale-quote-line {
+  font-size: 0.88rem;
+  color: #fbeee0;
+  margin: 0 0 3px 0;
+  font-style: italic;
+}
+
+.finale-quote-bold {
+  font-weight: 700;
+  color: var(--gold-200);
+  font-size: 0.96rem;
+  margin-top: 4px;
+}
+
+.finale-telugu-salutation {
+  font-size: 0.88rem;
+  color: var(--gold-300);
+  margin: 0.75rem 0 0.4rem;
+  font-weight: 600;
+}
+
+.finale-bappa-mantra {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--gold-400);
+  letter-spacing: 0.02em;
+}
+
+.finale-pudhchya {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #ffffff;
+  letter-spacing: 0.08em;
+  margin-top: 3px;
+}
+
+/* Modal Bottom Actions */
 .capsule-actions {
   display: flex;
   justify-content: center;
   gap: 1.25rem;
 }
 
-.capsule-closing-note {
-  text-align: center;
-  margin-bottom: 2rem;
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  line-height: 1.7;
+.capsule-bottom-actions {
+  margin-top: -1rem;
+  padding-bottom: 2rem;
 }
 
-.capsule-closing-note .mantra-text {
-  margin-top: 0.5rem;
-  font-family: var(--font-display);
-  color: var(--gold-400);
-  font-weight: 700;
-}
-
-body.capsule-modal-open {
-  overflow: hidden !important;
+/* Responsive screen styles for capsule */
+@media (max-width: 768px) {
+  .capsule-modal-topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
+  }
+  .capsule-topbar-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .capsule-book-scroll-wrapper {
+    padding: 1rem 0.75rem 3rem;
+    gap: 2rem;
+  }
+  .capsule-page {
+    padding: 1.5rem 1.25rem;
+    border-radius: var(--radius-xl);
+  }
+  .capsule-title {
+    font-size: 1.5rem;
+  }
+  .capsule-timeline-grid,
+  .capsule-gallery-grid,
+  .capsule-jokes-grid,
+  .capsule-videos-catalog {
+    grid-template-columns: 1fr;
+  }
+  .capsule-gang-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 /* --------------------------------------------------------------------------
-   PRINT STYLESHEET: TIME CAPSULE KEEPSAKE CERTIFICATE
-   Guarantees clean 1-page output and completely eliminates trailing blank pages
+   PRINT STYLESHEET: 7-PAGE COMMEMORATIVE KEEPSAKE BOOK
+   Exact A4 Portrait pagination: 1 distinct sheet per commemorative page
    -------------------------------------------------------------------------- */
 @page {
   size: A4 portrait;
@@ -3550,7 +4112,7 @@ body.capsule-modal-open {
 }
 
 @media print {
-  /* 1. Global Reset & Canvas Configuration */
+  /* 1. Reset Global Document Root */
   html, body {
     background: #ffffff !important;
     background-color: #ffffff !important;
@@ -3565,7 +4127,7 @@ body.capsule-modal-open {
     print-color-adjust: exact !important;
   }
 
-  /* 2. COMPLETELY HIDE all elements except the capsule modal to prevent blank pages */
+  /* 2. Hide ALL outside sections, header, footer, modals to avoid accidental print pages */
   body > *:not(#capsule-modal) {
     display: none !important;
     height: 0 !important;
@@ -3575,7 +4137,6 @@ body.capsule-modal-open {
     overflow: hidden !important;
   }
 
-  /* Explicitly suppress all main sections, navigation, headers, footers and widgets */
   header, footer, main, section, nav, aside, canvas,
   .site-header, .site-footer, .hero-section, .section-padding,
   .mobile-subnav-track, .audio-widget, .festive-toast,
@@ -3590,7 +4151,7 @@ body.capsule-modal-open {
     padding: 0 !important;
   }
 
-  /* 3. Make #capsule-modal the sole printable document root */
+  /* 3. Make #capsule-modal the sole printable document container */
   #capsule-modal {
     display: block !important;
     position: static !important;
@@ -3599,7 +4160,7 @@ body.capsule-modal-open {
     height: auto !important;
     min-height: 0 !important;
     max-height: none !important;
-    margin: 0 auto !important;
+    margin: 0 !important;
     padding: 0 !important;
     background: #ffffff !important;
     backdrop-filter: none !important;
@@ -3607,75 +4168,136 @@ body.capsule-modal-open {
     opacity: 1 !important;
     visibility: visible !important;
     pointer-events: auto !important;
-    page-break-before: avoid !important;
-    page-break-after: avoid !important;
-    page-break-inside: avoid !important;
-    break-before: avoid !important;
-    break-after: avoid !important;
-    break-inside: avoid !important;
   }
 
-  /* 4. Elegant Keepsake Certificate Card (Fits precisely on 1 sheet of paper) */
-  #capsule-modal .capsule-card {
+  /* Hide interactive controls in print */
+  .capsule-modal-topbar,
+  .capsule-modal-close,
+  .capsule-actions,
+  .capsule-bottom-actions,
+  #btn-print-capsule,
+  #btn-print-cert-only,
+  #btn-print-capsule-bottom {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .capsule-book-scroll-wrapper {
     display: block !important;
-    position: static !important;
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+  }
+
+  /* 4. Strict Page Box for Every Keepsake Page */
+  .capsule-page {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
     width: 100% !important;
-    max-width: 700px !important;
+    max-width: 100% !important;
+    /* Strict budget to fit gracefully on 1 sheet of A4 */
+    min-height: 250mm !important;
+    max-height: 278mm !important;
     margin: 0 auto !important;
-    padding: 24px 28px !important;
+    padding: 12mm 14mm 10mm !important;
     background: #fffdf8 !important;
     background-color: #fffdf8 !important;
     color: #1f140e !important;
-    border: 3px double #d4a34b !important;
-    border-radius: 14px !important;
+    border: 3.5px double #c99238 !important;
+    border-radius: 12px !important;
     box-shadow: none !important;
-    overflow: visible !important;
-    max-height: none !important;
+    overflow: hidden !important;
+
+    /* Page Break Isolation */
     page-break-inside: avoid !important;
     break-inside: avoid !important;
-    box-sizing: border-box !important;
+    page-break-after: always !important;
+    break-after: page !important;
   }
 
-  /* Certificate Header */
-  #capsule-modal .capsule-header {
+  /* Prevent trailing blank page after page 7 */
+  .capsule-page:last-of-type,
+  .capsule-page-7 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* When printing Certificate cover only */
+  body.print-cert-only .capsule-page:not(.capsule-page-1) {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+  body.print-cert-only .capsule-page-1 {
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  /* Header in Print */
+  .capsule-page-header {
     border-bottom: 2px solid #ecd59b !important;
-    padding-bottom: 12px !important;
-    margin-bottom: 16px !important;
+    padding-bottom: 8px !important;
+    margin-bottom: 12px !important;
     text-align: center !important;
+    flex-shrink: 0 !important;
   }
 
-  #capsule-modal .capsule-header div:first-child {
-    font-size: 1.6rem !important;
-    margin-bottom: 4px !important;
+  .capsule-emblem {
+    font-size: 1.5rem !important;
+    margin-bottom: 2px !important;
   }
 
-  #capsule-modal .capsule-title {
+  .capsule-title {
     color: #8b1e1e !important;
     font-family: Georgia, 'Cinzel', serif !important;
-    font-size: 1.85rem !important;
+    font-size: 1.7rem !important;
     font-weight: 700 !important;
     letter-spacing: 0.02em !important;
-    margin-bottom: 4px !important;
+    margin-bottom: 3px !important;
     text-shadow: none !important;
   }
 
-  #capsule-modal .capsule-subtitle {
+  .capsule-subtitle {
     color: #634735 !important;
-    font-size: 0.92rem !important;
+    font-size: 0.85rem !important;
     font-weight: 500 !important;
   }
 
-  /* 3-Photo Row */
-  #capsule-modal .capsule-photos-row {
-    display: grid !important;
-    grid-template-columns: repeat(3, 1fr) !important;
-    gap: 12px !important;
-    margin-bottom: 16px !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
+  /* Footer in Print */
+  .capsule-page-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    border-top: 1.5px solid #d4a34b !important;
+    padding-top: 8px !important;
+    margin-top: auto !important;
+    font-family: Georgia, 'Cinzel', serif !important;
+    font-size: 0.78rem !important;
+    color: #8b5212 !important;
+    font-weight: 600 !important;
+    flex-shrink: 0 !important;
   }
 
-  #capsule-modal .capsule-photo-item {
+  /* Page 1 Print Details */
+  .capsule-page-1 .capsule-photos-row {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .capsule-page-1 .capsule-photo-item {
     border: 1.5px solid #d4a34b !important;
     border-radius: 8px !important;
     overflow: hidden !important;
@@ -3683,76 +4305,439 @@ body.capsule-modal-open {
     background: #fbf5e8 !important;
   }
 
-  #capsule-modal .capsule-photo-item img {
+  .capsule-page-1 .capsule-photo-item img {
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
     display: block !important;
   }
 
-  /* Vows & Remembrance Box */
-  #capsule-modal .capsule-vows {
+  .capsule-page-1 .capsule-photo-label {
+    background: #fbf5e8 !important;
+    color: #634735 !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    border-top: 1px solid #e2cb9c !important;
+  }
+
+  .capsule-page-1 .capsule-vows {
     background: #fdf8ed !important;
-    background-color: #fdf8ed !important;
     border: 1.5px dashed #c69437 !important;
     border-radius: 10px !important;
-    padding: 14px 18px !important;
-    margin-bottom: 14px !important;
+    padding: 12px 18px !important;
+    margin-bottom: 12px !important;
+    text-align: center !important;
+  }
+
+  .capsule-page-1 .capsule-vow-lead {
     color: #2b170c !important;
     font-family: Georgia, 'Cinzel', serif !important;
-    font-size: 0.96rem !important;
     font-style: italic !important;
-    line-height: 1.55 !important;
-    text-align: center !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
+    font-size: 0.96rem !important;
+    margin-bottom: 4px !important;
   }
 
-  #capsule-modal .capsule-vows p {
-    color: #2b170c !important;
-    margin: 0 !important;
-  }
-
-  #capsule-modal .capsule-vows p + p {
-    margin-top: 6px !important;
-    font-size: 0.9rem !important;
-  }
-
-  #capsule-modal .capsule-vows strong {
+  .capsule-page-1 .capsule-vow-dedication {
     color: #8b1e1e !important;
-    font-weight: 700 !important;
+    font-size: 0.88rem !important;
+    font-weight: 600 !important;
   }
 
-  /* Closing Note & Mantra */
-  #capsule-modal .capsule-closing-note {
+  .capsule-page-1 .capsule-closing-note {
+    color: #4a3328 !important;
+    font-size: 0.84rem !important;
     text-align: center !important;
-    margin-bottom: 0 !important;
-    color: #4a3328 !important;
-    font-size: 0.86rem !important;
     line-height: 1.5 !important;
-    page-break-inside: avoid !important;
-    break-inside: avoid !important;
   }
 
-  #capsule-modal .capsule-closing-note p {
-    color: #4a3328 !important;
-    margin: 0 !important;
-  }
-
-  #capsule-modal .capsule-closing-note .mantra-text {
+  .capsule-page-1 .capsule-closing-note .mantra-text {
     font-family: Georgia, 'Cinzel', serif !important;
     color: #a16207 !important;
     font-weight: 700 !important;
-    font-size: 1rem !important;
+    font-size: 0.98rem !important;
     margin-top: 6px !important;
   }
 
-  /* Hide print trigger buttons and close cross */
-  .capsule-modal-close,
-  .capsule-actions,
-  #btn-print-capsule {
-    display: none !important;
-    visibility: hidden !important;
+  /* Page 2 Print Details (Timeline) */
+  .capsule-page-2 .capsule-timeline-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px 12px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .capsule-page-2 .capsule-timeline-card {
+    display: flex !important;
+    gap: 8px !important;
+    border: 1px solid #d8b877 !important;
+    background: #fffdfa !important;
+    border-radius: 6px !important;
+    padding: 6px 8px !important;
+    align-items: flex-start !important;
+  }
+
+  .capsule-page-2 .capsule-step-badge {
+    background: #8b1e1e !important;
+    color: #ffffff !important;
+    font-size: 0.72rem !important;
+    font-weight: 700 !important;
+    width: 22px !important;
+    height: 22px !important;
+    border-radius: 50% !important;
+    flex-shrink: 0 !important;
+    text-align: center !important;
+    line-height: 22px !important;
+  }
+
+  .capsule-page-2 .capsule-step-content h4 {
+    color: #781919 !important;
+    font-size: 0.84rem !important;
+    margin-bottom: 1px !important;
+    font-weight: 700 !important;
+  }
+
+  .capsule-page-2 .capsule-step-date {
+    color: #92580c !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 2px !important;
+  }
+
+  .capsule-page-2 .capsule-step-content p {
+    color: #3b281c !important;
+    font-size: 0.74rem !important;
+    line-height: 1.35 !important;
+    margin: 0 !important;
+  }
+
+  .capsule-page-2 .capsule-mini-photos-strip {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 8px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .capsule-page-2 .mini-strip-item {
+    border: 1px solid #c99238 !important;
+    border-radius: 5px !important;
+    overflow: hidden !important;
+    aspect-ratio: 16 / 10 !important;
+    height: 60px !important;
+  }
+
+  .capsule-page-2 .mini-strip-item img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  /* Page 3 Print Details (Gang) */
+  .capsule-page-3 .capsule-gang-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 10px 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .capsule-page-3 .capsule-gang-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    border: 1.5px solid #d4a34b !important;
+    background: #fffefb !important;
+    border-radius: 8px !important;
+    padding: 8px 4px !important;
+  }
+
+  .capsule-page-3 .capsule-gang-avatar-wrap {
+    width: 64px !important;
+    height: 64px !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    border: 2px solid #8b1e1e !important;
+    margin-bottom: 4px !important;
+  }
+
+  .capsule-page-3 .capsule-gang-avatar-wrap img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .capsule-page-3 .capsule-gang-info h4 {
+    color: #701414 !important;
+    font-size: 0.86rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 1px !important;
+  }
+
+  .capsule-page-3 .capsule-gang-info span {
+    color: #92580c !important;
+    font-size: 0.72rem !important;
+    font-weight: 600 !important;
+  }
+
+  .capsule-page-3 .capsule-brotherhood-vow {
+    border-left: 3px solid #8b1e1e !important;
+    background: #fdf8ed !important;
+    border-radius: 0 6px 6px 0 !important;
+    padding: 10px 14px !important;
+    font-size: 0.85rem !important;
+    color: #2e1d13 !important;
+    font-style: italic !important;
+    line-height: 1.45 !important;
+  }
+
+  /* Page 4 Print Details (Sai Nikhil Tribute) */
+  .capsule-page-4 .capsule-tribute-photos-row {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 14px !important;
+  }
+
+  .capsule-page-4 .tribute-photo-frame {
+    border: 2px solid #c99238 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    aspect-ratio: 4 / 3 !important;
+    height: 125px !important;
+    position: relative !important;
+  }
+
+  .capsule-page-4 .tribute-photo-frame img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .capsule-page-4 .tribute-photo-frame span {
+    position: absolute !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    color: #4a2810 !important;
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    padding: 2px 4px !important;
+    text-align: center !important;
+  }
+
+  .capsule-page-4 .capsule-tribute-box {
+    background: #fdf8ed !important;
+    border: 1.5px dashed #c69437 !important;
+    border-radius: 10px !important;
+    padding: 14px 18px !important;
+    text-align: center !important;
+  }
+
+  .capsule-page-4 .tribute-quote-badge {
+    display: inline-block !important;
+    background: #8b1e1e !important;
+    color: #ffffff !important;
+    font-size: 0.76rem !important;
+    font-weight: 700 !important;
+    padding: 3px 10px !important;
+    border-radius: 20px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .capsule-page-4 .tribute-main-quote {
+    font-family: Georgia, serif !important;
+    font-style: italic !important;
+    font-size: 1.05rem !important;
+    color: #781919 !important;
+    font-weight: 700 !important;
+    margin-bottom: 8px !important;
+  }
+
+  .capsule-page-4 .tribute-body-text {
+    color: #3b281c !important;
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+    margin-bottom: 6px !important;
+  }
+
+  .capsule-page-4 .tribute-farewell-mantra {
+    font-family: Georgia, serif !important;
+    font-weight: 700 !important;
+    color: #a16207 !important;
+    font-size: 0.92rem !important;
+    margin-top: 8px !important;
+  }
+
+  /* Page 5 Print Details (Gallery) */
+  .capsule-page-5 .capsule-gallery-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .capsule-page-5 .capsule-gallery-item {
+    border: 1.5px solid #d4a34b !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    background: #fffefc !important;
+  }
+
+  .capsule-page-5 .capsule-gallery-item img {
+    aspect-ratio: 16 / 10 !important;
+    height: 110px !important;
+    width: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .capsule-page-5 .gallery-caption-bar {
+    padding: 6px 8px !important;
+    background: #fcf6eb !important;
+    border-top: 1px solid #eddabb !important;
+  }
+
+  .capsule-page-5 .gallery-caption-bar strong {
+    color: #781919 !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    display: block !important;
+  }
+
+  .capsule-page-5 .gallery-caption-bar span {
+    color: #4a3426 !important;
+    font-size: 0.72rem !important;
+    line-height: 1.3 !important;
+    display: block !important;
+  }
+
+  /* Page 6 Print Details (Jokes) */
+  .capsule-page-6 .capsule-jokes-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px 10px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .capsule-page-6 .capsule-joke-card {
+    border: 1px solid #d8b877 !important;
+    background: #fffdf8 !important;
+    border-radius: 6px !important;
+    padding: 8px 10px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .capsule-page-6 .joke-card-icon {
+    font-size: 1.2rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  .capsule-page-6 .capsule-joke-card h4 {
+    color: #781919 !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 2px !important;
+  }
+
+  .capsule-page-6 .capsule-joke-card p {
+    color: #2b1a10 !important;
+    font-size: 0.74rem !important;
+    font-style: italic !important;
+    line-height: 1.35 !important;
+    margin: 0 0 4px 0 !important;
+    flex: 1 !important;
+  }
+
+  .capsule-page-6 .joke-card-stamp {
+    color: #92580c !important;
+    background: #fbeed3 !important;
+    border: 1px solid #e4cb97 !important;
+    font-size: 0.65rem !important;
+    font-weight: 700 !important;
+    padding: 1px 6px !important;
+    border-radius: 10px !important;
+    align-self: flex-start !important;
+  }
+
+  /* Page 7 Print Details (Videos Catalog & Finale Blessing) */
+  .capsule-page-7 .capsule-videos-catalog {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 4px 10px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .capsule-page-7 .capsule-video-row {
+    display: flex !important;
+    gap: 6px !important;
+    align-items: flex-start !important;
+    border-left: 2px solid #8b1e1e !important;
+    background: #fdfaf3 !important;
+    padding: 3px 6px !important;
+    border-radius: 0 4px 4px 0 !important;
+  }
+
+  .capsule-page-7 .vid-num {
+    font-weight: 700 !important;
+    font-size: 0.72rem !important;
+    color: #8b1e1e !important;
+  }
+
+  .capsule-page-7 .vid-detail strong {
+    font-size: 0.74rem !important;
+    color: #2e160e !important;
+    line-height: 1.25 !important;
+  }
+
+  .capsule-page-7 .vid-detail p {
+    font-size: 0.68rem !important;
+    color: #5a4234 !important;
+    margin: 1px 0 0 0 !important;
+    line-height: 1.25 !important;
+  }
+
+  .capsule-page-7 .capsule-grand-finale-box {
+    background: #fff8eb !important;
+    border: 2px solid #c99238 !important;
+    border-radius: 8px !important;
+    padding: 8px 12px !important;
+    text-align: center !important;
+    margin-top: 6px !important;
+  }
+
+  .capsule-page-7 .finale-quote-line {
+    font-size: 0.76rem !important;
+    color: #4a2810 !important;
+    margin: 0 0 2px 0 !important;
+  }
+
+  .capsule-page-7 .finale-quote-bold {
+    font-weight: 700 !important;
+    color: #781919 !important;
+    font-size: 0.82rem !important;
+  }
+
+  .capsule-page-7 .finale-telugu-salutation {
+    font-size: 0.78rem !important;
+    color: #8b5212 !important;
+    margin: 4px 0 2px !important;
+    font-weight: 600 !important;
+  }
+
+  .capsule-page-7 .finale-bappa-mantra {
+    font-family: Georgia, serif !important;
+    font-size: 0.98rem !important;
+    font-weight: 800 !important;
+    color: #8b1e1e !important;
+  }
+
+  .capsule-page-7 .finale-pudhchya {
+    font-family: Georgia, serif !important;
+    font-size: 0.82rem !important;
+    font-weight: 800 !important;
+    color: #a16207 !important;
+    margin-top: 2px !important;
   }
 }
 

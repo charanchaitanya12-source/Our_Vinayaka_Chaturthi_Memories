@@ -19,7 +19,7 @@
   <!-- Stylesheets -->
   <link rel="stylesheet" href="css/design-system.css?v=4.4" />
   <link rel="stylesheet" href="css/animations.css?v=4.4" />
-  <link rel="stylesheet" href="css/components.css?v=6.9" />
+  <link rel="stylesheet" href="css/components.css?v=7.0" />
 </head>
 <body>
 
@@ -1339,47 +1339,545 @@
   </div>
 
   <!-- =========================================================================
-       17. DIGITAL TIME CAPSULE KEEPSAKE MODAL
+       17. DIGITAL TIME CAPSULE KEEPSAKE MODAL & MEMORY BOOK
        ========================================================================= -->
-  <div id="capsule-modal" class="capsule-modal" role="dialog" aria-modal="true" aria-label="Digital Time Capsule">
-    <div class="capsule-card">
-      <button id="capsule-modal-close" class="capsule-modal-close" aria-label="Close Keepsake">✕</button>
-      
-      <div class="capsule-header">
-        <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛕 ✨ 🪔</div>
-        <h2 class="capsule-title">Our Vinayaka Chaturthi Time Capsule</h2>
-        <p class="capsule-subtitle">A permanent keepsake of brotherhood, devotion, and timeless friendship</p>
+  <div id="capsule-modal" class="capsule-modal" role="dialog" aria-modal="true" aria-label="Digital Time Capsule Memory Book">
+    
+    <!-- Modal Control Header (hidden in print) -->
+    <div class="capsule-modal-topbar">
+      <div class="capsule-topbar-info">
+        <span class="capsule-topbar-badge">📜 Time Capsule Keepsake Book</span>
+        <span class="capsule-topbar-sub">7 Curated Pages • Timeline, Gang, Sai Nikhil Tribute, Gallery, Stories & Videos</span>
       </div>
+      <div class="capsule-topbar-actions">
+        <button id="btn-print-capsule" type="button" class="btn-primary btn-print-full" title="Print All 7 Pages or Save as Keepsake PDF">
+          🖨️ <span>Print Keepsake PDF (All 7 Pages)</span>
+        </button>
+        <button id="btn-print-cert-only" type="button" class="btn-secondary" style="border-color: var(--gold-400); color: var(--gold-300);" title="Print certificate cover page only">
+          📄 <span>Print Certificate Only</span>
+        </button>
+        <button id="capsule-modal-close" class="capsule-modal-close" aria-label="Close Keepsake">✕</button>
+      </div>
+    </div>
 
-      <div class="capsule-photos-row">
-        <div class="capsule-photo-item">
-          <img src="assets/images/real_gang_pandal_mandap.jpg" alt="The Gang with Bappa" />
+    <!-- Scrollable Book Container -->
+    <div class="capsule-book-scroll-wrapper" id="capsule-book-wrapper">
+
+      <!-- ================= PAGE 1: COMMEMORATIVE CERTIFICATE & COVER ================= -->
+      <article class="capsule-page capsule-page-1" id="capsule-page-1">
+        <div class="capsule-page-header">
+          <div class="capsule-emblem">🛕 ✨ 🪔</div>
+          <h2 class="capsule-title">Our Vinayaka Chaturthi Time Capsule</h2>
+          <p class="capsule-subtitle">A permanent keepsake of brotherhood, devotion, and timeless friendship</p>
         </div>
-        <div class="capsule-photo-item">
-          <img src="assets/images/tribute/tribute_group_ganesha_celebration.jpg" alt="Brotherhood Celebration" />
+
+        <div class="capsule-photos-row">
+          <div class="capsule-photo-item">
+            <img src="assets/images/real_gang_pandal_mandap.jpg" alt="The Gang with Bappa" />
+            <span class="capsule-photo-label">The Mandap Sanctum</span>
+          </div>
+          <div class="capsule-photo-item">
+            <img src="assets/images/tribute/tribute_group_ganesha_celebration.jpg" alt="Brotherhood Celebration" />
+            <span class="capsule-photo-label">Brotherhood & Bonds</span>
+          </div>
+          <div class="capsule-photo-item">
+            <img src="assets/images/real_gang_selfie_bappa.jpg" alt="Bappa & The Boys Selfie" />
+            <span class="capsule-photo-label">Candid Bappa Selfie</span>
+          </div>
         </div>
-        <div class="capsule-photo-item">
-          <img src="assets/images/real_gang_selfie_bappa.jpg" alt="Bappa & The Boys Selfie" />
+
+        <div class="capsule-vows">
+          <p class="capsule-vow-lead">“Some people become memories. Some memories become a part of who we are.”</p>
+          <p class="capsule-vow-dedication">
+            In loving remembrance of <strong>Sai Nikhil Raj Muppana</strong> — forever our brother, forever in our hearts.
+          </p>
         </div>
-      </div>
 
-      <div class="capsule-vows">
-        <p>“Some people become memories. Some memories become a part of who we are.”</p>
-        <p style="margin-top: 0.75rem; font-size: 0.95rem; color: var(--gold-300);">
-          In loving remembrance of <strong>Sai Nikhil Raj Muppana</strong> — forever our brother, forever in our hearts.
-        </p>
-      </div>
+        <div class="capsule-closing-note">
+          <p>No matter where life takes each of us in the years ahead, we promise to carry these memories with pride and joy.</p>
+          <p class="mantra-text">గణపతి బప్పా మోరియా • Ganpati Bappa Morya 🙏 Pudhchya Varshi Lavkar Ya!</p>
+        </div>
 
-      <div class="capsule-closing-note">
-        <p>No matter where life takes each of us in the years ahead, we promise to carry these memories with pride and joy.</p>
-        <p class="mantra-text">Ganpati Bappa Morya 🙏 Pudhchya Varshi Lavkar Ya!</p>
-      </div>
+        <footer class="capsule-page-footer">
+          <span>Our Vinayaka Chaturthi Memories</span>
+          <span>Keepsake Certificate • Page 1 of 7</span>
+        </footer>
+      </article>
 
-      <div class="capsule-actions">
-        <button id="btn-print-capsule" type="button" class="btn-primary">
-          🖨️ <span>Print / Save Keepsake PDF</span>
+      <!-- ================= PAGE 2: THE FESTIVAL JOURNEY & TIMELINE ================= -->
+      <article class="capsule-page capsule-page-2" id="capsule-page-2">
+        <div class="capsule-page-header">
+          <div class="capsule-emblem">🚩 🛕 🛣️</div>
+          <h2 class="capsule-title">The Sacred Festival Journey</h2>
+          <p class="capsule-subtitle">వేడుకల ప్రయాణం • Chronological milestones from highway road trip to sacred visarjan</p>
+        </div>
+
+        <div class="capsule-timeline-grid">
+          <div class="capsule-timeline-card">
+            <div class="capsule-step-badge">01</div>
+            <div class="capsule-step-content">
+              <h4>The Road Trip to Bring Bappa</h4>
+              <span class="capsule-step-date">Day 0 • Highway Morning</span>
+              <p>Riding on the open truck with the wind in our faces, full of joy and excitement to bring Lord Ganesha home.</p>
+            </div>
+          </div>
+
+          <div class="capsule-timeline-card">
+            <div class="capsule-step-badge">02</div>
+            <div class="capsule-step-content">
+              <h4>Mandap Setup & Night Prep</h4>
+              <span class="capsule-step-date">Day 0 • Evening & Night</span>
+              <p>Crafting decorative drapes, hanging glowing fairy lights, sound check, and hours of teamwork.</p>
+            </div>
+          </div>
+
+          <div class="capsule-timeline-card">
+            <div class="capsule-step-badge">03</div>
+            <div class="capsule-step-content">
+              <h4>Grand Aagman & Murti Sthapana</h4>
+              <span class="capsule-step-date">Chaturthi Morning • 08:30 AM</span>
+              <p>Carrying the idol on our shoulders covered in sacred cloth with resonant chants of "Ganpati Bappa Morya".</p>
+            </div>
+          </div>
+
+          <div class="capsule-timeline-card">
+            <div class="capsule-step-badge">04</div>
+            <div class="capsule-step-content">
+              <h4>Daily Aartis & Sacred Devotion</h4>
+              <span class="capsule-step-date">Festival Days • Morning & Evening</span>
+              <p>Camphor flames illuminating Bappa's face, incense smoke, floral offerings, and community prayers.</p>
+            </div>
+          </div>
+
+          <div class="capsule-timeline-card">
+            <div class="capsule-step-badge">05</div>
+            <div class="capsule-step-content">
+              <h4>Annadanam Community Feast</h4>
+              <span class="capsule-step-date">Festival Days • Community Feast</span>
+              <p>Stirring the giant handi with love and serving piping hot meals and prasad to the entire neighborhood.</p>
+            </div>
+          </div>
+
+          <div class="capsule-timeline-card">
+            <div class="capsule-step-badge">06</div>
+            <div class="capsule-step-content">
+              <h4>DJ Night & Celebration Dance</h4>
+              <span class="capsule-step-date">Festival Nights • 09:00 PM - Late</span>
+              <p>Flashing disco lights, electrifying dhol beats, and dancing non-stop with the gang under the sky.</p>
+            </div>
+          </div>
+
+          <div class="capsule-timeline-card">
+            <div class="capsule-step-badge">07</div>
+            <div class="capsule-step-content">
+              <h4>Sacred Visarjan Immersion</h4>
+              <span class="capsule-step-date">Visarjan Night • Sacred Immersion</span>
+              <p>Emotional chants, dancing along the truck, and gently letting Bappa return to the waters with prayers.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="capsule-mini-photos-strip">
+          <div class="mini-strip-item"><img src="assets/images/video_thumb_highway_roadtrip.jpg" alt="Road trip" /></div>
+          <div class="mini-strip-item"><img src="assets/images/real_gang_pandal_wide.jpg" alt="Mandap" /></div>
+          <div class="mini-strip-item"><img src="assets/images/video_thumb_food_prasad_feast.jpg" alt="Annadanam" /></div>
+          <div class="mini-strip-item"><img src="assets/images/video_thumb_visarjan_immersion.jpg" alt="Visarjan" /></div>
+        </div>
+
+        <footer class="capsule-page-footer">
+          <span>Our Vinayaka Chaturthi Memories</span>
+          <span>The Festival Journey • Page 2 of 7</span>
+        </footer>
+      </article>
+
+      <!-- ================= PAGE 3: BROTHERHOOD & BONDS (THE GANG) ================= -->
+      <article class="capsule-page capsule-page-3" id="capsule-page-3">
+        <div class="capsule-page-header">
+          <div class="capsule-emblem">🤝 ✨ ❤️</div>
+          <h2 class="capsule-title">The Gang • Brotherhood & Bonds</h2>
+          <p class="capsule-subtitle">మన గల్లీ కుర్రాళ్ళు & మిత్రులు • The faces and souls who made every single moment unforgettable</p>
+        </div>
+
+        <div class="capsule-gang-grid">
+          <!-- Ramesh -->
+          <div class="capsule-gang-card">
+            <div class="capsule-gang-avatar-wrap">
+              <img src="assets/images/gang/gang_member_ramesh.jpg" alt="Ramesh" />
+            </div>
+            <div class="capsule-gang-info">
+              <h4>Ramesh</h4>
+              <span>✨ The Gang</span>
+            </div>
+          </div>
+
+          <!-- Pradeep -->
+          <div class="capsule-gang-card">
+            <div class="capsule-gang-avatar-wrap">
+              <img src="assets/images/gang/gang_member_pradeep.jpg" alt="Pradeep" />
+            </div>
+            <div class="capsule-gang-info">
+              <h4>Pradeep</h4>
+              <span>✨ The Gang</span>
+            </div>
+          </div>
+
+          <!-- Teja -->
+          <div class="capsule-gang-card">
+            <div class="capsule-gang-avatar-wrap">
+              <img src="assets/images/gang/gang_member_teja.jpg" alt="Teja" />
+            </div>
+            <div class="capsule-gang-info">
+              <h4>Teja</h4>
+              <span>✨ The Gang</span>
+            </div>
+          </div>
+
+          <!-- Charan -->
+          <div class="capsule-gang-card">
+            <div class="capsule-gang-avatar-wrap">
+              <img src="assets/images/gang/gang_member_charan.jpg" alt="Charan" />
+            </div>
+            <div class="capsule-gang-info">
+              <h4>Charan</h4>
+              <span>✨ The Gang</span>
+            </div>
+          </div>
+
+          <!-- Hemu -->
+          <div class="capsule-gang-card">
+            <div class="capsule-gang-avatar-wrap">
+              <img src="assets/images/gang/gang_member_hamu.jpg" alt="Hemu" />
+            </div>
+            <div class="capsule-gang-info">
+              <h4>Hemu</h4>
+              <span>✨ The Gang</span>
+            </div>
+          </div>
+
+          <!-- Narendra -->
+          <div class="capsule-gang-card">
+            <div class="capsule-gang-avatar-wrap">
+              <img src="assets/images/gang/gang_member_narendra.jpg" alt="Narendra" />
+            </div>
+            <div class="capsule-gang-info">
+              <h4>Narendra</h4>
+              <span>✨ The Gang</span>
+            </div>
+          </div>
+
+          <!-- Chinna -->
+          <div class="capsule-gang-card">
+            <div class="capsule-gang-avatar-wrap">
+              <img src="assets/images/gang/gang_member_chinna.jpg" alt="Chinna" />
+            </div>
+            <div class="capsule-gang-info">
+              <h4>Chinna</h4>
+              <span>✨ The Gang</span>
+            </div>
+          </div>
+
+          <!-- Committee -->
+          <div class="capsule-gang-card">
+            <div class="capsule-gang-avatar-wrap">
+              <img src="assets/images/gang/gang_member_committee.jpg" alt="Committee" />
+            </div>
+            <div class="capsule-gang-info">
+              <h4>Committee</h4>
+              <span>✨ Utsav Committee</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="capsule-brotherhood-vow">
+          <p>“Arguments over every small detail, but always standing shoulder to shoulder when it mattered most. A brotherhood blessed by Bappa that will stand the test of time.”</p>
+        </div>
+
+        <footer class="capsule-page-footer">
+          <span>Our Vinayaka Chaturthi Memories</span>
+          <span>The Gang & Brotherhood • Page 3 of 7</span>
+        </footer>
+      </article>
+
+      <!-- ================= PAGE 4: IN LOVING MEMORY - SAI NIKHIL RAJ MUPPANA ================= -->
+      <article class="capsule-page capsule-page-4" id="capsule-page-4">
+        <div class="capsule-page-header">
+          <div class="capsule-emblem">🌸 🕊️ 🙏</div>
+          <h2 class="capsule-title">In Loving Memory</h2>
+          <p class="capsule-subtitle">నిత్య స్మరణలో • Forever Part of Our Memories — Sai Nikhil Raj Muppana</p>
+        </div>
+
+        <div class="capsule-tribute-photos-row">
+          <div class="tribute-photo-frame">
+            <img src="assets/images/tribute/tribute_solo_smile_pines.jpg" alt="Sai Nikhil Unforgettable Smile" />
+            <span>His Unforgettable Smile</span>
+          </div>
+          <div class="tribute-photo-frame">
+            <img src="assets/images/tribute/tribute_solo_night_smile.jpg" alt="Sai Nikhil Night Smile" />
+            <span>Moments of Pure Joy</span>
+          </div>
+          <div class="tribute-photo-frame">
+            <img src="assets/images/tribute/tribute_group_araku_pinery.jpg" alt="Araku Pinery Road Trip" />
+            <span>Our Araku Road Trip</span>
+          </div>
+        </div>
+
+        <div class="capsule-tribute-box">
+          <div class="tribute-quote-badge">✨ Forever In Our Hearts • Always Our Brother</div>
+          <blockquote class="tribute-main-quote">
+            “Some people become memories. Some memories become a part of who we are.”
+          </blockquote>
+          <p class="tribute-body-text">
+            Sai Nikhil may no longer be with us in person, but the laughter, warmth, and timeless moments we shared will always remain an inseparable part of who we are. Every smile, every road trip, and every celebration reminds us that some people leave a permanent place in our hearts.
+          </p>
+          <p class="tribute-body-text">
+            This celebration is also for the memories we created together. Sai Nikhil, you will always be a part of our story, our brotherhood, and our lives.
+          </p>
+          <div class="tribute-farewell-mantra">
+            Forever remembered. Forever our brother. Forever Sai Nikhil.
+          </div>
+        </div>
+
+        <footer class="capsule-page-footer">
+          <span>Our Vinayaka Chaturthi Memories</span>
+          <span>Tribute to Sai Nikhil • Page 4 of 7</span>
+        </footer>
+      </article>
+
+      <!-- ================= PAGE 5: CHERISHED MOMENTS (GALLERY HIGHLIGHTS) ================= -->
+      <article class="capsule-page capsule-page-5" id="capsule-page-5">
+        <div class="capsule-page-header">
+          <div class="capsule-emblem">📸 🪔 🌺</div>
+          <h2 class="capsule-title">Cherished Festival Moments</h2>
+          <p class="capsule-subtitle">అందమైన క్షణాలు • The smiles, the divine darshan, and the festive atmosphere</p>
+        </div>
+
+        <div class="capsule-gallery-grid">
+          <div class="capsule-gallery-item">
+            <img src="assets/images/real_ganesha_murti_hero.jpg" alt="Lord Ganesha in Divine Glory" />
+            <div class="gallery-caption-bar">
+              <strong>Lord Ganesha in Divine Glory</strong>
+              <span>The golden crown, yellow pitambar, and radiant aura of Bappa.</span>
+            </div>
+          </div>
+
+          <div class="capsule-gallery-item">
+            <img src="assets/images/real_gang_pandal_mandap.jpg" alt="The Entire Gang at Mandap" />
+            <div class="gallery-caption-bar">
+              <strong>The Entire Gang at Mandap</strong>
+              <span>Standing together beside Lord Ganesha in the illuminated mandap.</span>
+            </div>
+          </div>
+
+          <div class="capsule-gallery-item">
+            <img src="assets/images/real_gang_selfie_bappa.jpg" alt="Bappa & The Boys Selfie" />
+            <div class="gallery-caption-bar">
+              <strong>Bappa & The Boys Selfie</strong>
+              <span>Close-up candid smiles and unfiltered celebration joy.</span>
+            </div>
+          </div>
+
+          <div class="capsule-gallery-item">
+            <img src="assets/images/real_gang_pandal_wide.jpg" alt="The Festive Pandal Atmosphere" />
+            <div class="gallery-caption-bar">
+              <strong>The Festive Pandal Atmosphere</strong>
+              <span>Wide view of our fabric mandap, glowing lights, and setup.</span>
+            </div>
+          </div>
+        </div>
+
+        <footer class="capsule-page-footer">
+          <span>Our Vinayaka Chaturthi Memories</span>
+          <span>Cherished Photo Moments • Page 5 of 7</span>
+        </footer>
+      </article>
+
+      <!-- ================= PAGE 6: INSIDE JOKES & STREET STORIES ================= -->
+      <article class="capsule-page capsule-page-6" id="capsule-page-6">
+        <div class="capsule-page-header">
+          <div class="capsule-emblem">😂 💬 ☕</div>
+          <h2 class="capsule-title">Inside Jokes & Street Stories</h2>
+          <p class="capsule-subtitle">జ్ఞాపకాలు & నవ్వులు • Memories and laughs that only our street and gang will truly understand</p>
+        </div>
+
+        <div class="capsule-jokes-grid">
+          <div class="capsule-joke-card">
+            <div class="joke-card-icon">🚛</div>
+            <h4>The Open Truck Windstorm</h4>
+            <p>“Holding onto the truck railings on the highway while the wind blew everyone’s hair into crazy shapes!”</p>
+            <span class="joke-card-stamp">Highway Heroes</span>
+          </div>
+
+          <div class="capsule-joke-card">
+            <div class="joke-card-icon">🍲</div>
+            <h4>The Giant Handi Mystery</h4>
+            <p>“Stirring a 50kg rice pot with a giant wooden paddle like we were rowing a boat down the river!”</p>
+            <span class="joke-card-stamp">MasterChef Gang</span>
+          </div>
+
+          <div class="capsule-joke-card">
+            <div class="joke-card-icon">💃</div>
+            <h4>The Non-Stop DJ Night Dance</h4>
+            <p>“Said we would dance for 10 minutes. 2 hours later under the blue lights, shirts soaked, still jumping!”</p>
+            <span class="joke-card-stamp">Dance Floor Kings</span>
+          </div>
+
+          <div class="capsule-joke-card">
+            <div class="joke-card-icon">☕</div>
+            <h4>The Midnight Pandal Hangouts</h4>
+            <p>“Solving all world problems, discussing future dreams, and laughing about old memories inside the pandal at 2:30 AM.”</p>
+            <span class="joke-card-stamp">Night Vigil Crew</span>
+          </div>
+
+          <div class="capsule-joke-card">
+            <div class="joke-card-icon">🌊</div>
+            <h4>The Midnight Water Guard</h4>
+            <p>“Standing together by the lake edge in the dark, chanting with full throat as Bappa took his sacred dip!”</p>
+            <span class="joke-card-stamp">Visarjan Squad</span>
+          </div>
+
+          <div class="capsule-joke-card">
+            <div class="joke-card-icon">📸</div>
+            <h4>The 'Look At The Camera' Struggle</h4>
+            <p>“Taking 50 group photos because in every single shot, at least three people were looking somewhere else laughing!”</p>
+            <span class="joke-card-stamp">Photogenic Legends</span>
+          </div>
+        </div>
+
+        <footer class="capsule-page-footer">
+          <span>Our Vinayaka Chaturthi Memories</span>
+          <span>Stories & Inside Jokes • Page 6 of 7</span>
+        </footer>
+      </article>
+
+      <!-- ================= PAGE 7: CINEMATIC ARCHIVE & GRAND FINALE BLESSING ================= -->
+      <article class="capsule-page capsule-page-7" id="capsule-page-7">
+        <div class="capsule-page-header">
+          <div class="capsule-emblem">🎬 🛕 🙏</div>
+          <h2 class="capsule-title">Cinematic Video Archive & Farewell</h2>
+          <p class="capsule-subtitle">వీడియో జ్ఞాపకాలు & వీడ్కోలు • Memories recorded in motion and our sacred farewell blessing</p>
+        </div>
+
+        <div class="capsule-videos-catalog">
+          <div class="capsule-video-row">
+            <span class="vid-num">01</span>
+            <div class="vid-detail">
+              <strong>The Grand Aagman Arrival</strong> (00:44)
+              <p>Carrying Lord Ganesha's idol covered in sacred cloth into our lane.</p>
+            </div>
+          </div>
+
+          <div class="capsule-video-row">
+            <span class="vid-num">02</span>
+            <div class="vid-detail">
+              <strong>DAY 1 OF THE VINAYAKA CHAVITHI</strong> (00:40)
+              <p>First day celebrations, sacred rituals, and joyful welcome of Bappa.</p>
+            </div>
+          </div>
+
+          <div class="capsule-video-row">
+            <span class="vid-num">03</span>
+            <div class="vid-detail">
+              <strong>SONG THAT MADE EVERYONE TO FELL IN LOVE</strong> (01:27)
+              <p>Heartfelt celebration songs and music that brought everyone together.</p>
+            </div>
+          </div>
+
+          <div class="capsule-video-row">
+            <span class="vid-num">04</span>
+            <div class="vid-detail">
+              <strong>NIGHT FUN INSIDE THE PANDHIRI</strong> (00:30)
+              <p>Unforgettable late night laughs, memories, and bonding under the pandal.</p>
+            </div>
+          </div>
+
+          <div class="capsule-video-row">
+            <span class="vid-num">05</span>
+            <div class="vid-detail">
+              <strong>DANCE WITH FULL OF JOY</strong> (01:11)
+              <p>Pure energy and unrestrained happiness dancing together with the gang.</p>
+            </div>
+          </div>
+
+          <div class="capsule-video-row">
+            <span class="vid-num">06</span>
+            <div class="vid-detail">
+              <strong>DJ Night & Celebration Dance</strong> (00:26)
+              <p>Dancing with boundless energy under the flashing celebration lights.</p>
+            </div>
+          </div>
+
+          <div class="capsule-video-row">
+            <span class="vid-num">07</span>
+            <div class="vid-detail">
+              <strong>Community Annadanam Feast Preparation</strong> (00:20)
+              <p>Stirring the giant cooking handi of sacred Annadanam feast for all devotees.</p>
+            </div>
+          </div>
+
+          <div class="capsule-video-row">
+            <span class="vid-num">08</span>
+            <div class="vid-detail">
+              <strong>Prasad & Meal Distribution</strong> (00:21)
+              <p>Serving meals and prasad with devotion to the community.</p>
+            </div>
+          </div>
+
+          <div class="capsule-video-row">
+            <span class="vid-num">09</span>
+            <div class="vid-detail">
+              <strong>Neighborhood Festivities</strong> (00:26)
+              <p>Daytime celebration talks and neighborhood festive moments.</p>
+            </div>
+          </div>
+
+          <div class="capsule-video-row">
+            <span class="vid-num">10</span>
+            <div class="vid-detail">
+              <strong>Highway Journey to Bring Bappa</strong> (00:17)
+              <p>Cruising on the open truck along the highway to bring Lord Ganesha home.</p>
+            </div>
+          </div>
+
+          <div class="capsule-video-row">
+            <span class="vid-num">11</span>
+            <div class="vid-detail">
+              <strong>NIMARJANAM DAY FULL FIRE</strong> (00:45)
+              <p>Electrifying festive atmosphere and high spirits on the immersion day.</p>
+            </div>
+          </div>
+
+          <div class="capsule-video-row">
+            <span class="vid-num">12</span>
+            <div class="vid-detail">
+              <strong>Sacred Visarjan Immersion</strong> (01:19)
+              <p>The heartfelt night farewell and water immersion with promises to return.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="capsule-grand-finale-box">
+          <p class="finale-quote-line">“Maybe next year we will celebrate again.”</p>
+          <p class="finale-quote-line">“Maybe things will be different.”</p>
+          <p class="finale-quote-line">“Maybe everyone will be busy.”</p>
+          <p class="finale-quote-line finale-quote-bold">“But we will always have these memories.”</p>
+          <div class="finale-telugu-salutation">వచ్చే ఏడాది మళ్ళీ కలుద్దాం… • Until the next Chaturthi…</div>
+          <div class="finale-bappa-mantra">గణపతి బప్పా మోరియా • GANPATI BAPPA MORYA 🙏</div>
+          <div class="finale-pudhchya">PUDHCHYA VARSHI LAVKAR YA!</div>
+        </div>
+
+        <footer class="capsule-page-footer">
+          <span>Our Vinayaka Chaturthi Memories</span>
+          <span>Archive & Final Blessing • Page 7 of 7</span>
+        </footer>
+      </article>
+
+      <!-- Bottom Print Bar inside modal scroll -->
+      <div class="capsule-actions capsule-bottom-actions">
+        <button id="btn-print-capsule-bottom" type="button" class="btn-primary" style="padding: 0.85rem 2rem; font-size: 1rem;" title="Print all 7 keepsake pages or save as PDF">
+          🖨️ <span>Print Complete Keepsake Book (All 7 Pages)</span>
         </button>
       </div>
+
     </div>
   </div>
 
@@ -1395,6 +1893,6 @@
   </aside>
 
   <!-- Main JavaScript App Entrypoint (ES Module) -->
-  <script type="module" src="js/main.js?v=6.9"></script>
+  <script type="module" src="js/main.js?v=7.0"></script>
 </body>
 </html>
