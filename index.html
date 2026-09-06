@@ -87,11 +87,30 @@
           <input type="range" id="audio-volume" class="audio-volume-slider" min="0" max="1" step="0.05" value="0.6" title="Volume Slider" />
         </div>
 
+        <!-- Share Memories Button in Header -->
+        <button id="btn-header-share" class="btn-header-share btn-share-trigger" title="Share Memories • మన జ్ఞాపకాలను పంచుకోండి" aria-label="Share Memories">
+          ❤️ <span>Share</span>
+        </button>
+
         <!-- In-Browser Media & Photo Customizer Button -->
         <button id="btn-open-customizer" class="btn-customize-nav" title="Replace photos and videos with your real memories">
           ⚙️ <span>Add Photos & Videos</span>
         </button>
       </div>
+    </div>
+
+    <!-- Mobile Fast-Jump Pill Track (visible on phones/tablets <= 860px) -->
+    <div class="mobile-subnav-track" id="mobile-subnav-track" aria-label="Mobile Section Navigation">
+      <a href="#hero" class="mobile-subnav-pill">Top 🪔</a>
+      <a href="#beginning" class="mobile-subnav-pill">Beginning</a>
+      <a href="#timeline" class="mobile-subnav-pill">Journey</a>
+      <a href="#gallery" class="mobile-subnav-pill">Moments 📸</a>
+      <a href="#jokes" class="mobile-subnav-pill">Jokes 😂</a>
+      <a href="#friends" class="mobile-subnav-pill">The Gang</a>
+      <a href="#tribute" class="mobile-subnav-pill">Sai Nikhil 🙏</a>
+      <a href="#stories" class="mobile-subnav-pill">Stories</a>
+      <a href="#our-memories" class="mobile-subnav-pill">Videos 🎬</a>
+      <a href="#memory-wall" class="mobile-subnav-pill">Memory Wall ✍️</a>
     </div>
   </header>
 
@@ -132,7 +151,7 @@
           A nostalgic digital time capsule created with love for everyone in our street — kids, teenagers, adults, and elders. Explore our cherished moments or leave a heartfelt memory of your own!
         </p>
 
-        <!-- Elder-Friendly Touch Buttons (Min 48px height, high contrast, clear icons) -->
+        <!-- Elder-Friendly Touch Buttons (Min 50px height, high contrast, clear icons) -->
         <div class="hero-qr-cta-group">
           <a href="#gallery" id="btn-hero-explore" class="btn-hero-action btn-hero-explore" title="Explore festival photos and moments">
             <span class="btn-hero-icon">📸</span>
@@ -157,6 +176,15 @@
               <span class="btn-hero-sub">వీడియోలు చూడండి</span>
             </span>
           </a>
+
+          <!-- Easy Share Memories Button -->
+          <button type="button" id="btn-hero-share" class="btn-hero-action btn-hero-share btn-share-trigger" title="Share Memories with friends and family • మన జ్ఞాపకాలను పంచుకోండి">
+            <span class="btn-hero-icon">❤️</span>
+            <span class="btn-hero-text-wrap">
+              <span class="btn-hero-title">SHARE MEMORIES ❤️</span>
+              <span class="btn-hero-sub">మన జ్ఞాపకాలను ఇంకొంతమందితో పంచుకోండి</span>
+            </span>
+          </button>
         </div>
 
         <div style="margin-top: 1.15rem; display: flex; justify-content: center;">
@@ -897,6 +925,9 @@
           <span>Replay Our Memories • మళ్ళీ చూడండి</span>
           <span>↺</span>
         </button>
+        <button id="btn-finale-share" class="btn-secondary btn-share-trigger" style="border-color: #ff4d6d; color: #ffb3c1;">
+          ❤️ <span>Share Memories • పంచుకోండి</span>
+        </button>
       </div>
     </div>
   </section>
@@ -1337,7 +1368,18 @@
     </div>
   </div>
 
+  <!-- Floating Non-Intrusive Share Toast Notification -->
+  <aside id="share-toast" class="share-toast-notification" role="status" aria-live="polite" aria-atomic="true" hidden>
+    <div class="share-toast-inner">
+      <span class="share-toast-icon" id="share-toast-icon">❤️</span>
+      <div class="share-toast-text">
+        <strong class="share-toast-title" id="share-toast-title">Link copied ❤️</strong>
+        <span class="share-toast-subtitle" id="share-toast-subtitle">లింక్ కాపీ అయింది. ఎవరికైనా షేర్ చేయండి!</span>
+      </div>
+    </div>
+  </aside>
+
   <!-- Main JavaScript App Entrypoint (ES Module) -->
-  <script type="module" src="js/main.js?v=6.0"></script>
+  <script type="module" src="js/main.js?v=6.1"></script>
 </body>
 </html>

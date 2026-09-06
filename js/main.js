@@ -17,6 +17,7 @@ import { MemoryWallController } from './modules/memoryWall.js?v=6.0';
 import { PhotoManagerController } from './modules/photoManager.js?v=6.0';
 import { TributeController } from './modules/tribute.js?v=6.0';
 import { FestiveInteractions } from './modules/festiveInteractions.js?v=6.0';
+import { ShareManagerController } from './modules/shareManager.js?v=6.1';
 
 class App {
   constructor() {
@@ -42,6 +43,7 @@ class App {
     }
     this.photoManager = new PhotoManagerController();
     this.festiveInteractions = new FestiveInteractions(this.audio, this.particles);
+    this.shareManager = new ShareManagerController();
 
     // 3. Setup Scroll Observers & Interactions
     this.initScrollReveal();
