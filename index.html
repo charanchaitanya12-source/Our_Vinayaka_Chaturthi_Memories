@@ -27,7 +27,7 @@
   <!-- Stylesheets -->
   <link rel="stylesheet" href="css/design-system.css?v=4.4" />
   <link rel="stylesheet" href="css/animations.css?v=4.4" />
-  <link rel="stylesheet" href="css/components.css?v=5.2" />
+  <link rel="stylesheet" href="css/components.css?v=6.0" />
 </head>
 <body>
 
@@ -58,6 +58,7 @@
         <a href="#tribute" class="nav-link">In Memory</a>
         <a href="#stories" class="nav-link">Stories</a>
         <a href="#our-memories" class="nav-link">Our Memories</a>
+        <a href="#memory-wall" class="nav-link">Memory Wall</a>
       </nav>
 
       <div class="nav-actions">
@@ -109,7 +110,7 @@
     <div class="hero-content">
       <div class="hero-aura-badge sacred-glow">
         <span>🪔</span>
-        <span>A Digital Time Capsule • Forever In Our Hearts</span>
+        <span>Welcome to Our Memories • మన జ్ఞాపకాలు ఎప్పటికీ మనతోనే ❤️</span>
       </div>
 
       <p id="hero-pretitle-quote" class="hero-quote">
@@ -120,23 +121,50 @@
         <span class="gold-shimmer">Our Vinayaka Chaturthi Memories</span>
       </h1>
 
-      <p id="hero-description-text" class="hero-description">
-        A nostalgic journey through the laughter, the midnight pandal talks, the grand aartis, and the unforgettable moments we created together with Lord Ganesha.
-      </p>
+      <!-- Bilingual Pandal Welcome Card (QR Experience for Kids, Teens, Adults & Elders) -->
+      <div class="hero-welcome-card reveal-scale">
+        <div class="welcome-card-header">
+          <span class="welcome-diya-icon">🪔</span>
+          <h2 class="welcome-card-title">Welcome to Our Memories ❤️</h2>
+        </div>
+        <p class="welcome-telugu-lead">“మన పండుగలోని అందమైన క్షణాలు, మనుషులు, జ్ఞాపకాలు… అన్నీ ఒక్కచోట.”</p>
+        <p id="hero-description-text" class="welcome-card-desc">
+          A nostalgic digital time capsule created with love for everyone in our street — kids, teenagers, adults, and elders. Explore our cherished moments or leave a heartfelt memory of your own!
+        </p>
 
-      <div class="hero-cta-group">
-        <a href="#beginning" id="btn-enter-memories" class="btn-primary">
-          <span>Enter Our Memories</span>
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"></line>
-            <polyline points="12 5 19 12 12 19"></polyline>
-          </svg>
-        </a>
+        <!-- Elder-Friendly Touch Buttons (Min 48px height, high contrast, clear icons) -->
+        <div class="hero-qr-cta-group">
+          <a href="#gallery" id="btn-hero-explore" class="btn-hero-action btn-hero-explore" title="Explore festival photos and moments">
+            <span class="btn-hero-icon">📸</span>
+            <span class="btn-hero-text-wrap">
+              <span class="btn-hero-title">EXPLORE MEMORIES</span>
+              <span class="btn-hero-sub">జ్ఞాపకాలను చూడండి</span>
+            </span>
+          </a>
 
-        <a href="#gallery" class="btn-secondary">
-          <span>Explore Gallery</span>
-          <span>🖼️</span>
-        </a>
+          <a href="#leave-memory" id="btn-hero-leave" class="btn-hero-action btn-hero-leave" title="Leave your own memory on our Memory Wall">
+            <span class="btn-hero-icon">✍️</span>
+            <span class="btn-hero-text-wrap">
+              <span class="btn-hero-title">LEAVE A MEMORY</span>
+              <span class="btn-hero-sub">మీ జ్ఞాపకాన్ని పంచుకోండి</span>
+            </span>
+          </a>
+
+          <a href="#our-memories" id="btn-hero-videos" class="btn-hero-action btn-hero-videos" title="Watch festival celebration videos">
+            <span class="btn-hero-icon">🎬</span>
+            <span class="btn-hero-text-wrap">
+              <span class="btn-hero-title">WATCH VIDEOS</span>
+              <span class="btn-hero-sub">వీడియోలు చూడండి</span>
+            </span>
+          </a>
+        </div>
+
+        <div style="margin-top: 1.15rem; display: flex; justify-content: center;">
+          <a href="#beginning" id="btn-enter-memories" class="btn-hero-timeline-link">
+            <span>✨ Start Full Journey From Day 0 • మొదటి రోజు నుండి చూడండి</span>
+            <span style="font-size: 1.1rem;">↓</span>
+          </a>
+        </div>
       </div>
     </div>
 
@@ -155,7 +183,8 @@
         <span class="section-tag">Day 0 & The First Spark</span>
         <h2 class="section-title">Where Every Beautiful Memory Began</h2>
         <p class="section-subtitle">
-          Long before the first aarti was sung, our festival began with getting our hands dirty, shopping at dawn, and building a sanctum together.
+          <span class="telugu-subtext">మొదటి పూజకు ముందే మొదలైన మన సందడి, రాత్రంతా ముచ్చట్లు, పందిరి ఏర్పాట్లు ✨</span>
+          <span class="subtext-english">Long before the first aarti was sung, our festival began with getting our hands dirty, shopping at dawn, and building a sanctum together.</span>
         </p>
       </div>
 
@@ -195,7 +224,8 @@
         <span class="section-tag">Chronological Chapter</span>
         <h2 class="section-title">The Festival Journey</h2>
         <p class="section-subtitle">
-          Step by step, from the initial midnight brainstorming to the emotional sunset farewell.
+          <span class="telugu-subtext">మొదటి రోజు ప్రతిష్ఠాపన నుండి నిమజ్జనం వీడ్కోలు వరకు మన ప్రయాణం 🪔</span>
+          <span class="subtext-english">Step by step, from the initial midnight brainstorming to the emotional sunset farewell.</span>
         </p>
       </div>
 
@@ -217,7 +247,8 @@
         <span class="section-tag">Unfiltered Gallery</span>
         <h2 class="section-title">The Moments We Didn’t Plan</h2>
         <p class="section-subtitle">
-          Candid laughs, messy rangolis, delicious modaks, and our special Visarjan video memory.
+          <span class="telugu-subtext">కెమెరాకు తెలియకుండా చిక్కిన చిరునవ్వులు, ప్రసాదం గొడవలు, సరదా జ్ఞాపకాలు 📸</span>
+          <span class="subtext-english">Candid laughs, messy rangolis, delicious modaks, and our special celebration moments.</span>
         </p>
       </div>
 
@@ -270,7 +301,8 @@
         <span class="section-tag">Unforgettable Banter</span>
         <h2 class="section-title">Things Only We Understand</h2>
         <p class="section-subtitle">
-          The short circuits, the 2:00 AM chai debates, the rangoli disaster, and the mistakes we still laugh about.
+          <span class="telugu-subtext">మన గల్లీ మిత్రులకే తెలిసిన చిలిపి నవ్వులు, తీపి గుర్తులు 😂</span>
+          <span class="subtext-english">The short circuits, the 2:00 AM chai debates, the rangoli disaster, and the mistakes we still laugh about.</span>
         </p>
       </div>
 
@@ -289,7 +321,8 @@
         <span class="section-tag">Brotherhood & Bonds</span>
         <h2 class="section-title">The Gang</h2>
         <p class="section-subtitle">
-          The faces and souls that made every single moment of our celebrations unforgettable.
+          <span class="telugu-subtext">పండుగను ప్రతి క్షణం నిలబెట్టిన మన గల్లీ పిల్లలు, కుర్రాళ్ళు, పెద్దలు… మన ఆత్మీయులు ❤️</span>
+          <span class="subtext-english">The faces and souls that made every single moment of our celebrations unforgettable.</span>
         </p>
         <div class="gang-section-header-actions">
           <button id="btn-edit-friends" class="btn-manage-media" title="Edit friend names, adjust photos or remove cards">
@@ -468,6 +501,9 @@
           <p class="tribute-lead-quote">
             “Some people become memories. Some memories become a part of who we are.”
           </p>
+          <p class="telugu-subtext" style="color: var(--gold-300); font-weight: 500; font-size: 1.05rem; margin-top: 0.5rem;">
+            ఎప్పటికీ మన జ్ఞాపకాల్లో నిలిచిపోయే మన ప్రియమైన మిత్రుడు సాయి నిఖిల్ రాజ్ 🙏
+          </p>
         </div>
 
         <div class="tribute-content-grid">
@@ -514,7 +550,7 @@
               </div>
               <button type="button" class="btn-light-diya" title="Light a sacred diya in loving memory">
                 <span>🪔</span>
-                <span>Light a Diya for Sai Nikhil</span>
+                <span>Light a Diya for Sai Nikhil • దీపం వెలిగించండి</span>
               </button>
             </div>
           </div>
@@ -532,7 +568,8 @@
         <span class="section-tag">A Walk Down Memory Lane</span>
         <h2 class="section-title">If You Remember This…</h2>
         <p class="section-subtitle">
-          Some ordinary moments quietly became the most cherished memories of our youth.
+          <span class="telugu-subtext">చిన్ననాటి రోజులు, పందిరి దగ్గర రాత్రి మేల్కొలుపులు… గుర్తుకొస్తున్నాయా? 💭</span>
+          <span class="subtext-english">Some ordinary moments quietly became the most cherished memories of our youth.</span>
         </p>
       </div>
 
@@ -548,10 +585,11 @@
   <section class="section-padding" id="our-memories" style="background: radial-gradient(circle at 50% 50%, var(--bg-surface) 0%, var(--bg-darkest) 100%);">
     <div class="container">
       <div class="section-header reveal-item">
-        <span class="section-tag">Cinematic Video Memories</span>
+        <span class="section-tag">Cinematic Video Memories • వీడియో జ్ఞాపకాలు</span>
         <h2 class="section-title">Our Memories</h2>
         <p class="section-subtitle">
-          Relive our unforgettable festival moments in motion — from the highway journey and dhol dances to the sacred visarjan immersion.
+          <span class="telugu-subtext">మన జ్ఞాపకాలు ఎప్పటికీ మనతోనే ❤️ • డప్పుల చప్పుడు, ఆటపాటలు, నిమజ్జనం ఉత్సాహం</span>
+          <span class="subtext-english">Relive our unforgettable festival moments in motion — from the highway journey and dhol dances to the sacred visarjan immersion.</span>
         </p>
 
         <!-- Replacement Quick Guide & Video Management Actions -->
@@ -680,6 +718,161 @@
   </section>
 
   <!-- =========================================================================
+       11. MEMORY WALL & LEAVE A MEMORY (BILINGUAL STREET GUESTBOOK)
+       ========================================================================= -->
+  <section class="section-padding memory-wall-section" id="memory-wall">
+    <div class="container">
+      <div class="section-header reveal-item">
+        <span class="section-tag">Interactive Street Guestbook • గల్లీ జ్ఞాపకాల గోడ</span>
+        <h2 class="section-title">Memory Wall</h2>
+        <p class="section-subtitle">
+          <span class="telugu-subtext">మీ జ్ఞాపకాన్ని కూడా ఇక్కడ పంచుకోండి ❤️</span>
+          <span class="subtext-english">A timeless space for friends, family, kids & elders to leave a warm note or memory.</span>
+        </p>
+      </div>
+
+      <div class="memory-wall-layout">
+        <!-- Leave A Memory Form Card -->
+        <div class="memory-form-card reveal-item" id="leave-memory">
+          <div class="form-header-badge">
+            <span class="form-badge-icon">✍️</span>
+            <div>
+              <h3 class="memory-form-title">Leave a Memory</h3>
+              <p class="memory-form-telugu">మీ జ్ఞాపకాన్ని లేదా శుభాకాంక్షలను పంచుకోండి</p>
+            </div>
+          </div>
+
+          <form id="memory-wall-form" novalidate>
+            <!-- Name (Optional) -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="memory-author-name">Your Name • మీ పేరు</label>
+                <span class="form-optional-tag">Optional / ఐచ్ఛికం</span>
+              </div>
+              <input type="text" id="memory-author-name" class="form-input" placeholder="e.g. Charan, Sneha, Ramesh, బాబాయ్..." maxlength="60" />
+            </div>
+
+            <!-- Role / Relation (Optional) -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="memory-author-role">Relation / Role • పరిచయం</label>
+                <span class="form-optional-tag">Optional</span>
+              </div>
+              <select id="memory-author-role" class="form-input form-select">
+                <option value="Street Family">గల్లీ మిత్రులు / Street Family</option>
+                <option value="The Gang">The Gang / ఉత్సవ మిత్రులు</option>
+                <option value="Street Elder">గల్లీ పెద్దలు / Street Elder</option>
+                <option value="Street Youth">యువత / Youth</option>
+                <option value="Pandal Well Wisher">భక్తులు & శ్రేయోభిలాషులు / Well Wisher</option>
+                <option value="Neighbor">పక్కింటి మిత్రులు / Neighbor</option>
+              </select>
+            </div>
+
+            <!-- Category / Emotion -->
+            <div class="form-group">
+              <label class="form-label" for="memory-category">Memory Type • జ్ఞాపకం రకం</label>
+              <select id="memory-category" class="form-input form-select">
+                <option value="Favorite Moment">గుర్తుండిపోయే క్షణం / Favorite Moment</option>
+                <option value="Blessings & Wishes">ఆశీస్సులు & దీవెనలు / Blessings & Wishes</option>
+                <option value="Funniest Incident">సరదా సంఘటన / Funny Moment</option>
+                <option value="Message to Gang">మిత్రులకు సందేశం / Message to Gang</option>
+                <option value="Food & Prasad">అన్నదానం & ప్రసాదం / Prasad Memory</option>
+              </select>
+            </div>
+
+            <!-- Festive Sticker Selector -->
+            <div class="form-group">
+              <label class="form-label">Pick a Festive Sticker • స్టిక్కర్ ఎంచుకోండి</label>
+              <div class="sticker-selector" role="radiogroup" aria-label="Festive Stickers">
+                <button type="button" class="sticker-opt selected" data-sticker="🙏" title="Namaste / భక్తి">🙏</button>
+                <button type="button" class="sticker-opt" data-sticker="🪔" title="Diya / దీపం">🪔</button>
+                <button type="button" class="sticker-opt" data-sticker="🥟" title="Modak / ప్రసాదం">🥟</button>
+                <button type="button" class="sticker-opt" data-sticker="🥁" title="Dhol / బాజా">🥁</button>
+                <button type="button" class="sticker-opt" data-sticker="❤️" title="Love / ప్రేమ">❤️</button>
+                <button type="button" class="sticker-opt" data-sticker="✨" title="Sparks / మెరుపులు">✨</button>
+              </div>
+            </div>
+
+            <!-- Message (Required) -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label" for="memory-message-text">
+                  Your Memory / Message • మీ జ్ఞాపకం <span style="color: var(--gold-400);">*</span>
+                </label>
+                <span id="memory-char-count" class="form-char-count">0/500</span>
+              </div>
+              <textarea id="memory-message-text" class="form-textarea" rows="3" placeholder="మన పండుగలో మీకు బాగా నచ్చిన విషయం లేదా అనుభూతి రాయండి... Write your memory, fun story, or blessing..." maxlength="500" required></textarea>
+            </div>
+
+            <!-- Optional Photo Upload -->
+            <div class="form-group">
+              <div class="form-label-row">
+                <label class="form-label">Add a Festival Photo • ఫోటో జతచేయండి</label>
+                <span class="form-optional-tag">Optional / ఐచ్ఛికం</span>
+              </div>
+              <label class="form-photo-upload-box" for="memory-photo-file">
+                <span class="upload-icon">📷</span>
+                <span class="upload-label">Choose photo (JPEG, PNG) • ఫోటో ఎంచుకోండి</span>
+                <input type="file" id="memory-photo-file" accept="image/*" style="display: none;" />
+              </label>
+
+              <!-- Photo Preview Container -->
+              <div id="memory-photo-preview-container" class="memory-photo-preview-box" style="display: none;">
+                <img id="memory-photo-preview-img" src="" alt="Selected Memory Photo" class="memory-preview-thumbnail" />
+                <div class="preview-meta">
+                  <span class="preview-status">✅ Photo Ready</span>
+                  <button type="button" id="btn-remove-memory-photo" class="btn-remove-photo" title="Remove Photo">✕ తీసివేయండి</button>
+                </div>
+              </div>
+            </div>
+
+            <button type="submit" class="btn-primary btn-submit-memory" style="width: 100%; justify-content: center; min-height: 50px; font-size: 1rem;">
+              <span>Post to Memory Wall</span>
+              <span>•</span>
+              <span>జ్ఞాపకాన్ని చేర్చండి 🪔</span>
+            </button>
+          </form>
+
+          <!-- Export / Import Action Row -->
+          <div class="memory-backup-actions">
+            <button id="btn-export-memories" class="btn-secondary btn-backup-btn" title="Download backup of memories">
+              💾 Export JSON
+            </button>
+            <button id="btn-import-memories" class="btn-secondary btn-backup-btn" title="Restore memories from backup">
+              📂 Import JSON
+            </button>
+            <input type="file" id="import-file-input" accept=".json" style="display:none;" />
+          </div>
+        </div>
+
+        <!-- Interactive Memory Wall Column -->
+        <div class="memory-wall-display-col reveal-item reveal-delay-1">
+          <!-- Filter Chips -->
+          <div class="wall-filter-bar">
+            <span class="wall-filter-label">చూడండి / Filter:</span>
+            <div class="wall-filter-chips">
+              <button type="button" class="wall-filter-pill active" data-filter="all">
+                🌟 All Notes / అన్నీ
+              </button>
+              <button type="button" class="wall-filter-pill" data-filter="photos">
+                📷 With Photos / ఫోటోలతో
+              </button>
+              <button type="button" class="wall-filter-pill" data-filter="loved">
+                ❤️ Most Loved / ఎక్కువ ఇష్టపడినవి
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic Posts Container -->
+          <div id="wall-posts-container" class="wall-posts-container">
+            <!-- Dynamically populated from memoryWall.js -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
        12. THE EMOTIONAL FINALE & REPLAY
        ========================================================================= -->
   <section class="finale-section" id="finale">
@@ -693,15 +886,15 @@
         <!-- Dynamically populated from memoriesData.finale.lines -->
       </div>
 
-      <div class="finale-salutation reveal-item reveal-delay-1">Until the next Chaturthi…</div>
-      <div class="finale-mantra gold-shimmer reveal-item reveal-delay-2">Ganpati Bappa Morya 🙏</div>
+      <div class="finale-salutation reveal-item reveal-delay-1">వచ్చే ఏడాది మళ్ళీ కలుద్దాం… • Until the next Chaturthi…</div>
+      <div class="finale-mantra gold-shimmer reveal-item reveal-delay-2">గణపతి బప్పా మోరియా • Ganpati Bappa Morya 🙏</div>
 
       <div style="margin-top: 2.5rem; display: flex; justify-content: center; gap: 1.25rem; flex-wrap: wrap;" class="reveal-item reveal-delay-3">
         <button id="btn-open-capsule" class="btn-secondary" style="border-color: var(--gold-400); color: var(--gold-300); font-weight: 600;">
           📜 <span>Our Digital Time Capsule</span>
         </button>
         <button id="btn-replay-memories" class="btn-primary">
-          <span>Replay Our Memories</span>
+          <span>Replay Our Memories • మళ్ళీ చూడండి</span>
           <span>↺</span>
         </button>
       </div>
@@ -714,10 +907,10 @@
   <footer class="site-footer" role="contentinfo">
     <div class="container">
       <p class="footer-text">
-        Created with love & devotion for our incredible friendship gang.
+        Created with love & devotion for our street pandal, friends, and family.
       </p>
       <p class="footer-quote">
-        “May Lord Ganesha always bless our bond with laughter, strength, and endless memories.”
+        “బాప్పా ఆశీస్సులు మన వీధిపై ఎల్లప్పుడూ ఉండాలి • May Lord Ganesha always bless our street with laughter, strength, and endless memories.”
       </p>
     </div>
   </footer>

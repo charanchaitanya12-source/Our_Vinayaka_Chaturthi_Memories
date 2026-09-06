@@ -12,11 +12,20 @@ export const memoriesData = {
 
   // 1. HERO SECTION CONFIGURATION
   hero: {
-    badge: "A Digital Time Capsule • Forever In Our Hearts",
+    badge: "✨ Welcome to Our Memories • మన జ్ఞాపకాలు ఎప్పటికీ మనతోనే ❤️",
     preTitleQuote: "“Some festivals end, but some memories stay forever.”",
     mainTitle: "Our Vinayaka Chaturthi Memories",
+    welcomeTitle: "Welcome to Our Memories ❤️",
+    welcomeTelugu: "మన పండుగలోని అందమైన క్షణాలు, మనుషులు, జ్ఞాపకాలు… అన్నీ ఒక్కచోట.",
+    welcomeDesc: "A digital time capsule created with love for everyone in our street — kids, teenagers, adults, and elders. Explore our cherished festival moments or leave a heartfelt memory of your own!",
     description: "A nostalgic journey through the laughter, the road trips, the grand aagman, the sacred annadanam, and the unforgettable moments we created together with Lord Ganesha.",
     bgImage: "assets/images/real_gang_pandal_mandap.jpg",
+    ctaExplore: "EXPLORE MEMORIES",
+    ctaExploreTelugu: "జ్ఞాపకాలను చూడండి 📸",
+    ctaLeave: "LEAVE A MEMORY",
+    ctaLeaveTelugu: "మీ జ్ఞాపకాన్ని పంచుకోండి ✍️",
+    ctaVideos: "WATCH VIDEOS",
+    ctaVideosTelugu: "వీడియోలు చూడండి 🎬",
     ctaText: "Enter Our Memories",
     audioTitle: "Sacred Ragas • Tanpura & Flute Harmony"
   },
@@ -598,40 +607,50 @@ export const memoriesData = {
       author: "Charan",
       role: "Mandap & Gang",
       category: "Favorite Moment",
-      message: "That moment when we lifted Bappa together and the whole street chanted Ganpati Bappa Morya! Best feeling ever!",
+      message: "మనందరం కలిసి బాప్పాను ఎత్తిన ఆ క్షణం, గల్లీ మొత్తం 'గణపతి బప్పా మోరియా' అని మార్మోగిన ఆ అనుభూతి ఎప్పటికీ మర్చిపోలేం! That pure energy gave us goosebumps! 🙏",
       sticker: "🙏",
-      likes: 18,
-      date: "Aug 2024"
+      likes: 24,
+      date: "Festival Memory"
     },
     {
       id: "msg-2",
-      author: "Gang Member",
-      role: "DJ Floor Dynamo",
-      category: "Funniest Incident",
-      message: "The non-stop DJ night dance! We said 5 minutes and ended up dancing for hours until our legs gave up!",
-      sticker: "✨",
-      likes: 22,
-      date: "Aug 2024"
+      author: "గల్లీ పెద్దలు (Elder Uncle)",
+      role: "Street Elder",
+      category: "Blessings & Wishes",
+      message: "పిల్లలు, కుర్రాళ్ళంతా ఇంత ఐకమత్యంగా పందిరి వేసి, అన్నదానం జరిపించిన విధానం చాలా సంతోషాన్నిచ్చింది. మన వీధిపై బాప్పా ఆశీస్సులు ఎల్లప్పుడూ ఉండాలి. May God bless you all with success and good health! 🪔",
+      sticker: "🪔",
+      likes: 31,
+      date: "Festival Memory"
     },
     {
       id: "msg-3",
-      author: "Rahul",
-      role: "Road Trip Crew",
+      author: "Rahul & Crew",
+      role: "Road Trip Gang",
       category: "Favorite Moment",
-      message: "The truck ride on the highway with the cool breeze and everyone singing at the top of their lungs!",
+      message: "ఓపెన్ ట్రక్కులో బాప్పాను తీసుకురావడం, హైవే గాలి, గట్టిగా పాటలు పాడటం... ఆ రోడ్ ట్రిప్ ఎప్పటికీ ఒక అందమైన జ్ఞాపకం! Cruising on the highway together was epic! 🥁",
       sticker: "🥁",
-      likes: 15,
-      date: "Aug 2024"
+      likes: 19,
+      date: "Festival Memory"
     },
     {
       id: "msg-4",
-      author: "The Gang",
+      author: "DJ Floor Dynamo",
+      role: "Street Youth",
+      category: "Funniest Incident",
+      message: "DJ Night లో 5 నిమిషాలు అన్నవాళ్ళం కాళ్ళు నొప్పులు పుట్టేంతవరకు నాన్-స్టాప్ డాన్స్ చేశాం! We said 5 minutes and danced till midnight! ✨",
+      sticker: "✨",
+      likes: 28,
+      date: "Festival Memory"
+    },
+    {
+      id: "msg-5",
+      author: "The Gang & Friends",
       role: "Friends Forever",
       category: "Message to Gang",
-      message: "No matter where life takes us, let's promise we will meet for at least one evening every Vinayaka Chaturthi.",
+      message: "మనమంతా ఎక్కడున్నా, ఎంత బిజీగా ఉన్నా... ప్రతి వినాయక చవితికి మన గల్లీలో ఒక్కసారైనా కలవాలి. మన బంధం ఎప్పటికీ ఇలాగే నిలవాలి! Friends forever ❤️",
       sticker: "❤️",
-      likes: 29,
-      date: "Aug 2024"
+      likes: 36,
+      date: "Timeless Bond"
     }
   ],
 

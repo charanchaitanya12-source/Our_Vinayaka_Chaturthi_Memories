@@ -67,9 +67,8 @@ class App {
 
     if (heroTitle) heroTitle.innerHTML = `<span class="gold-shimmer">${memoriesData.hero.mainTitle}</span>`;
     if (heroQuote) heroQuote.textContent = memoriesData.hero.preTitleQuote;
-    if (heroDesc) heroDesc.textContent = memoriesData.hero.description;
+    if (heroDesc) heroDesc.textContent = memoriesData.hero.welcomeDesc || memoriesData.hero.description;
     if (heroBg) heroBg.src = memoriesData.hero.bgImage;
-    if (heroEnterBtn) heroEnterBtn.textContent = memoriesData.hero.ctaText;
 
     // The Beginning Bindings
     const prepLead = document.getElementById('prep-narrative-lead');
