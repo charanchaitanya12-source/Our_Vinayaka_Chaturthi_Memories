@@ -411,6 +411,13 @@ export class VideoMemoriesController {
 
   async restorePersistedVideos() {
     try {
+      // 0. Ensure all canonical festival videos are visible across existing browser sessions
+      if (localStorage.getItem('bappa_videos_catalog_v65') !== 'true') {
+        localStorage.removeItem('bappa_deleted_video_ids');
+        localStorage.removeItem('bappa_saved_videos_v2');
+        localStorage.setItem('bappa_videos_catalog_v65', 'true');
+      }
+
       // A. Check Cloud Database first for multi-device sync
       const cloudVideos = await CloudSyncService.fetchVideos();
       if (cloudVideos && Array.isArray(cloudVideos) && cloudVideos.length > 0) {
