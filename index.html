@@ -555,8 +555,11 @@
 
         <!-- Replacement Quick Guide & Video Management Actions -->
         <div class="video-section-header-actions" style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
+          <button id="btn-add-video-main" class="btn-primary btn-add-video-banner" title="Add a new celebration video clip to Our Memories">
+            <span>➕ Add New Video</span>
+          </button>
           <button id="btn-manage-videos" class="btn-manage-media" title="Add new videos or edit existing entries">
-            ⚙️ <span>Manage & Add Videos</span>
+            ⚙️ <span>Manage Videos</span>
           </button>
           <button id="btn-reset-videos-default" class="btn-manage-media" style="color: #ff9e9e; border-color: rgba(255, 100, 100, 0.35);" title="Reset all videos back to default sample clips">
             ↺ <span>Reset to Default</span>
@@ -564,7 +567,102 @@
         </div>
 
         <div class="video-replace-guide-pill">
-          <span>💡 <strong>Persistent Video Memories:</strong> Click <strong>"🔄 Replace Video"</strong> on any card to choose your video — it stays saved even when you refresh! You can also remove any unwanted cards using <strong>"🗑️ Delete"</strong>.</span>
+          <span>💡 <strong>Video Memories:</strong> Use the <strong>"Add a New Video"</strong> panel below to upload your festival clips, or click <strong>"🔄 Replace"</strong> on any card. All videos stay saved even when you refresh!</span>
+        </div>
+      </div>
+
+      <!-- =====================================================================
+           INLINE OPTION: ADD NEW VIDEO DIRECTLY ON OUR MEMORIES PAGE
+           ===================================================================== -->
+      <div id="inline-add-video-panel" class="inline-add-video-container">
+        <div class="inline-add-video-card" id="inline-video-card-wrapper">
+          <div class="inline-add-video-header">
+            <div class="inline-add-header-left">
+              <span class="inline-add-badge">✨ Video Time Capsule</span>
+              <h3 class="inline-add-title">Add a New Video to Our Memories</h3>
+              <p class="inline-add-desc">Upload a celebration video clip from your device (MP4, WebM, MOV) or enter a video link. Saved permanently in your browser!</p>
+            </div>
+            <button type="button" id="btn-toggle-add-video-panel" class="btn-secondary inline-add-toggle-btn" title="Toggle video form visibility">
+              <span id="toggle-panel-label">Collapse Panel</span> <span id="toggle-panel-arrow">▲</span>
+            </button>
+          </div>
+
+          <div id="inline-add-video-body" class="inline-add-video-body">
+            <form id="inline-add-video-form" class="inline-add-form">
+              <!-- Left Column: Video Dropzone & Preview Player -->
+              <div class="inline-form-dropzone-col">
+                <div class="video-dropzone" id="inline-video-dropzone">
+                  <input type="file" id="inline-video-file-input" accept="video/mp4,video/webm,video/quicktime,video/*" style="display: none;" />
+                  <div class="video-dropzone-content" id="inline-dropzone-empty">
+                    <div class="video-dropzone-icon">📹</div>
+                    <h4 style="color: var(--gold-300); margin-bottom: 0.35rem; font-size: 1.05rem;">Choose Video File or Drag & Drop Here</h4>
+                    <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.85rem;">Supports MP4, WebM, MOV festival clips</p>
+                    <button type="button" class="btn-secondary" id="btn-inline-browse" style="font-size: 0.82rem; padding: 0.45rem 1.15rem;">
+                      📁 Browse Video Files
+                    </button>
+                  </div>
+
+                  <!-- File Selected Preview -->
+                  <div id="inline-file-selected" style="display: none; width: 100%;">
+                    <div class="video-selected-card">
+                      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.4rem;">
+                        <span class="video-selected-badge">✅ Video File Ready</span>
+                        <span class="video-selected-meta" id="inline-file-size">0 MB</span>
+                      </div>
+                      <div class="video-selected-name" id="inline-file-name">video.mp4</div>
+                      <video id="inline-preview-player" controls playsinline muted style="width: 100%; max-height: 200px; border-radius: var(--radius-md); margin-top: 0.75rem; background: #000; border: 1px solid var(--border-subtle);"></video>
+                      <div style="margin-top: 0.6rem; display: flex; justify-content: flex-end;">
+                        <button type="button" class="btn-secondary" id="btn-inline-change-file" style="font-size: 0.78rem; padding: 0.3rem 0.85rem;">🔄 Change File</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Column: Video Details Form -->
+              <div class="inline-form-fields-col">
+                <div style="margin-bottom: 1rem;">
+                  <label class="form-label" for="inline-video-title">Video Title <span style="color: var(--gold-400);">*</span></label>
+                  <input type="text" id="inline-video-title" class="form-input" placeholder="e.g. Visarjan Dhol & Street Dance" required />
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                  <div>
+                    <label class="form-label" for="inline-video-duration">Duration</label>
+                    <input type="text" id="inline-video-duration" class="form-input" placeholder="Auto / e.g. 01:45" />
+                  </div>
+                  <div>
+                    <label class="form-label" for="inline-video-category">Category</label>
+                    <select id="inline-video-category" class="form-input" style="background: var(--bg-card); color: var(--text-primary);">
+                      <option value="Visarjan">Visarjan & Dance</option>
+                      <option value="Highway">Highway Roadtrip</option>
+                      <option value="Aagman">Grand Aagman</option>
+                      <option value="Mandap">Mandap & Aarti</option>
+                      <option value="Annadanam">Prasad & Feast</option>
+                      <option value="Friends">The Gang Celebrations</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style="margin-bottom: 1rem;">
+                  <label class="form-label" for="inline-video-desc">Short Description / Story</label>
+                  <textarea id="inline-video-desc" class="form-input" rows="2" placeholder="Tell a few words about this video moment..."></textarea>
+                </div>
+
+                <div style="margin-bottom: 1.25rem;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.35rem;">
+                    <label class="form-label" for="inline-video-url" style="margin-bottom: 0;">Or Video Web Link / URL</label>
+                    <span style="font-size: 0.72rem; color: var(--text-dim);">Optional</span>
+                  </div>
+                  <input type="url" id="inline-video-url" class="form-input" placeholder="https://... (or assets/videos/...)" />
+                </div>
+
+                <button type="submit" id="btn-inline-submit-video" class="btn-primary" style="width: 100%; justify-content: center; padding: 0.75rem 1.5rem; font-size: 0.95rem;">
+                  <span>✨ Add Video to Our Memories</span>
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
 
@@ -767,6 +865,11 @@
       </div>
 
       <div class="customizer-body">
+        <button type="button" id="btn-open-full-add-modal" class="btn-primary" style="width: 100%; justify-content: center; font-size: 0.9rem; padding: 0.75rem 1.2rem; margin-bottom: 1rem;">
+          <span>➕ Add New Video to Our Memories</span>
+          <span>✨</span>
+        </button>
+
         <!-- Add Video Form -->
         <form id="video-add-form" style="background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: var(--radius-lg); padding: 1.5rem;">
           <h4 style="font-family: var(--font-display); color: var(--gold-300); margin-bottom: 1rem;">Add New Video Memory</h4>
@@ -797,6 +900,91 @@
         <div id="video-settings-list">
           <!-- Dynamically populated from videoMemories.js -->
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       15B. ADD NEW VIDEO MODAL (OUR MEMORIES)
+       ========================================================================= -->
+  <div id="add-video-modal" class="customizer-modal" role="dialog" aria-modal="true" aria-label="Add New Video Memory">
+    <div class="customizer-dialog" style="max-width: 680px;">
+      <div class="customizer-header">
+        <div>
+          <h3 class="customizer-header-title">🎬 Add Video to Our Memories</h3>
+          <p style="font-size: 0.82rem; color: var(--text-muted);">Upload festival video clips (MP4, WebM, MOV) or enter a video link. Stays saved permanently!</p>
+        </div>
+        <button id="add-video-modal-close" class="lightbox-close-btn" style="position: static;" aria-label="Close Add Video Modal">✕</button>
+      </div>
+
+      <div class="customizer-body" style="gap: 1.25rem; padding: 1.75rem;">
+        <form id="modal-add-video-form">
+          <!-- Dropzone / Upload Area -->
+          <div class="video-dropzone" id="video-modal-dropzone">
+            <input type="file" id="modal-video-file-input" accept="video/mp4,video/webm,video/quicktime,video/*" style="display: none;" />
+            <div class="video-dropzone-content" id="video-dropzone-empty-view">
+              <div class="video-dropzone-icon">📹</div>
+              <h4 style="color: var(--gold-300); margin-bottom: 0.35rem; font-size: 1.05rem;">Choose Video File or Drag & Drop Here</h4>
+              <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.85rem;">Supports MP4, WebM, MOV celebration clips</p>
+              <button type="button" class="btn-secondary" id="btn-browse-modal-video" style="font-size: 0.82rem; padding: 0.45rem 1.15rem;">
+                📁 Browse Video Files
+              </button>
+            </div>
+
+            <!-- Video File Selected Preview -->
+            <div id="video-file-selected-info" style="display: none; width: 100%;">
+              <div class="video-selected-card">
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.5rem;">
+                  <span class="video-selected-badge">✅ Video File Ready</span>
+                  <span class="video-selected-meta" id="video-selected-filesize">0 MB</span>
+                </div>
+                <div class="video-selected-name" id="video-selected-filename">video.mp4</div>
+                <video id="modal-video-player-preview" controls playsinline muted style="width: 100%; max-height: 220px; border-radius: var(--radius-md); margin-top: 0.75rem; background: #000; border: 1px solid var(--border-subtle);"></video>
+                <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem; justify-content: flex-end;">
+                  <button type="button" class="btn-secondary" id="btn-change-modal-video" style="font-size: 0.78rem; padding: 0.35rem 0.9rem;">🔄 Change File</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Video Title & Duration -->
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; margin-top: 1.25rem;">
+            <div>
+              <label class="form-label" for="modal-video-title">Video Title <span style="color: var(--gold-400);">*</span></label>
+              <input type="text" id="modal-video-title" class="form-input" placeholder="e.g. Visarjan Dhol & Street Dance" required />
+            </div>
+            <div>
+              <label class="form-label" for="modal-video-duration">Duration</label>
+              <input type="text" id="modal-video-duration" class="form-input" placeholder="Auto / e.g. 01:45" />
+            </div>
+          </div>
+
+          <!-- Description -->
+          <div style="margin-top: 1rem;">
+            <label class="form-label" for="modal-video-desc">Description / Festival Moment</label>
+            <textarea id="modal-video-desc" class="form-input" rows="2" placeholder="Tell a few words about this video memory..."></textarea>
+          </div>
+
+          <!-- Optional Video URL / Web Link -->
+          <div style="margin-top: 1rem;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.4rem;">
+              <label class="form-label" for="modal-video-url-input" style="margin-bottom: 0;">Or Paste Video URL / Web Link</label>
+              <span style="font-size: 0.72rem; color: var(--text-dim);">Optional</span>
+            </div>
+            <input type="url" id="modal-video-url-input" class="form-input" placeholder="https://... (or assets/videos/...)" />
+          </div>
+
+          <!-- Modal Actions Footer -->
+          <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; border-top: 1px solid var(--border-subtle); padding-top: 1.25rem;">
+            <button type="button" id="btn-cancel-add-video" class="btn-secondary" style="font-size: 0.85rem;">
+              Cancel
+            </button>
+            <button type="submit" id="btn-submit-add-video" class="btn-primary" style="font-size: 0.85rem; padding: 0.65rem 1.75rem;">
+              <span>Add to Our Memories</span>
+              <span>✨</span>
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

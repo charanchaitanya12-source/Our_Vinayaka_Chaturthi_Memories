@@ -42,7 +42,7 @@ class VideoStorageEngine {
     });
   }
 
-  async saveVideo(id, blob, duration, thumb, customFileName, title, desc) {
+  async saveVideo(id, blob, duration, thumb, customFileName, title, desc, videoUrl) {
     try {
       const db = await this.dbPromise;
       return new Promise((resolve, reject) => {
@@ -50,7 +50,8 @@ class VideoStorageEngine {
         const store = tx.objectStore(this.storeName);
         store.put({
           id: id,
-          blob: blob,
+          blob: blob || null,
+          videoUrl: videoUrl || '',
           duration: duration || '00:30',
           thumb: thumb || '',
           customFileName: customFileName || 'custom_video.mp4',
@@ -119,14 +120,69 @@ class VideoStorageEngine {
 export class VideoMemoriesController {
   constructor(containerId = 'video-grid-container') {
     this.container = document.getElementById(containerId);
+    this.addVideoMainBtn = document.getElementById('btn-add-video-main');
     this.settingsBtn = document.getElementById('btn-manage-videos');
     this.resetBtn = document.getElementById('btn-reset-videos-default');
+
+    // Dedicated Add Video Modal Elements
+    this.addModal = document.getElementById('add-video-modal');
+    this.addModalClose = document.getElementById('add-video-modal-close');
+    this.addModalCancel = document.getElementById('btn-cancel-add-video');
+    this.addModalForm = document.getElementById('modal-add-video-form');
+    this.dropzone = document.getElementById('video-modal-dropzone');
+    this.fileInput = document.getElementById('modal-video-file-input');
+    this.browseBtn = document.getElementById('btn-browse-modal-video');
+    this.changeFileBtn = document.getElementById('btn-change-modal-video');
+    this.selectedInfo = document.getElementById('video-file-selected-info');
+    this.emptyView = document.getElementById('video-dropzone-empty-view');
+    this.selectedFilename = document.getElementById('video-selected-filename');
+    this.selectedFilesize = document.getElementById('video-selected-filesize');
+    this.previewPlayer = document.getElementById('modal-video-player-preview');
+    this.titleInput = document.getElementById('modal-video-title');
+    this.durationInput = document.getElementById('modal-video-duration');
+    this.descInput = document.getElementById('modal-video-desc');
+    this.urlInput = document.getElementById('modal-video-url-input');
+    this.submitBtn = document.getElementById('btn-submit-add-video');
+
+    // Inline Add Video Panel Elements (Directly on Our Memories Page)
+    this.inlinePanel = document.getElementById('inline-add-video-panel');
+    this.inlineCardWrapper = document.getElementById('inline-video-card-wrapper');
+    this.inlineToggleBtn = document.getElementById('btn-toggle-add-video-panel');
+    this.toggleLabel = document.getElementById('toggle-panel-label');
+    this.toggleArrow = document.getElementById('toggle-panel-arrow');
+    this.inlineForm = document.getElementById('inline-add-video-form');
+    this.inlineDropzone = document.getElementById('inline-video-dropzone');
+    this.inlineFileInput = document.getElementById('inline-video-file-input');
+    this.inlineBrowseBtn = document.getElementById('btn-inline-browse');
+    this.inlineChangeBtn = document.getElementById('btn-inline-change-file');
+    this.inlineEmptyView = document.getElementById('inline-dropzone-empty');
+    this.inlineSelectedView = document.getElementById('inline-file-selected');
+    this.inlineFileName = document.getElementById('inline-file-name');
+    this.inlineFileSize = document.getElementById('inline-file-size');
+    this.inlinePreviewPlayer = document.getElementById('inline-preview-player');
+    this.inlineTitleInput = document.getElementById('inline-video-title');
+    this.inlineDurationInput = document.getElementById('inline-video-duration');
+    this.inlineCategoryInput = document.getElementById('inline-video-category');
+    this.inlineDescInput = document.getElementById('inline-video-desc');
+    this.inlineUrlInput = document.getElementById('inline-video-url');
+    this.inlineSubmitBtn = document.getElementById('btn-inline-submit-video');
+
+    this.inlinePendingFile = null;
+    this.inlinePendingThumb = null;
+    this.inlinePendingDuration = null;
+
+    // Existing Management Modal Elements
     this.modal = document.getElementById('video-settings-modal');
     this.modalClose = document.getElementById('video-settings-close');
     this.addForm = document.getElementById('video-add-form');
     this.listContainer = document.getElementById('video-settings-list');
 
     this.videoStore = new VideoStorageEngine();
+
+    // State for pending upload
+    this.currentPendingFile = null;
+    this.currentPendingThumb = null;
+    this.currentPendingDuration = null;
 
     this.init();
   }
@@ -138,31 +194,183 @@ export class VideoMemoriesController {
     // 2. Render initial view
     this.render();
 
-    // 3. Attach header and modal triggers
+    // 3. Add Video Main Button Trigger (Scrolls to and highlights the inline panel)
+    if (this.addVideoMainBtn) {
+      this.addVideoMainBtn.addEventListener('click', () => this.focusInlineAddPanel());
+    }
+
+    // 4. Inline Panel Toggle Collapse/Expand
+    if (this.inlineToggleBtn) {
+      this.inlineToggleBtn.addEventListener('click', () => this.toggleInlinePanel());
+    }
+
+    // 5. Inline File Upload Handlers
+    if (this.inlineBrowseBtn && this.inlineFileInput) {
+      this.inlineBrowseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.inlineFileInput.click();
+      });
+    }
+    if (this.inlineChangeBtn && this.inlineFileInput) {
+      this.inlineChangeBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.inlineFileInput.click();
+      });
+    }
+    if (this.inlineDropzone && this.inlineFileInput) {
+      this.inlineDropzone.addEventListener('click', (e) => {
+        if (e.target.closest('video') || e.target.closest('button')) return;
+        this.inlineFileInput.click();
+      });
+
+      ['dragenter', 'dragover'].forEach(name => {
+        this.inlineDropzone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.inlineDropzone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(name => {
+        this.inlineDropzone.addEventListener(name, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.inlineDropzone.classList.remove('dragover');
+        });
+      });
+
+      this.inlineDropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files.length > 0) {
+          this.processInlineFile(dt.files[0]);
+        }
+      });
+
+      this.inlineFileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          this.processInlineFile(e.target.files[0]);
+        }
+      });
+    }
+
+    // 6. Inline Form Submission
+    if (this.inlineForm) {
+      this.inlineForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this.handleSubmitInlineVideo();
+      });
+    }
+
+    // 7. Modal Close Triggers
+    if (this.addModalClose) {
+      this.addModalClose.addEventListener('click', () => this.closeAddModal());
+    }
+    if (this.addModalCancel) {
+      this.addModalCancel.addEventListener('click', () => this.closeAddModal());
+    }
+    if (this.addModal) {
+      this.addModal.addEventListener('click', (e) => {
+        if (e.target === this.addModal) this.closeAddModal();
+      });
+    }
+
+    // 8. Modal File selection triggers
+    if (this.browseBtn && this.fileInput) {
+      this.browseBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.fileInput.click();
+      });
+    }
+    if (this.changeFileBtn && this.fileInput) {
+      this.changeFileBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.fileInput.click();
+      });
+    }
+    if (this.dropzone && this.fileInput) {
+      this.dropzone.addEventListener('click', (e) => {
+        if (e.target.closest('video') || e.target.closest('button')) return;
+        this.fileInput.click();
+      });
+
+      ['dragenter', 'dragover'].forEach(eventName => {
+        this.dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.dropzone.classList.add('dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(eventName => {
+        this.dropzone.addEventListener(eventName, (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          this.dropzone.classList.remove('dragover');
+        });
+      });
+
+      this.dropzone.addEventListener('drop', (e) => {
+        const dt = e.dataTransfer;
+        if (dt && dt.files && dt.files.length > 0) {
+          this.processSelectedFile(dt.files[0]);
+        }
+      });
+
+      this.fileInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files.length > 0) {
+          this.processSelectedFile(e.target.files[0]);
+        }
+      });
+    }
+
+    // 9. Modal Form Submission
+    if (this.addModalForm) {
+      this.addModalForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        this.handleSubmitAddVideo();
+      });
+    }
+
+    // 10. Existing management triggers
+    const settingsWizardBtn = document.getElementById('btn-open-full-add-modal');
+    if (settingsWizardBtn) {
+      settingsWizardBtn.addEventListener('click', () => {
+        this.closeSettings();
+        this.focusInlineAddPanel();
+      });
+    }
+
     if (this.settingsBtn) {
       this.settingsBtn.addEventListener('click', () => this.openSettings());
     }
-
     if (this.resetBtn) {
       this.resetBtn.addEventListener('click', () => this.handleResetToDefault());
     }
-
     if (this.modalClose) {
       this.modalClose.addEventListener('click', () => this.closeSettings());
     }
-
     if (this.modal) {
       this.modal.addEventListener('click', (e) => {
         if (e.target === this.modal) this.closeSettings();
       });
     }
-
     if (this.addForm) {
       this.addForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        this.handleAddVideo();
+        this.handleAddVideoFromSettings();
       });
     }
+
+    // Escape key listener for modals
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        if (this.addModal && this.addModal.classList.contains('active')) {
+          this.closeAddModal();
+        } else if (this.modal && this.modal.classList.contains('active')) {
+          this.closeSettings();
+        }
+      }
+    });
 
     // Listen for cross-module refreshes
     window.addEventListener('refresh-videos', () => this.render());
@@ -184,13 +392,18 @@ export class VideoMemoriesController {
       if (savedList && savedList.length > 0) {
         savedList.forEach(saved => {
           let existing = memoriesData.videos.find(v => v.id === saved.id);
-          const blobUrl = URL.createObjectURL(saved.blob);
+          let videoUrl = '';
+          if (saved.blob instanceof Blob) {
+            videoUrl = URL.createObjectURL(saved.blob);
+          } else if (saved.videoUrl) {
+            videoUrl = saved.videoUrl;
+          }
 
           if (existing) {
-            existing.videoUrl = blobUrl;
+            if (videoUrl) existing.videoUrl = videoUrl;
             existing.thumb = saved.thumb || existing.thumb;
             existing.duration = saved.duration || existing.duration;
-            existing.customFileName = saved.customFileName || 'Custom Video';
+            existing.customFileName = saved.customFileName || existing.customFileName || 'Custom Video';
             existing.isCustom = true;
           } else {
             // Newly added video from past session
@@ -200,7 +413,7 @@ export class VideoMemoriesController {
               desc: saved.desc || 'Our Vinayaka Chaturthi video memory.',
               thumb: saved.thumb || 'assets/images/video_thumb_visarjan_immersion.jpg',
               duration: saved.duration || '00:30',
-              videoUrl: blobUrl,
+              videoUrl: videoUrl,
               customFileName: saved.customFileName || 'Custom Video',
               isCustom: true
             });
@@ -217,16 +430,27 @@ export class VideoMemoriesController {
 
     if (!memoriesData.videos || memoriesData.videos.length === 0) {
       this.container.innerHTML = `
-        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; background: var(--bg-card); border: 1px dashed var(--border-medium); border-radius: var(--radius-xl);">
-          <div style="font-size: 2.5rem; margin-bottom: 1rem;">🎬</div>
-          <h3 style="font-family: var(--font-display); color: var(--gold-300); margin-bottom: 0.5rem;">No Videos in Our Memories</h3>
-          <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem;">All video cards were removed. You can reset back to the default sample videos or add your own.</p>
-          <button id="btn-empty-reset-videos" class="btn-primary" style="font-size: 0.85rem; padding: 0.6rem 1.6rem;">
-            ↺ Restore Sample Videos
-          </button>
+        <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1.5rem; background: var(--bg-card); border: 1px dashed var(--border-medium); border-radius: var(--radius-xl);">
+          <div style="font-size: 2.75rem; margin-bottom: 1rem;">🎬</div>
+          <h3 style="font-family: var(--font-display); color: var(--gold-300); margin-bottom: 0.5rem; font-size: 1.4rem;">No Videos in Our Memories</h3>
+          <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 1.75rem; max-width: 480px; margin-left: auto; margin-right: auto;">
+            All video cards were removed. You can restore the original sample videos or add your own festival clips right now.
+          </p>
+          <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <button id="btn-empty-add-video" class="btn-primary" style="font-size: 0.9rem; padding: 0.65rem 1.75rem;">
+              ➕ Add Your First Video
+            </button>
+            <button id="btn-empty-reset-videos" class="btn-secondary" style="font-size: 0.9rem; padding: 0.65rem 1.75rem;">
+              ↺ Restore Sample Videos
+            </button>
+          </div>
         </div>
       `;
 
+      const emptyAdd = document.getElementById('btn-empty-add-video');
+      if (emptyAdd) {
+        emptyAdd.addEventListener('click', () => this.openAddModal());
+      }
       const emptyReset = document.getElementById('btn-empty-reset-videos');
       if (emptyReset) {
         emptyReset.addEventListener('click', () => this.handleResetToDefault());
@@ -234,7 +458,7 @@ export class VideoMemoriesController {
       return;
     }
 
-    this.container.innerHTML = memoriesData.videos.map((vid, idx) => {
+    const cardsHtml = memoriesData.videos.map((vid, idx) => {
       const fileName = vid.customFileName || (vid.videoUrl ? vid.videoUrl.split('/').pop() : 'sample_video.mp4');
       const isCustom = vid.isCustom || false;
 
@@ -299,6 +523,29 @@ export class VideoMemoriesController {
     `;
     }).join('');
 
+    // Interactive "+ Add Video Memory" Card at the end of the grid
+    const addCardHtml = `
+      <div class="video-card add-video-dashed-card revealed" id="card-add-new-video" role="button" tabindex="0" title="Click to add a new video memory to Our Memories">
+        <div class="add-video-dashed-inner">
+          <div class="add-video-icon-circle">
+            <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="23 7 16 12 23 17 23 7"></polygon>
+              <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
+              <line x1="12" y1="9" x2="12" y2="15"></line>
+              <line x1="9" y1="12" x2="15" y2="12"></line>
+            </svg>
+          </div>
+          <h4 class="add-video-card-title">Add Video Memory</h4>
+          <p class="add-video-card-subtitle">Upload your festival clip (MP4, WebM, MOV) or enter a video link</p>
+          <button type="button" class="btn-primary" style="font-size: 0.82rem; padding: 0.5rem 1.25rem; pointer-events: none;">
+            <span>➕ Add New Video</span>
+          </button>
+        </div>
+      </div>
+    `;
+
+    this.container.innerHTML = cardsHtml + addCardHtml;
+
     // Attach click, change, and delete events
     this.attachEvents();
 
@@ -337,6 +584,18 @@ export class VideoMemoriesController {
         this.handleDeleteVideo(vidId);
       };
     });
+
+    // 4. Interactive "+ Add Video Memory" Card click -> Focus inline Add Video panel
+    const addCard = this.container.querySelector('#card-add-new-video');
+    if (addCard) {
+      addCard.onclick = () => this.focusInlineAddPanel();
+      addCard.onkeydown = (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          this.focusInlineAddPanel();
+        }
+      };
+    }
   }
 
   updateCardDOM(card, video) {
@@ -575,17 +834,220 @@ export class VideoMemoriesController {
     });
   }
 
-  async handleAddVideo() {
+  openAddModal() {
+    if (!this.addModal) return;
+    this.addModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    // If no file currently selected, show default empty state
+    if (!this.currentPendingFile) {
+      if (this.emptyView) this.emptyView.style.display = 'block';
+      if (this.selectedInfo) this.selectedInfo.style.display = 'none';
+      if (this.previewPlayer) {
+        this.previewPlayer.pause();
+        this.previewPlayer.removeAttribute('src');
+      }
+    }
+
+    if (this.titleInput) {
+      setTimeout(() => this.titleInput.focus(), 150);
+    }
+  }
+
+  closeAddModal() {
+    if (!this.addModal) return;
+    this.addModal.classList.remove('active');
+    document.body.style.overflow = '';
+
+    if (this.previewPlayer) {
+      this.previewPlayer.pause();
+    }
+  }
+
+  resetAddModalForm() {
+    this.currentPendingFile = null;
+    this.currentPendingThumb = null;
+    this.currentPendingDuration = null;
+
+    if (this.addModalForm) this.addModalForm.reset();
+    if (this.fileInput) this.fileInput.value = '';
+    if (this.emptyView) this.emptyView.style.display = 'block';
+    if (this.selectedInfo) this.selectedInfo.style.display = 'none';
+    if (this.previewPlayer) {
+      this.previewPlayer.pause();
+      this.previewPlayer.removeAttribute('src');
+      this.previewPlayer.style.display = 'none';
+    }
+    if (this.submitBtn) {
+      this.submitBtn.disabled = false;
+      this.submitBtn.innerHTML = '<span>Add to Our Memories</span> <span>✨</span>';
+    }
+  }
+
+  processSelectedFile(file) {
+    if (!file) return;
+
+    this.currentPendingFile = file;
+    const objectUrl = URL.createObjectURL(file);
+
+    // 1. Update dropzone UI
+    if (this.emptyView) this.emptyView.style.display = 'none';
+    if (this.selectedInfo) this.selectedInfo.style.display = 'block';
+    if (this.selectedFilename) this.selectedFilename.textContent = file.name;
+    if (this.selectedFilesize) {
+      const mb = (file.size / (1024 * 1024)).toFixed(1);
+      this.selectedFilesize.textContent = `${mb} MB • ${file.type || 'video/mp4'}`;
+    }
+
+    // 2. Set live preview player
+    if (this.previewPlayer) {
+      this.previewPlayer.src = objectUrl;
+      this.previewPlayer.style.display = 'block';
+      this.previewPlayer.load();
+    }
+
+    // 3. Auto-suggest title from file name if user hasn't typed one
+    if (this.titleInput && (!this.titleInput.value || this.titleInput.value.trim() === '')) {
+      const cleanName = file.name
+        .replace(/\.[^/.]+$/, '')
+        .replace(/[_-]+/g, ' ')
+        .trim();
+      const capitalized = cleanName
+        .split(' ')
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+      this.titleInput.value = capitalized || 'Festival Celebration Memory';
+    }
+
+    // 4. Probe duration and auto-extract preview frame for thumbnail
+    const probe = document.createElement('video');
+    probe.preload = 'metadata';
+    probe.muted = true;
+    probe.playsInline = true;
+    probe.src = objectUrl;
+
+    probe.onloadedmetadata = () => {
+      if (probe.duration && !isNaN(probe.duration) && probe.duration !== Infinity) {
+        const mins = Math.floor(probe.duration / 60);
+        const secs = Math.floor(probe.duration % 60).toString().padStart(2, '0');
+        const durStr = `${mins.toString().padStart(2, '0')}:${secs}`;
+        this.currentPendingDuration = durStr;
+        if (this.durationInput) {
+          this.durationInput.value = durStr;
+        }
+      }
+    };
+
+    probe.onloadeddata = () => {
+      probe.currentTime = Math.min(1.0, (probe.duration || 2) / 2);
+    };
+
+    probe.onseeked = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.min(probe.videoWidth || 640, 720);
+        canvas.height = Math.round(canvas.width * ((probe.videoHeight || 360) / (probe.videoWidth || 640)));
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(probe, 0, 0, canvas.width, canvas.height);
+        this.currentPendingThumb = canvas.toDataURL('image/jpeg', 0.85);
+      } catch (err) {
+        console.warn('Could not generate frame thumbnail from video:', err);
+      }
+    };
+  }
+
+  async handleSubmitAddVideo() {
+    const title = this.titleInput ? this.titleInput.value.trim() : '';
+    const duration = this.durationInput && this.durationInput.value.trim() 
+      ? this.durationInput.value.trim() 
+      : (this.currentPendingDuration || '00:30');
+    const desc = this.descInput && this.descInput.value.trim() 
+      ? this.descInput.value.trim() 
+      : 'Our Vinayaka Chaturthi video memory.';
+    const url = this.urlInput ? this.urlInput.value.trim() : '';
+    const file = this.currentPendingFile;
+
+    if (!title) {
+      alert('Please enter a title for this video memory.');
+      if (this.titleInput) this.titleInput.focus();
+      return;
+    }
+
+    if (!file && !url) {
+      alert('Please choose a video file or enter a video link.');
+      if (this.fileInput) this.fileInput.click();
+      return;
+    }
+
+    if (this.submitBtn) {
+      this.submitBtn.disabled = true;
+      this.submitBtn.innerHTML = '<span>Saving to Memories... ⏳</span>';
+    }
+
+    const vidId = 'vid-custom-' + Date.now();
+    const fallbackThumb = 'assets/images/video_thumb_visarjan_immersion.jpg';
+    const thumb = this.currentPendingThumb || fallbackThumb;
+
+    let videoUrl = '';
+    let customFileName = '';
+
+    if (file) {
+      videoUrl = URL.createObjectURL(file);
+      customFileName = file.name;
+      // Save full file blob into IndexedDB
+      await this.videoStore.saveVideo(vidId, file, duration, thumb, customFileName, title, desc, '');
+    } else {
+      videoUrl = url;
+      customFileName = url.split('/').pop() || 'Web Video Link';
+      // Save link into IndexedDB
+      await this.videoStore.saveVideo(vidId, null, duration, thumb, customFileName, title, desc, url);
+    }
+
+    const newVideo = {
+      id: vidId,
+      title: title,
+      desc: desc,
+      thumb: thumb,
+      duration: duration,
+      videoUrl: videoUrl,
+      customFileName: customFileName,
+      isCustom: true
+    };
+
+    memoriesData.videos.push(newVideo);
+
+    // Close modal and reset form
+    this.closeAddModal();
+    this.resetAddModalForm();
+
+    // Re-render UI
+    this.render();
+
+    // Show feedback toast
+    this.showToast(`🎬 Added "${newVideo.title}" to Our Memories!`);
+
+    // Smoothly scroll to the newly created video card
+    setTimeout(() => {
+      const newCard = this.container.querySelector(`[data-video-id="${vidId}"]`);
+      if (newCard) {
+        newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        newCard.classList.add('video-card-newly-added');
+        setTimeout(() => newCard.classList.remove('video-card-newly-added'), 4000);
+      }
+    }, 150);
+  }
+
+  async handleAddVideoFromSettings() {
     const titleInput = document.getElementById('video-add-title');
     const descInput = document.getElementById('video-add-desc');
     const durationInput = document.getElementById('video-add-duration');
     const fileInput = document.getElementById('video-add-file');
 
-    const title = titleInput ? titleInput.value.trim() : 'New Video';
-    const desc = descInput ? descInput.value.trim() : '';
+    const title = titleInput ? titleInput.value.trim() : 'New Celebration Video';
+    const desc = descInput ? descInput.value.trim() : 'Our Vinayaka Chaturthi video memory.';
     const duration = durationInput ? durationInput.value.trim() : '00:30';
 
-    const vidId = 'vid-' + Date.now();
+    const vidId = 'vid-custom-' + Date.now();
     const newVideo = {
       id: vidId,
       title: title || 'New Celebration Video',
@@ -602,8 +1064,8 @@ export class VideoMemoriesController {
       newVideo.customFileName = file.name;
       newVideo.isCustom = true;
 
-      // Save to IndexedDB so added video persists across refresh too!
-      await this.videoStore.saveVideo(vidId, file, duration, newVideo.thumb, file.name, newVideo.title, newVideo.desc);
+      // Save to IndexedDB so added video persists across refresh
+      await this.videoStore.saveVideo(vidId, file, duration, newVideo.thumb, file.name, newVideo.title, newVideo.desc, '');
     }
 
     memoriesData.videos.push(newVideo);
@@ -612,5 +1074,215 @@ export class VideoMemoriesController {
 
     if (this.addForm) this.addForm.reset();
     this.showToast(`🎬 Added "${newVideo.title}" to Our Memories!`);
+  }
+
+  /* =========================================================================
+     INLINE ADD VIDEO PANEL (ON THE "OUR MEMORIES" PAGE)
+     ========================================================================= */
+  focusInlineAddPanel() {
+    if (this.inlinePanel) {
+      if (this.inlineCardWrapper && this.inlineCardWrapper.classList.contains('collapsed')) {
+        this.toggleInlinePanel(false);
+      }
+      this.inlinePanel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (this.inlineCardWrapper) {
+        this.inlineCardWrapper.classList.add('panel-highlight-glow');
+        setTimeout(() => {
+          if (this.inlineCardWrapper) this.inlineCardWrapper.classList.remove('panel-highlight-glow');
+        }, 3600);
+      }
+      if (this.inlineTitleInput) {
+        setTimeout(() => this.inlineTitleInput.focus(), 300);
+      }
+    } else {
+      this.openAddModal();
+    }
+  }
+
+  toggleInlinePanel(forceState) {
+    if (!this.inlineCardWrapper) return;
+    const isCurrentlyCollapsed = this.inlineCardWrapper.classList.contains('collapsed');
+    const collapse = typeof forceState === 'boolean' ? forceState : !isCurrentlyCollapsed;
+
+    if (collapse) {
+      this.inlineCardWrapper.classList.add('collapsed');
+      if (this.toggleLabel) this.toggleLabel.textContent = 'Add Video';
+      if (this.toggleArrow) this.toggleArrow.textContent = '▼';
+    } else {
+      this.inlineCardWrapper.classList.remove('collapsed');
+      if (this.toggleLabel) this.toggleLabel.textContent = 'Collapse Panel';
+      if (this.toggleArrow) this.toggleArrow.textContent = '▲';
+    }
+  }
+
+  processInlineFile(file) {
+    if (!file) return;
+
+    this.inlinePendingFile = file;
+    const objectUrl = URL.createObjectURL(file);
+
+    // 1. Update dropzone UI
+    if (this.inlineEmptyView) this.inlineEmptyView.style.display = 'none';
+    if (this.inlineSelectedView) this.inlineSelectedView.style.display = 'block';
+    if (this.inlineFileName) this.inlineFileName.textContent = file.name;
+    if (this.inlineFileSize) {
+      const mb = (file.size / (1024 * 1024)).toFixed(1);
+      this.inlineFileSize.textContent = `${mb} MB • ${file.type || 'video/mp4'}`;
+    }
+
+    // 2. Set live preview player
+    if (this.inlinePreviewPlayer) {
+      this.inlinePreviewPlayer.src = objectUrl;
+      this.inlinePreviewPlayer.style.display = 'block';
+      this.inlinePreviewPlayer.load();
+    }
+
+    // 3. Auto-suggest title from file name if user hasn't typed one
+    if (this.inlineTitleInput && (!this.inlineTitleInput.value || this.inlineTitleInput.value.trim() === '')) {
+      const cleanName = file.name
+        .replace(/\.[^/.]+$/, '')
+        .replace(/[_-]+/g, ' ')
+        .trim();
+      const capitalized = cleanName
+        .split(' ')
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+        .join(' ');
+      this.inlineTitleInput.value = capitalized || 'Festival Celebration Memory';
+    }
+
+    // 4. Probe duration and auto-extract preview frame for thumbnail
+    const probe = document.createElement('video');
+    probe.preload = 'metadata';
+    probe.muted = true;
+    probe.playsInline = true;
+    probe.src = objectUrl;
+
+    probe.onloadedmetadata = () => {
+      if (probe.duration && !isNaN(probe.duration) && probe.duration !== Infinity) {
+        const mins = Math.floor(probe.duration / 60);
+        const secs = Math.floor(probe.duration % 60).toString().padStart(2, '0');
+        const durStr = `${mins.toString().padStart(2, '0')}:${secs}`;
+        this.inlinePendingDuration = durStr;
+        if (this.inlineDurationInput) {
+          this.inlineDurationInput.value = durStr;
+        }
+      }
+    };
+
+    probe.onloadeddata = () => {
+      probe.currentTime = Math.min(1.0, (probe.duration || 2) / 2);
+    };
+
+    probe.onseeked = () => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.min(probe.videoWidth || 640, 720);
+        canvas.height = Math.round(canvas.width * ((probe.videoHeight || 360) / (probe.videoWidth || 640)));
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(probe, 0, 0, canvas.width, canvas.height);
+        this.inlinePendingThumb = canvas.toDataURL('image/jpeg', 0.85);
+      } catch (err) {
+        console.warn('Could not generate frame thumbnail from video:', err);
+      }
+    };
+  }
+
+  resetInlineForm() {
+    this.inlinePendingFile = null;
+    this.inlinePendingThumb = null;
+    this.inlinePendingDuration = null;
+
+    if (this.inlineForm) this.inlineForm.reset();
+    if (this.inlineFileInput) this.inlineFileInput.value = '';
+    if (this.inlineEmptyView) this.inlineEmptyView.style.display = 'block';
+    if (this.inlineSelectedView) this.inlineSelectedView.style.display = 'none';
+    if (this.inlinePreviewPlayer) {
+      this.inlinePreviewPlayer.pause();
+      this.inlinePreviewPlayer.removeAttribute('src');
+    }
+    if (this.inlineSubmitBtn) {
+      this.inlineSubmitBtn.disabled = false;
+      this.inlineSubmitBtn.innerHTML = '<span>✨ Add Video to Our Memories</span>';
+    }
+  }
+
+  async handleSubmitInlineVideo() {
+    const title = this.inlineTitleInput ? this.inlineTitleInput.value.trim() : '';
+    const duration = this.inlineDurationInput && this.inlineDurationInput.value.trim() 
+      ? this.inlineDurationInput.value.trim() 
+      : (this.inlinePendingDuration || '00:30');
+    const desc = this.inlineDescInput && this.inlineDescInput.value.trim() 
+      ? this.inlineDescInput.value.trim() 
+      : 'Our Vinayaka Chaturthi video memory.';
+    const url = this.inlineUrlInput ? this.inlineUrlInput.value.trim() : '';
+    const file = this.inlinePendingFile;
+
+    if (!title) {
+      alert('Please enter a title for this video memory.');
+      if (this.inlineTitleInput) this.inlineTitleInput.focus();
+      return;
+    }
+
+    if (!file && !url) {
+      alert('Please choose a video file or enter a video web link.');
+      if (this.inlineFileInput) this.inlineFileInput.click();
+      return;
+    }
+
+    if (this.inlineSubmitBtn) {
+      this.inlineSubmitBtn.disabled = true;
+      this.inlineSubmitBtn.innerHTML = '<span>Saving to Our Memories... ⏳</span>';
+    }
+
+    const vidId = 'vid-custom-' + Date.now();
+    const fallbackThumb = 'assets/images/video_thumb_visarjan_immersion.jpg';
+    const thumb = this.inlinePendingThumb || fallbackThumb;
+
+    let videoUrl = '';
+    let customFileName = '';
+
+    if (file) {
+      videoUrl = URL.createObjectURL(file);
+      customFileName = file.name;
+      // Save full file blob into IndexedDB
+      await this.videoStore.saveVideo(vidId, file, duration, thumb, customFileName, title, desc, '');
+    } else {
+      videoUrl = url;
+      customFileName = url.split('/').pop() || 'Web Video Link';
+      // Save link into IndexedDB
+      await this.videoStore.saveVideo(vidId, null, duration, thumb, customFileName, title, desc, url);
+    }
+
+    const newVideo = {
+      id: vidId,
+      title: title,
+      desc: desc,
+      thumb: thumb,
+      duration: duration,
+      videoUrl: videoUrl,
+      customFileName: customFileName,
+      isCustom: true
+    };
+
+    memoriesData.videos.push(newVideo);
+
+    // Reset inline form
+    this.resetInlineForm();
+
+    // Re-render video grid
+    this.render();
+
+    // Show celebratory feedback toast
+    this.showToast(`🎬 Added "${newVideo.title}" directly to Our Memories!`);
+
+    // Smoothly scroll down to the newly created video card
+    setTimeout(() => {
+      const newCard = this.container.querySelector(`[data-video-id="${vidId}"]`);
+      if (newCard) {
+        newCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        newCard.classList.add('video-card-newly-added');
+        setTimeout(() => newCard.classList.remove('video-card-newly-added'), 4000);
+      }
+    }, 150);
   }
 }
