@@ -177,6 +177,24 @@ export class VideoMemoriesController {
     this.addForm = document.getElementById('video-add-form');
     this.listContainer = document.getElementById('video-settings-list');
 
+    // Cross-Device Video Sync & Code Export Elements
+    this.syncQrBtn = document.getElementById('btn-sync-videos-qr');
+    this.modalSyncQrBtn = document.getElementById('btn-modal-sync-videos');
+    this.exportCodeBtn = document.getElementById('btn-export-videos-code');
+    this.modalExportCodeBtn = document.getElementById('btn-modal-export-videos');
+    this.modalImportBtn = document.getElementById('btn-modal-import-videos');
+
+    this.videoSyncQrModal = document.getElementById('video-sync-qr-modal');
+    this.videoSyncQrClose = document.getElementById('video-sync-qr-close');
+    this.videoSyncQrImg = document.getElementById('video-sync-qr-img');
+    this.copyVideoSyncLinkBtn = document.getElementById('btn-copy-video-sync-link');
+    this.copyVideoJsonBtn = document.getElementById('btn-copy-video-json');
+
+    this.videoExportModal = document.getElementById('video-export-modal');
+    this.videoExportClose = document.getElementById('video-export-close');
+    this.videoExportTextarea = document.getElementById('video-export-code-textarea');
+    this.copyExportCodeBtn = document.getElementById('btn-copy-export-code');
+
     this.videoStore = new VideoStorageEngine();
 
     // State for pending upload
@@ -188,18 +206,25 @@ export class VideoMemoriesController {
   }
 
   async init() {
-    // 1. Restore persistent state (deleted videos + replaced video files)
+    // 0. Auto-import any video sync data present in URL hash or parameters (#videoSync=...)
+    this.checkForVideoUrlSync();
+
+    // 1. Restore persistent state (deleted videos + localStorage sync + IndexedDB)
     await this.restorePersistedVideos();
 
     // 2. Render initial view
     this.render();
 
-    // 3. Add Video Main Button Trigger (Scrolls to and highlights the inline panel)
+    // 3. Setup Cross-Device Sync & Code Export Event Listeners
+    this.setupSyncAndExportEvents();
+    this.setupYouTubeUrlDetection();
+
+    // 4. Add Video Main Button Trigger (Scrolls to and highlights the inline panel)
     if (this.addVideoMainBtn) {
       this.addVideoMainBtn.addEventListener('click', () => this.focusInlineAddPanel());
     }
 
-    // 4. Inline Panel Toggle Collapse/Expand
+    // 5. Inline Panel Toggle Collapse/Expand
     if (this.inlineToggleBtn) {
       this.inlineToggleBtn.addEventListener('click', () => this.toggleInlinePanel());
     }
@@ -387,7 +412,42 @@ export class VideoMemoriesController {
         }
       }
 
-      // B. Load any replaced video files from IndexedDB
+      // B. Load from localStorage (cross-device synced and persistent metadata)
+      const storedJson = localStorage.getItem('bappa_saved_videos_v2');
+      if (storedJson) {
+        try {
+          const savedList = JSON.parse(storedJson);
+          if (Array.isArray(savedList) && savedList.length > 0) {
+            savedList.forEach(saved => {
+              let existing = memoriesData.videos.find(v => v.id === saved.id);
+              if (existing) {
+                if (saved.videoUrl) existing.videoUrl = saved.videoUrl;
+                if (saved.thumb) existing.thumb = saved.thumb;
+                if (saved.duration) existing.duration = saved.duration;
+                if (saved.title) existing.title = saved.title;
+                if (saved.desc) existing.desc = saved.desc;
+                if (saved.customFileName) existing.customFileName = saved.customFileName;
+                existing.isCustom = true;
+              } else {
+                memoriesData.videos.push({
+                  id: saved.id,
+                  title: saved.title || 'Celebration Video',
+                  desc: saved.desc || 'Our Vinayaka Chaturthi video memory.',
+                  thumb: saved.thumb || 'assets/images/video_thumb_visarjan_immersion.jpg',
+                  duration: saved.duration || '00:30',
+                  videoUrl: saved.videoUrl || '',
+                  customFileName: saved.customFileName || '',
+                  isCustom: true
+                });
+              }
+            });
+          }
+        } catch (e) {
+          console.warn('LocalStorage videos parse error:', e);
+        }
+      }
+
+      // C. Load any replaced video files from IndexedDB
       const savedList = await this.videoStore.getAllVideos();
       if (savedList && savedList.length > 0) {
         savedList.forEach(saved => {
@@ -720,7 +780,8 @@ export class VideoMemoriesController {
       }
     };
 
-    this.showToast(`💾 Original video "${file.name}" saved! It will remain even when you refresh.`);
+    this.saveToLocalStorage();
+    this.showToast(`💾 Original video "${file.name}" saved! Click "📲 Sync to Phone" to view on your mobile.`);
   }
 
   async handleDeleteVideo(vidId) {
@@ -751,7 +812,10 @@ export class VideoMemoriesController {
     // 3. Remove from IndexedDB if it was custom
     await this.videoStore.deleteVideo(vidId);
 
-    // 4. Update UI
+    // 4. Update localStorage
+    this.saveToLocalStorage();
+
+    // 5. Update UI
     this.render();
     this.showToast(`🗑️ "${videoTitle}" deleted.`);
   }
@@ -761,8 +825,9 @@ export class VideoMemoriesController {
       return;
     }
 
-    // 1. Clear deleted IDs from localStorage
+    // 1. Clear deleted IDs and saved videos from localStorage
     localStorage.removeItem('bappa_deleted_video_ids');
+    localStorage.removeItem('bappa_saved_videos_v2');
 
     // 2. Clear IndexedDB
     await this.videoStore.clearAll();
@@ -1016,6 +1081,9 @@ export class VideoMemoriesController {
 
     memoriesData.videos.push(newVideo);
 
+    // Persist to localStorage for immediate multi-device sync availability
+    this.saveToLocalStorage();
+
     // Close modal and reset form
     this.closeAddModal();
     this.resetAddModalForm();
@@ -1023,8 +1091,8 @@ export class VideoMemoriesController {
     // Re-render UI
     this.render();
 
-    // Show feedback toast
-    this.showToast(`🎬 Added "${newVideo.title}" to Our Memories!`);
+    // Show feedback toast with cross-device sync prompt
+    this.showToast(`🎬 Added "${newVideo.title}"! Click "📲 Sync to Phone" above to open it on your phone.`);
 
     // Smoothly scroll to the newly created video card
     setTimeout(() => {
@@ -1266,14 +1334,17 @@ export class VideoMemoriesController {
 
     memoriesData.videos.push(newVideo);
 
+    // Persist to localStorage for multi-device sync
+    this.saveToLocalStorage();
+
     // Reset inline form
     this.resetInlineForm();
 
     // Re-render video grid
     this.render();
 
-    // Show celebratory feedback toast
-    this.showToast(`🎬 Added "${newVideo.title}" directly to Our Memories!`);
+    // Show celebratory feedback toast with cross-device tip
+    this.showToast(`🎬 Added "${newVideo.title}"! Click "📲 Sync to Phone" above to open on mobile.`);
 
     // Smoothly scroll down to the newly created video card
     setTimeout(() => {
@@ -1284,5 +1355,283 @@ export class VideoMemoriesController {
         setTimeout(() => newCard.classList.remove('video-card-newly-added'), 4000);
       }
     }, 150);
+  }
+
+  /* =========================================================================
+     CROSS-DEVICE SYNCHRONIZATION & CODE EXPORT METHODS
+     ========================================================================= */
+
+  setupSyncAndExportEvents() {
+    // 1. Open QR Code Modal
+    const openSyncQr = () => {
+      if (!this.videoSyncQrModal) return;
+      const syncUrl = this.generateVideoSyncUrl();
+      if (this.videoSyncQrImg) {
+        this.videoSyncQrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(syncUrl)}`;
+      }
+      this.videoSyncQrModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    if (this.syncQrBtn) this.syncQrBtn.addEventListener('click', openSyncQr);
+    if (this.modalSyncQrBtn) this.modalSyncQrBtn.addEventListener('click', openSyncQr);
+
+    // 2. Close QR Modal
+    if (this.videoSyncQrClose && this.videoSyncQrModal) {
+      this.videoSyncQrClose.addEventListener('click', () => {
+        this.videoSyncQrModal.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+      this.videoSyncQrModal.addEventListener('click', (e) => {
+        if (e.target === this.videoSyncQrModal) {
+          this.videoSyncQrModal.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+
+    // 3. Copy Direct Sync Link
+    if (this.copyVideoSyncLinkBtn) {
+      this.copyVideoSyncLinkBtn.addEventListener('click', () => {
+        const syncUrl = this.generateVideoSyncUrl();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(syncUrl).then(() => {
+            this.showToast("🔗 Video Sync Link copied! Open this on your phone.");
+          }).catch(() => {
+            prompt("Copy this Video Sync Link to open on your phone:", syncUrl);
+          });
+        } else {
+          prompt("Copy this Video Sync Link to open on your phone:", syncUrl);
+        }
+      });
+    }
+
+    // 4. Copy Video JSON Data
+    if (this.copyVideoJsonBtn) {
+      this.copyVideoJsonBtn.addEventListener('click', () => {
+        const jsonStr = JSON.stringify(this.getCleanVideoList(), null, 2);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(jsonStr).then(() => {
+            this.showToast("📋 Video data JSON copied!");
+          }).catch(() => {
+            prompt("Copy video JSON data:", jsonStr);
+          });
+        } else {
+          prompt("Copy video JSON data:", jsonStr);
+        }
+      });
+    }
+
+    // 5. Import Code Button
+    if (this.modalImportBtn) {
+      this.modalImportBtn.addEventListener('click', () => {
+        const input = prompt("Paste your Video Sync Link or Video JSON code below:");
+        if (!input || !input.trim()) return;
+
+        try {
+          let parsed = null;
+          if (input.includes('videoSync=')) {
+            const rawEncoded = input.split('videoSync=')[1].split('&')[0];
+            const decodedStr = decodeURIComponent(escape(atob(decodeURIComponent(rawEncoded))));
+            parsed = JSON.parse(decodedStr);
+          } else {
+            parsed = JSON.parse(input.trim());
+          }
+
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            this.importVideoList(parsed, false);
+            this.closeSettings();
+            this.showToast("🎉 Videos imported and saved successfully!");
+          } else {
+            alert("Invalid video data format. Please make sure you copied the full code.");
+          }
+        } catch (err) {
+          alert("Could not parse data. Please check the code and try again.");
+        }
+      });
+    }
+
+    // 6. Open Export Code Modal
+    const openExportCode = () => {
+      if (!this.videoExportModal || !this.videoExportTextarea) return;
+      const cleanList = this.getCleanVideoList();
+      const codeSnippet = `// In js/data/memoriesData.js, replace the "videos: [...]" array with this:\n  videos: ${JSON.stringify(cleanList, null, 4)}`;
+      this.videoExportTextarea.value = codeSnippet;
+      this.videoExportModal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    };
+
+    if (this.exportCodeBtn) this.exportCodeBtn.addEventListener('click', openExportCode);
+    if (this.modalExportCodeBtn) this.modalExportCodeBtn.addEventListener('click', openExportCode);
+
+    // 7. Close Export Modal
+    if (this.videoExportClose && this.videoExportModal) {
+      this.videoExportClose.addEventListener('click', () => {
+        this.videoExportModal.classList.remove('active');
+        document.body.style.overflow = '';
+      });
+      this.videoExportModal.addEventListener('click', (e) => {
+        if (e.target === this.videoExportModal) {
+          this.videoExportModal.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    }
+
+    // 8. Copy Export Code to Clipboard
+    if (this.copyExportCodeBtn && this.videoExportTextarea) {
+      this.copyExportCodeBtn.addEventListener('click', () => {
+        const text = this.videoExportTextarea.value;
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => {
+            this.showToast("📋 Code copied! Paste into js/data/memoriesData.js to save permanently.");
+          }).catch(() => {
+            this.videoExportTextarea.select();
+            document.execCommand('copy');
+            this.showToast("📋 Code copied to clipboard!");
+          });
+        } else {
+          this.videoExportTextarea.select();
+          document.execCommand('copy');
+          this.showToast("📋 Code copied to clipboard!");
+        }
+      });
+    }
+
+    // 9. Live Cross-Tab Sync via storage event
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'bappa_saved_videos_v2' && e.newValue) {
+        try {
+          const parsed = JSON.parse(e.newValue);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            this.importVideoList(parsed, false);
+          }
+        } catch (err) {}
+      }
+    });
+  }
+
+  setupYouTubeUrlDetection() {
+    const handleUrlInputDetection = (inputEl, thumbKey, titleInputEl) => {
+      if (!inputEl) return;
+      const checkYt = () => {
+        const val = inputEl.value.trim();
+        const ytMatch = val.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=|shorts\/))([\w-]{11})/i);
+        if (ytMatch && ytMatch[1]) {
+          const ytThumb = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+          this[thumbKey] = ytThumb;
+          if (titleInputEl && (!titleInputEl.value || titleInputEl.value.trim() === '')) {
+            titleInputEl.value = 'YouTube Festival Celebration Clip';
+          }
+          this.showToast("🎬 YouTube video detected! Thumbnail automatically applied.");
+        }
+      };
+
+      inputEl.addEventListener('input', checkYt);
+      inputEl.addEventListener('change', checkYt);
+      inputEl.addEventListener('paste', () => setTimeout(checkYt, 50));
+    };
+
+    handleUrlInputDetection(this.inlineUrlInput, 'inlinePendingThumb', this.inlineTitleInput);
+    handleUrlInputDetection(this.urlInput, 'currentPendingThumb', this.titleInput);
+  }
+
+  getCleanVideoList() {
+    return memoriesData.videos.map(v => ({
+      id: v.id,
+      title: v.title,
+      desc: v.desc || 'Our Vinayaka Chaturthi video memory.',
+      thumb: v.thumb && v.thumb.startsWith('data:') 
+        ? (v.thumb.length < 40000 ? v.thumb : 'assets/images/video_thumb_visarjan_immersion.jpg') 
+        : (v.thumb || 'assets/images/video_thumb_visarjan_immersion.jpg'),
+      duration: v.duration || '00:30',
+      videoUrl: v.videoUrl && !v.videoUrl.startsWith('blob:') 
+        ? v.videoUrl 
+        : (v.customFileName ? `assets/videos/${v.customFileName}` : 'assets/videos/video_01_highway_roadtrip.mp4'),
+      customFileName: v.customFileName || '',
+      isCustom: !!v.isCustom
+    }));
+  }
+
+  generateVideoSyncUrl() {
+    try {
+      const cleanList = this.getCleanVideoList();
+      const jsonStr = JSON.stringify(cleanList);
+      const encoded = encodeURIComponent(btoa(unescape(encodeURIComponent(jsonStr))));
+      return `${window.location.origin}${window.location.pathname}#videoSync=${encoded}`;
+    } catch (e) {
+      console.warn('generateVideoSyncUrl error:', e);
+      return window.location.href;
+    }
+  }
+
+  checkForVideoUrlSync() {
+    const hash = window.location.hash || '';
+    const search = window.location.search || '';
+    let rawEncoded = null;
+
+    if (hash.includes('videoSync=')) {
+      rawEncoded = hash.split('videoSync=')[1].split('&')[0];
+    } else if (search.includes('videoSync=')) {
+      rawEncoded = search.split('videoSync=')[1].split('&')[0];
+    }
+
+    if (rawEncoded) {
+      try {
+        const decodedStr = decodeURIComponent(escape(atob(decodeURIComponent(rawEncoded))));
+        const parsed = JSON.parse(decodedStr);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          this.importVideoList(parsed, true);
+          try {
+            history.replaceState(null, document.title, window.location.pathname);
+          } catch (e) {}
+        }
+      } catch (e) {
+        console.warn('Video sync URL import error:', e);
+      }
+    }
+  }
+
+  importVideoList(videosArray, fromUrl = false) {
+    if (!Array.isArray(videosArray) || videosArray.length === 0) return;
+
+    videosArray.forEach(incoming => {
+      const existing = memoriesData.videos.find(v => v.id === incoming.id);
+      if (existing) {
+        existing.title = incoming.title || existing.title;
+        existing.desc = incoming.desc || existing.desc;
+        existing.duration = incoming.duration || existing.duration;
+        if (incoming.videoUrl) existing.videoUrl = incoming.videoUrl;
+        if (incoming.thumb) existing.thumb = incoming.thumb;
+        if (incoming.customFileName) existing.customFileName = incoming.customFileName;
+        existing.isCustom = true;
+      } else {
+        memoriesData.videos.push({
+          id: incoming.id,
+          title: incoming.title || 'Celebration Video',
+          desc: incoming.desc || 'Our Vinayaka Chaturthi video memory.',
+          thumb: incoming.thumb || 'assets/images/video_thumb_visarjan_immersion.jpg',
+          duration: incoming.duration || '00:30',
+          videoUrl: incoming.videoUrl || '',
+          customFileName: incoming.customFileName || '',
+          isCustom: true
+        });
+      }
+    });
+
+    this.saveToLocalStorage();
+    this.render();
+    if (fromUrl) {
+      this.showToast("🎉 Videos synced & saved successfully on your phone! ✨");
+    }
+  }
+
+  saveToLocalStorage() {
+    try {
+      const clean = this.getCleanVideoList();
+      localStorage.setItem('bappa_saved_videos_v2', JSON.stringify(clean));
+    } catch (err) {
+      console.warn('Could not save to localStorage:', err);
+    }
   }
 }

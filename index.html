@@ -244,6 +244,7 @@
         
         <img id="lightbox-img" class="lightbox-image" src="" alt="Enlarged Memory Photo" />
         <video id="lightbox-video" class="lightbox-video" controls playsinline></video>
+        <iframe id="lightbox-iframe" class="lightbox-iframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
         <button id="lightbox-next" class="lightbox-nav-btn lightbox-next" aria-label="Next Media">❯</button>
       </div>
@@ -558,8 +559,14 @@
           <button id="btn-add-video-main" class="btn-primary btn-add-video-banner" title="Add a new celebration video clip to Our Memories">
             <span>➕ Add New Video</span>
           </button>
+          <button id="btn-sync-videos-qr" class="btn-primary" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 700;" title="Sync all added videos to your phone via QR Code or Link">
+            <span>📲 Sync to Phone</span>
+          </button>
           <button id="btn-manage-videos" class="btn-manage-media" title="Add new videos or edit existing entries">
             ⚙️ <span>Manage Videos</span>
+          </button>
+          <button id="btn-export-videos-code" class="btn-manage-media" title="Copy exact code to update js/data/memoriesData.js permanently">
+            💾 <span>Export to Website Code</span>
           </button>
           <button id="btn-reset-videos-default" class="btn-manage-media" style="color: #ff9e9e; border-color: rgba(255, 100, 100, 0.35);" title="Reset all videos back to default sample clips">
             ↺ <span>Reset to Default</span>
@@ -567,7 +574,7 @@
         </div>
 
         <div class="video-replace-guide-pill">
-          <span>💡 <strong>Video Memories:</strong> Use the <strong>"Add a New Video"</strong> panel below to upload your festival clips, or click <strong>"🔄 Replace"</strong> on any card. All videos stay saved even when you refresh!</span>
+          <span>💡 <strong>Multi-Device Tip:</strong> Videos added on this device stay saved in your browser. Click <strong>"📲 Sync to Phone"</strong> to open them instantly on your phone with a QR code or direct link, or click <strong>"💾 Export to Website Code"</strong> to save permanently for all visitors!</span>
         </div>
       </div>
 
@@ -865,10 +872,22 @@
       </div>
 
       <div class="customizer-body">
-        <button type="button" id="btn-open-full-add-modal" class="btn-primary" style="width: 100%; justify-content: center; font-size: 0.9rem; padding: 0.75rem 1.2rem; margin-bottom: 1rem;">
+        <button type="button" id="btn-open-full-add-modal" class="btn-primary" style="width: 100%; justify-content: center; font-size: 0.9rem; padding: 0.75rem 1.2rem; margin-bottom: 0.75rem;">
           <span>➕ Add New Video to Our Memories</span>
           <span>✨</span>
         </button>
+
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.25rem;">
+          <button type="button" id="btn-modal-sync-videos" class="btn-secondary" style="font-size: 0.82rem; padding: 0.45rem 0.9rem; color: var(--gold-300);" title="Sync videos to phone via QR code or link">
+            📲 <span>Sync to Phone</span>
+          </button>
+          <button type="button" id="btn-modal-import-videos" class="btn-secondary" style="font-size: 0.82rem; padding: 0.45rem 0.9rem;" title="Import video sync link or JSON code">
+            📥 <span>Import Code</span>
+          </button>
+          <button type="button" id="btn-modal-export-videos" class="btn-secondary" style="font-size: 0.82rem; padding: 0.45rem 0.9rem;" title="Export video code for memoriesData.js">
+            💾 <span>Export Code</span>
+          </button>
+        </div>
 
         <!-- Add Video Form -->
         <form id="video-add-form" style="background: var(--bg-card); border: 1px solid var(--border-medium); border-radius: var(--radius-lg); padding: 1.5rem;">
@@ -990,6 +1009,63 @@
   </div>
 
   <!-- =========================================================================
+       15C. VIDEO SYNC QR CODE MODAL
+       ========================================================================= -->
+  <div id="video-sync-qr-modal" class="customizer-modal" role="dialog" aria-modal="true" aria-label="Sync Videos to Phone">
+    <div class="customizer-dialog" style="max-width: 440px; text-align: center;">
+      <div class="customizer-header">
+        <div>
+          <h3 class="customizer-header-title">📲 Sync Videos to Phone</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Scan this QR Code with your phone's camera</p>
+        </div>
+        <button id="video-sync-qr-close" class="lightbox-close-btn" style="position: static;" aria-label="Close Video Sync Modal">✕</button>
+      </div>
+      <div class="customizer-body" style="padding: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+        <div id="video-sync-qr-container" style="background: #fff; padding: 1rem; border-radius: var(--radius-lg); box-shadow: 0 8px 30px rgba(0,0,0,0.5);">
+          <img id="video-sync-qr-img" src="" alt="Video Sync QR Code" style="width: 220px; height: 220px; display: block;" />
+        </div>
+        <p style="font-size: 0.85rem; color: var(--gold-300); line-height: 1.5;">
+          ✨ Scan with your phone's camera (or open the direct link) to immediately load and save all your new video memories on your phone!
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+          <button id="btn-copy-video-sync-link" type="button" class="btn-primary" style="font-size: 0.85rem; width: 100%; justify-content: center;">
+            🔗 Copy Direct Video Sync Link
+          </button>
+          <button id="btn-copy-video-json" type="button" class="btn-secondary" style="font-size: 0.85rem; width: 100%; justify-content: center;">
+            📋 Copy Video Data JSON
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       15D. VIDEO CODE EXPORT MODAL
+       ========================================================================= -->
+  <div id="video-export-modal" class="customizer-modal" role="dialog" aria-modal="true" aria-label="Export Video Code">
+    <div class="customizer-dialog" style="max-width: 680px;">
+      <div class="customizer-header">
+        <div>
+          <h3 class="customizer-header-title">💾 Export Video Code for Website</h3>
+          <p style="font-size: 0.8rem; color: var(--text-muted);">Copy this snippet to replace <code>videos: [...]</code> in <code>js/data/memoriesData.js</code></p>
+        </div>
+        <button id="video-export-close" class="lightbox-close-btn" style="position: static;" aria-label="Close Export Modal">✕</button>
+      </div>
+      <div class="customizer-body" style="padding: 1.5rem;">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+          To make your videos permanently visible on every device without needing a sync link, copy the code below into <code style="color: var(--gold-300);">js/data/memoriesData.js</code> and commit to GitHub:
+        </p>
+        <textarea id="video-export-code-textarea" readonly style="width: 100%; height: 260px; font-family: monospace; font-size: 0.8rem; background: var(--bg-darkest); color: var(--gold-300); border: 1px solid var(--border-medium); border-radius: var(--radius-md); padding: 0.75rem; resize: vertical; margin-bottom: 1rem;"></textarea>
+        <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+          <button type="button" id="btn-copy-export-code" class="btn-primary" style="font-size: 0.85rem;">
+            📋 Copy Code to Clipboard
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
        16. PHOTO & MEDIA CUSTOMIZER MODAL
        ========================================================================= -->
   <div id="customizer-modal" class="customizer-modal" role="dialog" aria-modal="true" aria-label="Photo & Video Customizer">
@@ -1069,6 +1145,6 @@
   </div>
 
   <!-- Main JavaScript App Entrypoint (ES Module) -->
-  <script type="module" src="js/main.js?v=5.2"></script>
+  <script type="module" src="js/main.js?v=6.0"></script>
 </body>
 </html>

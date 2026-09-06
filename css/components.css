@@ -881,6 +881,17 @@
   outline: none;
 }
 
+.lightbox-iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  max-height: 68vh;
+  border: none;
+  display: none;
+  background: #000;
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+}
+
 .lightbox-nav-btn {
   position: absolute;
   top: 50%;
