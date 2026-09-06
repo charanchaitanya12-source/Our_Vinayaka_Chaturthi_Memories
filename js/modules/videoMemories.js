@@ -436,7 +436,7 @@ export class VideoMemoriesController {
             savedList.forEach(saved => {
               let existing = memoriesData.videos.find(v => v.id === saved.id);
               if (existing) {
-                if (saved.videoUrl) existing.videoUrl = saved.videoUrl;
+                if (saved.videoUrl && !saved.videoUrl.startsWith('blob:')) existing.videoUrl = saved.videoUrl;
                 if (saved.thumb) existing.thumb = saved.thumb;
                 if (saved.duration) existing.duration = saved.duration;
                 if (saved.title) existing.title = saved.title;
@@ -444,13 +444,17 @@ export class VideoMemoriesController {
                 if (saved.customFileName) existing.customFileName = saved.customFileName;
                 existing.isCustom = true;
               } else {
+                let fallbackUrl = saved.videoUrl || '';
+                if ((!fallbackUrl || fallbackUrl.startsWith('blob:')) && saved.customFileName) {
+                  fallbackUrl = `assets/videos/${saved.customFileName}`;
+                }
                 memoriesData.videos.push({
                   id: saved.id,
                   title: saved.title || 'Celebration Video',
                   desc: saved.desc || 'Our Vinayaka Chaturthi video memory.',
                   thumb: saved.thumb || 'assets/images/video_thumb_visarjan_immersion.jpg',
                   duration: saved.duration || '00:30',
-                  videoUrl: saved.videoUrl || '',
+                  videoUrl: fallbackUrl,
                   customFileName: saved.customFileName || '',
                   isCustom: true
                 });
@@ -470,8 +474,10 @@ export class VideoMemoriesController {
           let videoUrl = '';
           if (saved.blob instanceof Blob) {
             videoUrl = URL.createObjectURL(saved.blob);
-          } else if (saved.videoUrl) {
+          } else if (saved.videoUrl && !saved.videoUrl.startsWith('blob:')) {
             videoUrl = saved.videoUrl;
+          } else if (saved.customFileName) {
+            videoUrl = `assets/videos/${saved.customFileName}`;
           }
 
           if (existing) {
@@ -488,7 +494,7 @@ export class VideoMemoriesController {
               desc: saved.desc || 'Our Vinayaka Chaturthi video memory.',
               thumb: saved.thumb || 'assets/images/video_thumb_visarjan_immersion.jpg',
               duration: saved.duration || '00:30',
-              videoUrl: videoUrl,
+              videoUrl: videoUrl || (saved.customFileName ? `assets/videos/${saved.customFileName}` : ''),
               customFileName: saved.customFileName || 'Custom Video',
               isCustom: true
             });
@@ -717,11 +723,27 @@ export class VideoMemoriesController {
     const video = memoriesData.videos.find(v => v.id === vidId);
     if (!video) return;
 
+    let targetUrl = video.videoUrl;
+    // Fallback: If videoUrl is missing, or is an expired/broken blob URL
+    if (!targetUrl || (typeof targetUrl === 'string' && targetUrl.startsWith('blob:') && !targetUrl.includes('//'))) {
+      if (video.customFileName) {
+        targetUrl = `assets/videos/${video.customFileName}`;
+      }
+    }
+    // Safely encode relative path URLs with spaces for cross-device & mobile browser support
+    if (targetUrl && !targetUrl.startsWith('http') && !targetUrl.startsWith('blob:') && !targetUrl.startsWith('data:')) {
+      try {
+        targetUrl = encodeURI(decodeURI(targetUrl));
+      } catch (e) {
+        targetUrl = encodeURI(targetUrl);
+      }
+    }
+
     window.dispatchEvent(new CustomEvent('open-lightbox', {
       detail: {
         type: 'video',
         src: video.thumb,
-        videoUrl: video.videoUrl || '',
+        videoUrl: targetUrl || '',
         title: `🎬 ${video.title}`,
         caption: `${video.desc} ${video.customFileName ? `• Original: ${video.customFileName}` : ''} (Duration: ${video.duration || 'Video'})`,
         category: 'Our Memories'

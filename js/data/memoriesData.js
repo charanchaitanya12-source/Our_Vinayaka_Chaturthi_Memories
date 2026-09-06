@@ -535,68 +535,64 @@ export const memoriesData = {
   // 8. VIDEO MEMORIES ("MOTION & MELODIES")
   videos: [
     {
-      id: "vid-1",
-      title: "Highway Journey to Bring Bappa",
-      desc: "Cruising on the open truck along the highway to bring Lord Ganesha home.",
-      thumb: "assets/images/video_thumb_highway_roadtrip.jpg",
-      duration: "00:17",
-      videoUrl: "assets/videos/video_01_highway_roadtrip.mp4"
-    },
-    {
-      id: "vid-2",
-      title: "The Grand Aagman Arrival",
-      desc: "Carrying Lord Ganesha's idol covered in sacred cloth into our lane.",
-      thumb: "assets/images/video_thumb_grand_aagman.jpg",
-      duration: "00:44",
-      videoUrl: "assets/videos/video_02_grand_aagman.mp4"
-    },
-    {
-      id: "vid-3",
-      title: "Community Annadanam Feast Preparation",
-      desc: "Stirring the giant cooking handi of sacred Annadanam feast for all devotees.",
-      thumb: "assets/images/video_thumb_food_prasad_feast.jpg",
-      duration: "00:20",
-      videoUrl: "assets/videos/video_06_food_prasad_feast.mp4"
-    },
-    {
-      id: "vid-4",
-      title: "Prasad & Meal Distribution",
-      desc: "Serving meals and prasad with devotion to the community.",
-      thumb: "assets/images/video_thumb_pujadance_celebration.jpg",
-      duration: "00:21",
-      videoUrl: "assets/videos/video_07_pujadance_celebration.mp4"
-    },
-    {
-      id: "vid-5",
-      title: "DJ Night & Celebration Dance",
-      desc: "Dancing with boundless energy under the flashing celebration lights.",
-      thumb: "assets/images/video_thumb_dj_night_celebration.jpg",
-      duration: "00:26",
-      videoUrl: "assets/videos/video_03_dj_night_celebration.mp4"
-    },
-    {
-      id: "vid-6",
-      title: "Visarjan Street Procession",
-      desc: "Dancing along the street with the music truck during the procession.",
-      thumb: "assets/images/video_thumb_visarjan_procession.jpg",
-      duration: "00:16",
-      videoUrl: "assets/videos/video_04_visarjan_procession_dance.mp4"
-    },
-    {
-      id: "vid-7",
-      title: "Sacred Visarjan Immersion",
-      desc: "The heartfelt night farewell and water immersion with promises to return.",
-      thumb: "assets/images/video_thumb_visarjan_immersion.jpg",
-      duration: "01:19",
-      videoUrl: "assets/videos/video_05_sacred_visarjan_immersion.mp4"
-    },
-    {
       id: "vid-8",
       title: "Neighborhood Festivities",
       desc: "Daytime celebration talks and neighborhood festive moments.",
       thumb: "assets/images/video_thumb_festival_moments.jpg",
       duration: "00:26",
-      videoUrl: "assets/videos/video_08_festival_moments.mp4"
+      videoUrl: "assets/videos/video_08_festival_moments.mp4",
+      customFileName: "video_08_festival_moments.mp4",
+      isCustom: false
+    },
+    {
+      id: "vid-custom-1788704984589",
+      title: "SONG THAT MADE EVERYONE TO FELL IN LOVE",
+      desc: "Our Vinayaka Chaturthi video memory.",
+      thumb: "assets/images/video_thumb_song_fell_in_love.jpg",
+      duration: "01:27",
+      videoUrl: "assets/videos/WhatsApp Video 2026-09-04 at 17.17.47.mp4",
+      customFileName: "WhatsApp Video 2026-09-04 at 17.17.47.mp4",
+      isCustom: true
+    },
+    {
+      id: "vid-custom-1788705069284",
+      title: "NIGHT FUN INSIDE THE PANDHIRI",
+      desc: "Our Vinayaka Chaturthi video memory.",
+      thumb: "assets/images/video_thumb_night_fun_pandhiri.jpg",
+      duration: "00:30",
+      videoUrl: "assets/videos/WhatsApp Video 2026-09-04 at 17.17.48.mp4",
+      customFileName: "WhatsApp Video 2026-09-04 at 17.17.48.mp4",
+      isCustom: true
+    },
+    {
+      id: "vid-custom-1788705106195",
+      title: "DANCE WITH FULL OF JOY",
+      desc: "Our Vinayaka Chaturthi video memory.",
+      thumb: "assets/images/video_thumb_dance_full_of_joy.jpg",
+      duration: "01:11",
+      videoUrl: "assets/videos/WhatsApp Video 2026-09-04 at 17.17.49.mp4",
+      customFileName: "WhatsApp Video 2026-09-04 at 17.17.49.mp4",
+      isCustom: true
+    },
+    {
+      id: "vid-custom-1788705144956",
+      title: "NIMARJANAM DAY FULL FIRE",
+      desc: "Our Vinayaka Chaturthi video memory.",
+      thumb: "assets/images/video_thumb_nimarjanam_full_fire.jpg",
+      duration: "00:45",
+      videoUrl: "assets/videos/WhatsApp Video 2026-09-04 at 17.17.50.mp4",
+      customFileName: "WhatsApp Video 2026-09-04 at 17.17.50.mp4",
+      isCustom: true
+    },
+    {
+      id: "vid-custom-1788705174722",
+      title: "DAY 1 OF THE VINAYAKA CHAVITHI",
+      desc: "Our Vinayaka Chaturthi video memory.",
+      thumb: "assets/images/video_thumb_day1_vinayaka_chavithi.jpg",
+      duration: "00:40",
+      videoUrl: "assets/videos/WhatsApp Video 2026-09-04 at 17.17.28.mp4",
+      customFileName: "WhatsApp Video 2026-09-04 at 17.17.28.mp4",
+      isCustom: true
     }
   ],
 

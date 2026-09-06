@@ -184,7 +184,15 @@ export class GalleryController {
           this.lightboxVideo.style.display = 'block';
           this.lightboxVideo.poster = item.src || '';
           if (item.videoUrl) {
-            this.lightboxVideo.src = item.videoUrl;
+            let finalSrc = item.videoUrl;
+            if (!finalSrc.startsWith('blob:') && !finalSrc.startsWith('data:')) {
+              try {
+                finalSrc = encodeURI(decodeURI(finalSrc));
+              } catch (e) {
+                finalSrc = encodeURI(finalSrc);
+              }
+            }
+            this.lightboxVideo.src = finalSrc;
             this.lightboxVideo.load();
             const playPromise = this.lightboxVideo.play();
             if (playPromise !== undefined) {
