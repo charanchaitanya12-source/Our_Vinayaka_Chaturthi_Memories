@@ -19,6 +19,9 @@ export class CloudSyncService {
   static isCloudConnected = false;
   static listeners = {};
   static lastSyncTimestamp = 0;
+  static sseConnection = null;
+  static sseActive = false;
+  static memoryPollTimer = null;
 
   // Local storage cache keys
   static CACHE_KEYS = {
@@ -246,31 +249,90 @@ export class CloudSyncService {
      ========================================================================= */
 
   /**
-   * Fetches latest memory wall posts
+   * Normalizes memory object structure for backwards/forwards compatibility
+   */
+  static normalizeMemory(m) {
+    if (!m) return null;
+    const author = m.name || m.author || 'గల్లీ మిత్రుడు (Well Wisher)';
+    const role = m.relation || m.role || 'Street Family';
+    const cat = m.memoryType || m.category || 'Favorite Moment';
+    const photo = m.photo || m.photo_url || null;
+    const createdAt = m.createdAt || Date.now();
+    const date = m.date || new Date(createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+    return {
+      id: m.id || ('mem_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6)),
+      name: author,
+      author: author,
+      relation: role,
+      role: role,
+      memoryType: cat,
+      category: cat,
+      sticker: m.sticker || '🙏',
+      message: m.message || '',
+      photo: photo,
+      photo_url: photo,
+      createdAt: createdAt,
+      date: date,
+      likes: typeof m.likes === 'number' ? m.likes : 0
+    };
+  }
+
+  /**
+   * Fetches latest memory wall posts (Cloud database first, Server API second, localStorage fallback)
    */
   static async fetchMemories() {
+    // 1. Check Firebase Realtime Database
     if (this.database && this.isCloudConnected) {
       try {
         const snapshot = await this.database.ref(this.DB_PATHS.MEMORIES).once('value');
         const val = snapshot.val();
-        if (val && Array.isArray(val)) {
-          localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(val));
-          return val;
+        if (val) {
+          let list = [];
+          if (Array.isArray(val)) {
+            list = val.filter(Boolean).map(m => this.normalizeMemory(m));
+          } else if (typeof val === 'object') {
+            list = Object.values(val).map(m => this.normalizeMemory(m));
+          }
+          if (list.length > 0) {
+            list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+            localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(list));
+            return list;
+          }
         }
       } catch (err) {
-        console.warn('CloudSync fetchMemories error:', err);
+        console.warn('CloudSync fetchMemories (Firebase) error:', err);
       }
     }
 
+    // 2. Query REST API /api/memories
+    try {
+      const resp = await fetch('/api/memories');
+      if (resp.ok) {
+        const data = await resp.json();
+        if (data && Array.isArray(data.memories)) {
+          const normalized = data.memories.map(m => this.normalizeMemory(m));
+          normalized.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(normalized));
+          return normalized;
+        }
+      }
+    } catch (err) {
+      // Expected if running without local API
+    }
+
+    // 3. Fallback to localStorage
     try {
       const stored = localStorage.getItem(this.CACHE_KEYS.MEMORIES);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map(m => this.normalizeMemory(m)).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        }
       }
     } catch (e) {}
 
-    return null;
+    return [];
   }
 
   /**
@@ -279,13 +341,14 @@ export class CloudSyncService {
   static async saveMemories(postsList) {
     if (!Array.isArray(postsList)) return false;
 
+    const normalized = postsList.map(m => this.normalizeMemory(m));
     try {
-      localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(postsList));
+      localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(normalized));
     } catch (e) {}
 
-    if (this.database) {
+    if (this.database && this.isCloudConnected) {
       try {
-        await this.database.ref(this.DB_PATHS.MEMORIES).set(postsList);
+        await this.database.ref(this.DB_PATHS.MEMORIES).set(normalized);
         await this.database.ref(this.DB_PATHS.LAST_UPDATED).set(Date.now());
         this.lastSyncTimestamp = Date.now();
         localStorage.setItem(this.CACHE_KEYS.LAST_CLOUD_SYNC, this.lastSyncTimestamp.toString());
@@ -300,21 +363,224 @@ export class CloudSyncService {
   }
 
   /**
-   * Subscribes to real-time memory wall posts
+   * Adds a new memory to cloud database and server API
+   */
+  static async addMemory(memoryData) {
+    const memory = this.normalizeMemory(memoryData);
+
+    // 1. Optimistic Local Cache Update
+    let current = [];
+    try {
+      const stored = localStorage.getItem(this.CACHE_KEYS.MEMORIES);
+      if (stored) current = JSON.parse(stored);
+    } catch (e) {}
+    current = [memory, ...current.filter(m => m.id !== memory.id)];
+    localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(current));
+
+    let savedRemotely = false;
+
+    // 2. Push to Firebase Realtime Database
+    if (this.database && this.isCloudConnected) {
+      try {
+        await this.database.ref(this.DB_PATHS.MEMORIES).child(memory.id).set(memory);
+        await this.database.ref(this.DB_PATHS.LAST_UPDATED).set(Date.now());
+        savedRemotely = true;
+      } catch (err) {
+        console.warn('Firebase addMemory error:', err);
+      }
+    }
+
+    // 3. Post to /api/memories server API
+    try {
+      const resp = await fetch('/api/memories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(memory)
+      });
+      if (resp.ok) {
+        savedRemotely = true;
+      }
+    } catch (err) {
+      // Server API might not be available in static-only mode
+    }
+
+    // Emit event so UI updates immediately
+    this.emit('memories', current);
+    return { success: true, memory, savedRemotely };
+  }
+
+  /**
+   * Increments like count on a memory across devices
+   */
+  static async likeMemory(memoryId) {
+    if (!memoryId) return false;
+
+    // Update local cache
+    let updatedLikes = 1;
+    try {
+      const stored = localStorage.getItem(this.CACHE_KEYS.MEMORIES);
+      if (stored) {
+        const mems = JSON.parse(stored);
+        const target = mems.find(m => m.id === memoryId);
+        if (target) {
+          target.likes = (target.likes || 0) + 1;
+          updatedLikes = target.likes;
+          localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(mems));
+          this.emit('memories', mems);
+        }
+      }
+    } catch (e) {}
+
+    // 1. Update Firebase
+    if (this.database && this.isCloudConnected) {
+      try {
+        this.database.ref(this.DB_PATHS.MEMORIES).child(memoryId).child('likes').transaction(curr => (curr || 0) + 1);
+      } catch (err) {}
+    }
+
+    // 2. Update Server API
+    try {
+      fetch(`/api/memories/${encodeURIComponent(memoryId)}/like`, { method: 'POST' }).catch(() => {});
+    } catch (e) {}
+
+    return updatedLikes;
+  }
+
+  /**
+   * Deletes memory (admin only)
+   */
+  static async deleteMemory(memoryId, passcode = 'chaturthi2026') {
+    if (!memoryId) return false;
+
+    // Update local cache
+    try {
+      const stored = localStorage.getItem(this.CACHE_KEYS.MEMORIES);
+      if (stored) {
+        const mems = JSON.parse(stored).filter(m => m.id !== memoryId);
+        localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(mems));
+        this.emit('memories', mems);
+      }
+    } catch (e) {}
+
+    // 1. Firebase delete
+    if (this.database && this.isCloudConnected) {
+      try {
+        await this.database.ref(this.DB_PATHS.MEMORIES).child(memoryId).remove();
+      } catch (err) {}
+    }
+
+    // 2. Server API delete
+    try {
+      await fetch(`/api/memories/${encodeURIComponent(memoryId)}`, {
+        method: 'DELETE',
+        headers: { 'x-admin-passcode': passcode }
+      });
+    } catch (e) {}
+
+    return true;
+  }
+
+  /**
+   * Subscribes to real-time memory wall posts with multi-device sync
    */
   static subscribeMemories(callback) {
     if (typeof callback !== 'function') return;
 
     this.on('memories', callback);
 
+    // 1. Firebase Realtime Database Listener
     if (this.database) {
       this.database.ref(this.DB_PATHS.MEMORIES).on('value', (snapshot) => {
         const val = snapshot.val();
-        if (val && Array.isArray(val)) {
-          localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(val));
-          callback(val);
+        if (val) {
+          let list = [];
+          if (Array.isArray(val)) {
+            list = val.filter(Boolean).map(m => this.normalizeMemory(m));
+          } else if (typeof val === 'object') {
+            list = Object.values(val).map(m => this.normalizeMemory(m));
+          }
+          list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(list));
+          callback(list);
         }
       });
+    }
+
+    // 2. Server-Sent Events (SSE) Listener for Server API
+    if (typeof window !== 'undefined' && typeof window.EventSource !== 'undefined' && !this.sseActive) {
+      try {
+        const es = new EventSource('/api/memories/stream');
+        this.sseConnection = es;
+        this.sseActive = true;
+
+        es.addEventListener('memory_added', (e) => {
+          try {
+            const newMem = this.normalizeMemory(JSON.parse(e.data));
+            const stored = localStorage.getItem(this.CACHE_KEYS.MEMORIES);
+            let mems = stored ? JSON.parse(stored) : [];
+            if (!mems.some(m => m.id === newMem.id)) {
+              mems.unshift(newMem);
+              mems.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+              localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(mems));
+              callback(mems);
+            }
+          } catch (err) {}
+        });
+
+        es.addEventListener('memory_liked', (e) => {
+          try {
+            const data = JSON.parse(e.data);
+            const stored = localStorage.getItem(this.CACHE_KEYS.MEMORIES);
+            if (stored) {
+              const mems = JSON.parse(stored);
+              const target = mems.find(m => m.id === data.id);
+              if (target) {
+                target.likes = data.likes;
+                localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(mems));
+                callback(mems);
+              }
+            }
+          } catch (err) {}
+        });
+
+        es.addEventListener('memory_deleted', (e) => {
+          try {
+            const data = JSON.parse(e.data);
+            const stored = localStorage.getItem(this.CACHE_KEYS.MEMORIES);
+            if (stored) {
+              const mems = JSON.parse(stored).filter(m => m.id !== data.id);
+              localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(mems));
+              callback(mems);
+            }
+          } catch (err) {}
+        });
+
+        es.onerror = () => {
+          // SSE auto-reconnects
+        };
+      } catch (err) {}
+    }
+
+    // 3. Periodic Background Sync (every 8s) as ultra-reliable fallback
+    if (!this.memoryPollTimer && typeof window !== 'undefined') {
+      this.memoryPollTimer = setInterval(async () => {
+        try {
+          const resp = await fetch('/api/memories');
+          if (resp.ok) {
+            const data = await resp.json();
+            if (data && Array.isArray(data.memories)) {
+              const remote = data.memories.map(m => this.normalizeMemory(m));
+              const local = localStorage.getItem(this.CACHE_KEYS.MEMORIES);
+              const localStr = local ? JSON.stringify(JSON.parse(local)) : '';
+              const remoteStr = JSON.stringify(remote);
+              if (localStr !== remoteStr) {
+                localStorage.setItem(this.CACHE_KEYS.MEMORIES, remoteStr);
+                callback(remote);
+              }
+            }
+          }
+        } catch (e) {}
+      }, 8000);
     }
   }
 

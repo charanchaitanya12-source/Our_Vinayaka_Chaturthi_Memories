@@ -6208,6 +6208,124 @@ body.cert-modal-open {
   }
 }
 
+/* Memory Wall Loading State */
+.wall-loading-state {
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  background: rgba(25, 13, 9, 0.7);
+  border: 1px solid rgba(245, 184, 66, 0.25);
+  border-radius: var(--radius-xl);
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.wall-spinner-lamp {
+  font-size: 2.8rem;
+  margin-bottom: 0.75rem;
+  display: inline-block;
+  animation: lampGlowPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes lampGlowPulse {
+  0%, 100% {
+    transform: scale(1);
+    filter: drop-shadow(0 0 8px rgba(245, 184, 66, 0.5));
+  }
+  50% {
+    transform: scale(1.15);
+    filter: drop-shadow(0 0 25px rgba(245, 184, 66, 0.95)) drop-shadow(0 0 35px rgba(230, 81, 0, 0.8));
+  }
+}
+
+/* Floating Success & Error Toast */
+.memory-wall-toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 10001;
+  background: linear-gradient(135deg, rgba(28, 14, 10, 0.98), rgba(45, 20, 12, 0.98));
+  border: 1px solid var(--gold-400);
+  border-radius: var(--radius-xl);
+  padding: 1.15rem 1.5rem;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(245, 184, 66, 0.3);
+  backdrop-filter: blur(14px);
+  color: #fff;
+  max-width: 420px;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+  transform: translateY(100px);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.memory-wall-toast.active {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.memory-wall-toast.toast-error {
+  border-color: rgba(239, 68, 68, 0.7);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 25px rgba(239, 68, 68, 0.3);
+}
+
+.toast-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.toast-content {
+  flex: 1;
+}
+
+.toast-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--gold-300);
+  margin-bottom: 0.2rem;
+  font-weight: 700;
+}
+
+.toast-error .toast-title {
+  color: #fca5a5;
+}
+
+.toast-message {
+  font-size: 0.84rem;
+  color: #e5e0db;
+  line-height: 1.45;
+}
+
+.toast-close {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 1.1rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.25rem;
+  line-height: 1;
+}
+
+.toast-close:hover {
+  color: #fff;
+}
+
+@media (max-width: 600px) {
+  .memory-wall-toast {
+    bottom: 1rem;
+    right: 1rem;
+    left: 1rem;
+    max-width: none;
+  }
+}
+
 /* --------------------------------------------------------------------------
    21. EASY SHARING & FLOATING TOAST NOTIFICATION
    -------------------------------------------------------------------------- */

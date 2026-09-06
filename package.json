@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "build": "echo 'Static assets ready'",
-    "start": "serve . -l $PORT"
+    "start": "node server.js"
   },
   "dependencies": {
     "serve": "^14.2.4"
