@@ -200,10 +200,10 @@ export class FriendsController {
           taggedMoments: f.taggedMoments || ['gal-1', 'gal-2', 'gal-11']
         };
       }
-      if (f.id === 'friend-hamu' || (f.name && f.name.toLowerCase().includes('hamu'))) {
+      if (f.id === 'friend-hamu' || (f.name && (f.name.toLowerCase().includes('hamu') || f.name.toLowerCase().includes('hemu')))) {
         return {
           id: 'friend-hamu',
-          name: 'Hamu',
+          name: 'Hemu',
           nickname: f.nickname || 'The Gang',
           photos: (f.photos && f.photos.length > 0) ? [...f.photos] : [
             'assets/images/gang/gang_member_hamu.jpg',

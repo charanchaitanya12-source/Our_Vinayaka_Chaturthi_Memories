@@ -397,7 +397,7 @@ export const memoriesData = {
     },
     {
       id: "friend-hamu",
-      name: "Hamu",
+      name: "Hemu",
       nickname: "The Gang",
       photos: [
         "assets/images/gang/gang_member_hamu.jpg",
