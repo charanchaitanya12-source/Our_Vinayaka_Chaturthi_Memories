@@ -2762,32 +2762,70 @@
 }
 
 .footer-bottom-corner {
-  margin-top: 2rem;
-  padding-top: 1.25rem;
-  border-top: 1px solid rgba(245, 184, 66, 0.12);
+  margin-top: 2.25rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(245, 184, 66, 0.18);
   display: flex;
   justify-content: flex-end;
 }
 
 .footer-creator-credit {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, rgba(245, 184, 66, 0.12) 0%, rgba(104, 21, 35, 0.3) 100%);
+  border: 1.5px solid rgba(245, 184, 66, 0.45);
+  border-radius: var(--radius-full);
+  padding: 0.55rem 1.25rem;
   font-family: var(--font-sans);
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-dim);
-  letter-spacing: 0.03em;
-  text-align: right;
+  font-size: 0.86rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45), 0 0 16px rgba(245, 184, 66, 0.18);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: all var(--transition-normal);
   margin: 0;
+}
+
+.footer-creator-credit:hover {
+  border-color: var(--gold-400);
+  background: linear-gradient(135deg, rgba(245, 184, 66, 0.2) 0%, rgba(104, 21, 35, 0.4) 100%);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.6), 0 0 24px rgba(245, 184, 66, 0.4);
+  transform: translateY(-2px);
+}
+
+.footer-creator-credit .creator-sparkle {
+  color: var(--gold-400);
+  font-size: 1rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 6px rgba(245, 184, 66, 0.6));
+}
+
+.footer-creator-credit .creator-highlight {
+  color: #fff4cc;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff 0%, #ffd768 45%, #f5b842 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 12px rgba(245, 184, 66, 0.45);
 }
 
 @media (max-width: 640px) {
   .footer-bottom-corner {
     justify-content: center;
-    margin-top: 1.5rem;
-    padding-top: 1rem;
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
   }
   .footer-creator-credit {
+    font-size: 0.78rem;
+    padding: 0.45rem 0.95rem;
     text-align: center;
-    font-size: 0.76rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 380px;
   }
 }
 
