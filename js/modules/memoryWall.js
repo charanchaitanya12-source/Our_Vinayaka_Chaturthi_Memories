@@ -39,11 +39,49 @@ export class MemoryWallController {
     this.lastSubmitTime = 0;
     this.posts = [];
 
+    this.myMemoriesStorageKey = 'vinayaka_my_memories_tokens_v1';
+
     // Admin detection via URL param or session storage
     const urlParams = new URLSearchParams(window.location.search);
     this.isAdmin = urlParams.get('admin') === 'chaturthi2026' || sessionStorage.getItem('vinayaka_admin') === 'true';
 
     this.init();
+  }
+
+  getMyMemories() {
+    try {
+      const saved = localStorage.getItem(this.myMemoriesStorageKey);
+      return saved ? JSON.parse(saved) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  getMyMemoryToken(id) {
+    const myMems = this.getMyMemories();
+    return myMems[id] || null;
+  }
+
+  isMyMemory(id) {
+    if (this.isAdmin) return true;
+    const myMems = this.getMyMemories();
+    return Boolean(myMems && myMems[id]);
+  }
+
+  recordMyMemory(id, token) {
+    try {
+      const myMems = this.getMyMemories();
+      myMems[id] = token;
+      localStorage.setItem(this.myMemoriesStorageKey, JSON.stringify(myMems));
+    } catch (e) {}
+  }
+
+  removeMyMemory(id) {
+    try {
+      const myMems = this.getMyMemories();
+      delete myMems[id];
+      localStorage.setItem(this.myMemoriesStorageKey, JSON.stringify(myMems));
+    } catch (e) {}
   }
 
   async init() {
@@ -337,6 +375,7 @@ export class MemoryWallController {
         submitBtn.innerHTML = `<span>Saving to Cloud... 🪔</span>`;
       }
 
+      const authorToken = 'tok_' + now + '_' + Math.random().toString(36).substr(2, 8);
       const newPost = {
         id: 'mem_' + now + '_' + Math.random().toString(36).substr(2, 6),
         name: this.sanitize(authorName),
@@ -351,8 +390,12 @@ export class MemoryWallController {
         photo_url: this.attachedPhotoDataUrl || null,
         createdAt: now,
         date: new Date(now).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-        likes: 0
+        likes: 0,
+        authorToken: authorToken
       };
+
+      // Record ownership in this browser so author can delete their memory anytime
+      this.recordMyMemory(newPost.id, authorToken);
 
       try {
         // Save to online database
@@ -457,11 +500,19 @@ export class MemoryWallController {
   }
 
   async deletePost(postId) {
-    if (confirm('ఈ జ్ఞాపకాన్ని మెమొరీ వాల్ నుండి తొలగించాలా?\nAre you sure you want to delete this memory from the wall?')) {
-      await CloudSyncService.deleteMemory(postId, 'chaturthi2026');
+    const isOwner = this.isMyMemory(postId);
+    const confirmMsg = isOwner
+      ? 'మీరు పోస్ట్ చేసిన ఈ జ్ఞాపకాన్ని మెమొరీ వాల్ నుండి తొలగించాలా?\nAre you sure you want to delete your memory from the wall?'
+      : 'ఈ జ్ఞాపకాన్ని మెమొరీ వాల్ నుండి తొలగించాలా? (Admin Action)\nAre you sure you want to delete this memory?';
+
+    if (confirm(confirmMsg)) {
+      const token = this.getMyMemoryToken(postId);
+      const passcode = this.isAdmin ? 'chaturthi2026' : null;
+      await CloudSyncService.deleteMemory(postId, token, passcode);
+      this.removeMyMemory(postId);
       this.posts = this.posts.filter(p => p.id !== postId);
       this.render();
-      this.showToast('Memory Deleted', 'The memory was removed from the wall.', 'success', 3000);
+      this.showToast('Memory Deleted 🗑️', 'మీ జ్ఞాపకం విజయవంతంగా తొలగించబడింది / Your memory was successfully deleted from the wall.', 'success', 4000);
     }
   }
 
@@ -522,6 +573,8 @@ export class MemoryWallController {
       const photoSrc = post.photo || post.photo_url;
       const dateDisplay = this.formatDate(post.createdAt, post.date);
       const isLiked = localStorage.getItem('vinayaka_liked_' + post.id) === 'true';
+      const canDelete = this.isAdmin || this.isMyMemory(post.id);
+      const deleteTitle = this.isMyMemory(post.id) ? 'Delete your memory • మీ జ్ఞాపకాన్ని తొలగించండి' : 'Admin: Delete memory';
 
       return `
         <div class="wall-post-card" id="card-${post.id}">
@@ -541,9 +594,9 @@ export class MemoryWallController {
             </div>
             <div class="wall-header-actions">
               <span class="wall-post-date">${dateDisplay}</span>
-              ${this.isAdmin ? `
-                <button class="btn-delete-wall-post" data-post-id="${post.id}" title="Admin: Delete memory" aria-label="Delete memory">
-                  🗑️
+              ${canDelete ? `
+                <button class="btn-delete-wall-post" data-post-id="${post.id}" title="${deleteTitle}" aria-label="${deleteTitle}">
+                  🗑️ <span class="delete-btn-tag">Delete</span>
                 </button>
               ` : ''}
             </div>
@@ -570,15 +623,14 @@ export class MemoryWallController {
       `;
     }).join('');
 
-    // Attach Admin Delete listeners if admin
-    if (this.isAdmin) {
-      this.postsContainer.querySelectorAll('.btn-delete-wall-post').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const postId = btn.getAttribute('data-post-id');
-          this.deletePost(postId);
-        });
+    // Attach Delete listeners for author or admin
+    this.postsContainer.querySelectorAll('.btn-delete-wall-post').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const postId = btn.getAttribute('data-post-id');
+        await this.deletePost(postId);
       });
-    }
+    });
 
     // Like button listeners with rapid-duplicate prevention
     this.postsContainer.querySelectorAll('.btn-like-post').forEach(btn => {

@@ -467,9 +467,9 @@ export class CloudSyncService {
   }
 
   /**
-   * Deletes memory (admin only)
+   * Deletes memory (Author or Admin)
    */
-  static async deleteMemory(memoryId, passcode = 'chaturthi2026') {
+  static async deleteMemory(memoryId, token = null, passcode = null) {
     if (!memoryId) return false;
 
     // Update local cache
@@ -491,9 +491,13 @@ export class CloudSyncService {
 
     // 2. Server API delete
     try {
+      const headers = {};
+      if (passcode) headers['x-admin-passcode'] = passcode;
+      if (token) headers['x-author-token'] = token;
+
       await fetch(`/api/memories/${encodeURIComponent(memoryId)}`, {
         method: 'DELETE',
-        headers: { 'x-admin-passcode': passcode }
+        headers: headers
       });
     } catch (e) {}
 

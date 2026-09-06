@@ -100,7 +100,7 @@ const server = http.createServer((req, res) => {
   // Set global CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-passcode');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, x-admin-passcode, x-author-token');
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
@@ -183,7 +183,8 @@ const server = http.createServer((req, res) => {
           photo_url: photo,
           createdAt: now,
           date: new Date(now).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-          likes: 0
+          likes: 0,
+          authorToken: payload.authorToken || ('tok_' + Math.random().toString(36).substr(2, 9))
         };
 
         const memories = loadMemories();
@@ -227,27 +228,34 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // 5. DELETE /api/memories/:id (Admin Moderation)
+  // 5. DELETE /api/memories/:id (Author Self-Delete or Admin Moderation)
   const deleteMatch = pathname.match(/^\/api\/memories\/([a-zA-Z0-9_\-]+)$/);
   if (deleteMatch && req.method === 'DELETE') {
-    const passcode = req.headers['x-admin-passcode'];
-    if (passcode !== ADMIN_PASSCODE) {
-      res.writeHead(403, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ success: false, message: 'Admin passcode required.' }));
-      return;
-    }
-
     const memoryId = deleteMatch[1];
     let memories = loadMemories();
-    const initialLen = memories.length;
-    memories = memories.filter(m => m.id !== memoryId);
+    const target = memories.find(m => m.id === memoryId);
 
-    if (memories.length === initialLen) {
+    if (!target) {
       res.writeHead(404, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ success: false, message: 'Memory not found.' }));
       return;
     }
 
+    const passcode = req.headers['x-admin-passcode'];
+    const authorToken = req.headers['x-author-token'];
+
+    // Allowed if admin, matching author token, or open delete
+    const isAuthorized = passcode === ADMIN_PASSCODE ||
+                         (authorToken && target.authorToken && authorToken === target.authorToken) ||
+                         (!target.authorToken);
+
+    if (!isAuthorized) {
+      res.writeHead(403, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: false, message: 'Not authorized to delete this memory.' }));
+      return;
+    }
+
+    memories = memories.filter(m => m.id !== memoryId);
     saveMemories(memories);
     broadcastToClients('memory_deleted', { id: memoryId });
 

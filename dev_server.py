@@ -39,7 +39,7 @@ class DevHandler(SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.send_header('Access-Control-Allow-Methods', 'GET, POST, DELETE, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type, x-admin-passcode')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, x-admin-passcode, x-author-token')
         super().end_headers()
 
     def do_OPTIONS(self):
@@ -100,7 +100,8 @@ class DevHandler(SimpleHTTPRequestHandler):
                 "photo_url": data.get('photo') or data.get('photo_url'),
                 "createdAt": now,
                 "date": "Just Now • ఇప్పుడే",
-                "likes": 0
+                "likes": 0,
+                "authorToken": data.get('authorToken') or f"tok_{now}_{os.urandom(4).hex()}"
             }
 
             mems = read_memories()
@@ -147,27 +148,33 @@ class DevHandler(SimpleHTTPRequestHandler):
         parsed = urllib.parse.urlparse(self.path)
         if parsed.path.startswith('/api/memories/'):
             mem_id = parsed.path.split('/')[3]
-            passcode = self.headers.get('x-admin-passcode')
-            if passcode != ADMIN_PASSCODE:
-                self.send_response(403)
-                self.end_headers()
-                self.wfile.write(b'{"success": false, "message": "Admin passcode required"}')
-                return
-
             mems = read_memories()
-            init_len = len(mems)
-            mems = [m for m in mems if m.get('id') != mem_id]
-            if len(mems) < init_len:
-                write_memories(mems)
-                self.send_response(200)
-                self.end_headers()
-                self.wfile.write(b'{"success": true}')
-                return
-            else:
+            target = next((m for m in mems if m.get('id') == mem_id), None)
+            if not target:
                 self.send_response(404)
                 self.end_headers()
                 self.wfile.write(b'{"success": false, "message": "Not found"}')
                 return
+
+            passcode = self.headers.get('x-admin-passcode')
+            author_token = self.headers.get('x-author-token')
+
+            is_authorized = (passcode == ADMIN_PASSCODE or
+                             (author_token and target.get('authorToken') and author_token == target.get('authorToken')) or
+                             (not target.get('authorToken')))
+
+            if not is_authorized:
+                self.send_response(403)
+                self.end_headers()
+                self.wfile.write(b'{"success": false, "message": "Not authorized to delete this memory"}')
+                return
+
+            mems = [m for m in mems if m.get('id') != mem_id]
+            write_memories(mems)
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b'{"success": true}')
+            return
 
         self.send_response(404)
         self.end_headers()

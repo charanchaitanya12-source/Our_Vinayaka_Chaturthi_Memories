@@ -6046,18 +6046,32 @@ body.cert-modal-open {
 }
 
 .btn-delete-wall-post {
-  background: transparent;
-  border: none;
-  font-size: 0.85rem;
+  background: rgba(255, 68, 68, 0.08);
+  border: 1px solid rgba(255, 68, 68, 0.25);
+  border-radius: var(--radius-sm);
+  font-size: 0.72rem;
+  color: #ff9999;
   cursor: pointer;
-  opacity: 0.4;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  transition: all 0.2s ease;
+  line-height: 1;
 }
 
 .btn-delete-wall-post:hover {
-  opacity: 1;
-  transform: scale(1.15);
+  background: rgba(255, 68, 68, 0.25);
+  border-color: rgba(255, 68, 68, 0.5);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.delete-btn-tag {
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .wall-post-message-body {
