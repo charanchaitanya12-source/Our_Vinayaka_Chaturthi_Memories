@@ -19,7 +19,7 @@
   <!-- Stylesheets -->
   <link rel="stylesheet" href="css/design-system.css?v=4.4" />
   <link rel="stylesheet" href="css/animations.css?v=4.4" />
-  <link rel="stylesheet" href="css/components.css?v=7.1" />
+  <link rel="stylesheet" href="css/components.css?v=7.2" />
 </head>
 <body>
 
@@ -1887,6 +1887,156 @@
     </div>
   </div>
 
+  <!-- =========================================================================
+       18. PERSONALIZED PARTICIPATION CERTIFICATE MODAL
+       ========================================================================= -->
+  <div id="personalized-cert-modal" class="cert-modal" role="dialog" aria-modal="true" aria-label="Vinayaka Chaturthi Participation Certificate">
+    
+    <!-- STEP 1: Name Input Dialog -->
+    <div id="cert-name-step" class="cert-dialog cert-name-dialog">
+      <div class="cert-dialog-header">
+        <div class="cert-dialog-emblem">🪔 ✨ 📜</div>
+        <h3 class="cert-dialog-title">Enter Your Name</h3>
+        <p class="cert-dialog-sub">Enter your full name to generate your Vinayaka Chaturthi participation certificate.</p>
+        <button id="cert-modal-close" class="cert-modal-close" aria-label="Close">✕</button>
+      </div>
+
+      <div class="cert-dialog-body">
+        <div class="cert-input-group">
+          <label for="cert-name-input" class="cert-input-label">Your Full Name</label>
+          <input 
+            type="text" 
+            id="cert-name-input" 
+            class="cert-text-input" 
+            placeholder="Enter your full name" 
+            autocomplete="name" 
+            maxlength="60"
+          />
+          <p id="cert-name-error" class="cert-error-msg" role="alert" style="display: none;">
+            ⚠️ Please enter your name to generate the certificate.
+          </p>
+        </div>
+      </div>
+
+      <div class="cert-dialog-actions">
+        <button id="btn-generate-cert" type="button" class="btn-primary">
+          ✨ <span>Generate Certificate</span>
+        </button>
+        <button id="btn-cancel-cert" type="button" class="btn-secondary">
+          <span>Cancel</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Certificate Preview Dialog -->
+    <div id="cert-preview-step" class="cert-preview-wrapper" style="display: none;">
+      
+      <!-- Preview Sticky Top Control Bar -->
+      <div class="cert-preview-topbar">
+        <div class="cert-preview-title-wrap">
+          <span class="cert-preview-badge">📜 Certificate Preview</span>
+          <span class="cert-preview-sub">Ready to print or save as PDF</span>
+        </div>
+        <div class="cert-preview-actions">
+          <button id="btn-print-single-cert" type="button" class="btn-primary btn-print-cert">
+            🖨️ <span>Print Certificate</span>
+          </button>
+          <button id="btn-edit-cert-name" type="button" class="btn-secondary" title="Change the name on certificate">
+            ✏️ <span>Change Name</span>
+          </button>
+          <button id="btn-close-cert-preview" class="cert-modal-close" aria-label="Close Preview">✕</button>
+        </div>
+      </div>
+
+      <!-- Scrollable Preview Sheet Container -->
+      <div class="cert-preview-scroll-area">
+        
+        <!-- Printable Certificate Card -->
+        <div id="personalized-cert-card" class="personalized-cert-card">
+          <!-- Ornamental Corners -->
+          <div class="cert-corner corner-tl">❖</div>
+          <div class="cert-corner corner-tr">❖</div>
+          <div class="cert-corner corner-bl">❖</div>
+          <div class="cert-corner corner-br">❖</div>
+
+          <div class="cert-inner-frame">
+            <!-- Top Emblem & Sacred Mantras -->
+            <div class="cert-header-section">
+              <div class="cert-ganesha-emblem">🛕 🪔 ✨ 🪔 🛕</div>
+              <div class="cert-sanskrit-line">॥ శ్రీ గణేశాయ నమః • ॐ गं गणपतये नमः ॥</div>
+              <h1 class="cert-main-title">VINAYAKA CHATURTHI PARTICIPATION CERTIFICATE</h1>
+              <div class="cert-decorative-line">
+                <span class="dec-leaf">❧</span>
+                <span class="dec-bar"></span>
+                <span class="dec-gem">♦</span>
+                <span class="dec-bar"></span>
+                <span class="dec-leaf">☙</span>
+              </div>
+            </div>
+
+            <!-- Presentation Body -->
+            <div class="cert-body-section">
+              <p class="cert-present-lead">This certificate is proudly presented to</p>
+              
+              <div class="cert-name-display-wrap">
+                <h2 id="cert-recipient-name" class="cert-recipient-name">Candidate Name</h2>
+                <div class="cert-name-underline"></div>
+              </div>
+
+              <p class="cert-participation-text">
+                for participating in and being a cherished part of our Vinayaka Chaturthi celebrations.
+              </p>
+              
+              <p class="cert-celebration-text">
+                Celebrating devotion, friendship, brotherhood, and the beautiful memories we created together.
+              </p>
+            </div>
+
+            <!-- Sacred Mantras -->
+            <div class="cert-mantras-section">
+              <span class="cert-mantra-pill">గణపతి బప్పా మోరియా • Ganpati Bappa Morya 🙏</span>
+              <span class="cert-mantra-pill">Pudchya Varshi Lavkar Ya!</span>
+            </div>
+
+            <!-- Bottom Signatures & Year -->
+            <div class="cert-footer-section">
+              <div class="cert-sig-block">
+                <div class="cert-sig-line"></div>
+                <span class="cert-sig-title">Organized with love by Friends &amp; Family</span>
+                <span class="cert-sig-sub">Street Pandal Committee</span>
+              </div>
+
+              <div class="cert-seal-block">
+                <div class="cert-seal-badge">
+                  <span class="seal-icon">🪔</span>
+                  <span class="seal-text">UTSAV</span>
+                  <span class="seal-year">2026</span>
+                </div>
+              </div>
+
+              <div class="cert-sig-block">
+                <div class="cert-sig-line"></div>
+                <span class="cert-sig-title">Vinayaka Chaturthi 2026</span>
+                <span class="cert-sig-sub">Celebration &amp; Keepsake</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mobile Print Helper Buttons at bottom -->
+        <div class="cert-bottom-controls">
+          <button id="btn-print-single-cert-bottom" type="button" class="btn-primary" style="padding: 0.8rem 2.2rem; font-size: 1rem;">
+            🖨️ <span>Print Certificate</span>
+          </button>
+          <button id="btn-close-cert-bottom" type="button" class="btn-secondary" style="padding: 0.8rem 1.75rem;">
+            Close
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- Floating Non-Intrusive Share Toast Notification -->
   <aside id="share-toast" class="share-toast-notification" role="status" aria-live="polite" aria-atomic="true" hidden>
     <div class="share-toast-inner">
@@ -1899,6 +2049,6 @@
   </aside>
 
   <!-- Main JavaScript App Entrypoint (ES Module) -->
-  <script type="module" src="js/main.js?v=7.1"></script>
+  <script type="module" src="js/main.js?v=7.2"></script>
 </body>
 </html>

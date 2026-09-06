@@ -25,6 +25,7 @@ export class FestiveInteractions {
     this.initFlowerShower();
     this.initCardTilt();
     this.initTimeCapsule();
+    this.initPersonalizedCertificate();
   }
 
   /* --------------------------------------------------------------------------
@@ -182,7 +183,6 @@ export class FestiveInteractions {
 
     const printBtn = document.getElementById('btn-print-capsule');
     const printBottomBtn = document.getElementById('btn-print-capsule-bottom');
-    const printCertOnlyBtn = document.getElementById('btn-print-cert-only');
 
     const triggerFullPrint = (e) => {
       if (e) {
@@ -190,15 +190,7 @@ export class FestiveInteractions {
         e.stopPropagation();
       }
       document.body.classList.remove('print-cert-only');
-      window.print();
-    };
-
-    const triggerCertOnlyPrint = (e) => {
-      if (e) {
-        e.preventDefault();
-        e.stopPropagation();
-      }
-      document.body.classList.add('print-cert-only');
+      document.body.classList.remove('print-personalized-cert');
       window.print();
     };
 
@@ -210,12 +202,166 @@ export class FestiveInteractions {
       printBottomBtn.addEventListener('click', triggerFullPrint);
     }
 
-    if (printCertOnlyBtn) {
-      printCertOnlyBtn.addEventListener('click', triggerCertOnlyPrint);
-    }
-
     window.addEventListener('afterprint', () => {
       document.body.classList.remove('print-cert-only');
+      document.body.classList.remove('print-personalized-cert');
+    });
+  }
+
+  /* --------------------------------------------------------------------------
+     5. PERSONALIZED PARTICIPATION CERTIFICATE GENERATOR & MODAL
+     -------------------------------------------------------------------------- */
+  initPersonalizedCertificate() {
+    const certModal = document.getElementById('personalized-cert-modal');
+    const certOnlyBtn = document.getElementById('btn-print-cert-only');
+    const nameStep = document.getElementById('cert-name-step');
+    const previewStep = document.getElementById('cert-preview-step');
+    const nameInput = document.getElementById('cert-name-input');
+    const nameError = document.getElementById('cert-name-error');
+    const generateBtn = document.getElementById('btn-generate-cert');
+    const cancelBtn = document.getElementById('btn-cancel-cert');
+    const closeBtn = document.getElementById('cert-modal-close');
+    const recipientNameEl = document.getElementById('cert-recipient-name');
+    const printCertBtn = document.getElementById('btn-print-single-cert');
+    const printCertBottomBtn = document.getElementById('btn-print-single-cert-bottom');
+    const editNameBtn = document.getElementById('btn-edit-cert-name');
+    const closePreviewBtn = document.getElementById('btn-close-cert-preview');
+    const closeBottomBtn = document.getElementById('btn-close-cert-bottom');
+
+    if (!certModal || !certOnlyBtn) return;
+
+    const openNameModal = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      if (nameStep) nameStep.style.display = 'block';
+      if (previewStep) previewStep.style.display = 'none';
+      if (nameError) nameError.style.display = 'none';
+      certModal.classList.add('is-active');
+      document.body.classList.add('cert-modal-open');
+      if (nameInput) {
+        setTimeout(() => nameInput.focus(), 60);
+      }
+    };
+
+    const closeCertModal = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      certModal.classList.remove('is-active');
+      document.body.classList.remove('cert-modal-open');
+      document.body.classList.remove('print-personalized-cert');
+      if (nameError) nameError.style.display = 'none';
+    };
+
+    const generateCertificate = () => {
+      const rawName = nameInput ? nameInput.value : '';
+      const cleanName = rawName ? rawName.trim().replace(/\s+/g, ' ') : '';
+
+      if (!cleanName || cleanName.length === 0) {
+        if (nameError) {
+          nameError.textContent = '⚠️ Please enter your name to generate the certificate.';
+          nameError.style.display = 'block';
+        }
+        if (nameInput) nameInput.focus();
+        return;
+      }
+
+      if (nameError) nameError.style.display = 'none';
+      if (recipientNameEl) {
+        recipientNameEl.textContent = cleanName;
+      }
+
+      if (nameStep) nameStep.style.display = 'none';
+      if (previewStep) previewStep.style.display = 'flex';
+
+      if (this.particles) {
+        this.particles.burstFlowers(30);
+      }
+    };
+
+    const printCertificate = (e) => {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      document.body.classList.remove('print-cert-only');
+      document.body.classList.add('print-personalized-cert');
+      window.print();
+    };
+
+    // Attach to "Print Certificate Only" button in Time Capsule topbar
+    certOnlyBtn.addEventListener('click', openNameModal);
+
+    if (generateBtn) {
+      generateBtn.addEventListener('click', generateCertificate);
+    }
+
+    if (cancelBtn) {
+      cancelBtn.addEventListener('click', closeCertModal);
+    }
+
+    if (closeBtn) {
+      closeBtn.addEventListener('click', closeCertModal);
+    }
+
+    if (closePreviewBtn) {
+      closePreviewBtn.addEventListener('click', closeCertModal);
+    }
+
+    if (closeBottomBtn) {
+      closeBottomBtn.addEventListener('click', closeCertModal);
+    }
+
+    if (editNameBtn) {
+      editNameBtn.addEventListener('click', () => {
+        if (previewStep) previewStep.style.display = 'none';
+        if (nameStep) nameStep.style.display = 'block';
+        if (nameError) nameError.style.display = 'none';
+        if (nameInput) {
+          nameInput.focus();
+          nameInput.select();
+        }
+      });
+    }
+
+    if (nameInput) {
+      nameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          generateCertificate();
+        } else {
+          if (nameError && nameError.style.display !== 'none') {
+            nameError.style.display = 'none';
+          }
+        }
+      });
+    }
+
+    if (printCertBtn) {
+      printCertBtn.addEventListener('click', printCertificate);
+    }
+
+    if (printCertBottomBtn) {
+      printCertBottomBtn.addEventListener('click', printCertificate);
+    }
+
+    certModal.addEventListener('click', (e) => {
+      if (e.target === certModal) {
+        closeCertModal(e);
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && certModal.classList.contains('is-active')) {
+        closeCertModal(e);
+      }
+    });
+
+    window.addEventListener('afterprint', () => {
+      document.body.classList.remove('print-personalized-cert');
     });
   }
 

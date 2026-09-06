@@ -4116,6 +4116,489 @@ body.capsule-modal-open {
 }
 
 /* --------------------------------------------------------------------------
+   19B. PERSONALIZED PARTICIPATION CERTIFICATE MODAL
+   -------------------------------------------------------------------------- */
+.cert-modal {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10010;
+  background: rgba(8, 5, 4, 0.94);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  overflow: hidden;
+}
+
+.cert-modal.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body.cert-modal-open {
+  overflow: hidden !important;
+}
+
+/* Step 1: Name Input Dialog */
+.cert-name-dialog {
+  position: relative;
+  width: 92%;
+  max-width: 520px;
+  background: radial-gradient(circle at 50% 15%, #2a1512 0%, #120907 100%);
+  border: 2px solid var(--gold-500);
+  border-radius: var(--radius-2xl);
+  padding: 2.5rem 2.25rem;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), 0 0 45px rgba(245, 184, 66, 0.2);
+  color: var(--text-primary);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.cert-dialog-header {
+  position: relative;
+  margin-bottom: 1.75rem;
+}
+
+.cert-dialog-emblem {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.cert-dialog-title {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  color: var(--gold-300);
+  margin-bottom: 0.4rem;
+  font-weight: 700;
+}
+
+.cert-dialog-sub {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.cert-modal-close {
+  position: absolute;
+  top: -1rem;
+  right: -1rem;
+  background: rgba(245, 184, 66, 0.15);
+  border: 1px solid var(--gold-400);
+  color: var(--gold-300);
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-size: 1rem;
+}
+
+.cert-modal-close:hover {
+  background: var(--gold-500);
+  color: #1a0f05;
+}
+
+.cert-dialog-body {
+  margin-bottom: 2rem;
+}
+
+.cert-input-group {
+  text-align: left;
+}
+
+.cert-input-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gold-300);
+  margin-bottom: 0.5rem;
+}
+
+.cert-text-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.85rem 1.15rem;
+  background: rgba(14, 7, 5, 0.85);
+  border: 1.5px solid rgba(245, 184, 66, 0.45);
+  border-radius: var(--radius-md);
+  color: #fff6de;
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  outline: none;
+  transition: all var(--transition-fast);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.cert-text-input:focus {
+  border-color: var(--gold-400);
+  box-shadow: 0 0 16px rgba(245, 184, 66, 0.35), inset 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.cert-error-msg {
+  color: #ff7676;
+  font-size: 0.84rem;
+  margin: 0.5rem 0 0 0;
+  font-weight: 500;
+}
+
+.cert-dialog-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Step 2: Preview Wrapper & Sticky Topbar */
+.cert-preview-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: rgba(10, 6, 5, 0.96);
+  z-index: 10;
+}
+
+.cert-preview-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.85rem 1.75rem;
+  background: rgba(22, 11, 8, 0.96);
+  border-bottom: 1px solid rgba(245, 184, 66, 0.35);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  flex-shrink: 0;
+  z-index: 20;
+  gap: 1rem;
+}
+
+.cert-preview-badge {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--gold-300);
+  display: block;
+}
+
+.cert-preview-sub {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.cert-preview-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.cert-preview-actions .btn-print-cert {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.35rem;
+  font-size: 0.92rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--gold-400), var(--gold-600));
+  color: #1a0f05;
+  border-radius: var(--radius-full);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(245, 184, 66, 0.35);
+  transition: all var(--transition-fast);
+}
+
+.cert-preview-actions .btn-print-cert:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245, 184, 66, 0.5);
+}
+
+.cert-preview-scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2.25rem 1.5rem 4.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* Ornate Certificate Card */
+.personalized-cert-card {
+  position: relative;
+  width: 100%;
+  max-width: 780px;
+  background: radial-gradient(circle at 50% 25%, #25120e 0%, #120806 100%);
+  border: 4px double var(--gold-500);
+  border-radius: var(--radius-2xl);
+  padding: 2.75rem 2.5rem 2.5rem;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9), 0 0 50px rgba(245, 184, 66, 0.16);
+  color: var(--text-primary);
+  box-sizing: border-box;
+}
+
+/* Ornamental Corners */
+.cert-corner {
+  position: absolute;
+  color: var(--gold-400);
+  font-size: 1.4rem;
+  line-height: 1;
+  user-select: none;
+  opacity: 0.85;
+}
+.corner-tl { top: 12px; left: 14px; }
+.corner-tr { top: 12px; right: 14px; }
+.corner-bl { bottom: 12px; left: 14px; }
+.corner-br { bottom: 12px; right: 14px; }
+
+.cert-inner-frame {
+  border: 1.5px dashed rgba(245, 184, 66, 0.4);
+  border-radius: var(--radius-lg);
+  padding: 2.25rem 2rem 2rem;
+  text-align: center;
+  position: relative;
+}
+
+.cert-header-section {
+  margin-bottom: 1.75rem;
+}
+
+.cert-ganesha-emblem {
+  font-size: 1.75rem;
+  margin-bottom: 0.35rem;
+  letter-spacing: 0.3em;
+}
+
+.cert-sanskrit-line {
+  font-family: var(--font-serif);
+  font-size: 0.88rem;
+  color: var(--gold-400);
+  letter-spacing: 0.06em;
+  margin-bottom: 0.6rem;
+}
+
+.cert-main-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3.2vw, 2.1rem);
+  font-weight: 800;
+  color: var(--gold-300);
+  letter-spacing: 0.04em;
+  line-height: 1.25;
+  margin-bottom: 0.85rem;
+  text-shadow: 0 2px 14px rgba(245, 184, 66, 0.35);
+}
+
+.cert-decorative-line {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--gold-400);
+  font-size: 0.9rem;
+}
+
+.cert-decorative-line .dec-bar {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold-400), transparent);
+}
+
+.cert-body-section {
+  margin-bottom: 1.85rem;
+}
+
+.cert-present-lead {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: #fff2d4;
+  margin-bottom: 0.75rem;
+}
+
+.cert-name-display-wrap {
+  margin: 0.85rem auto 1.15rem;
+  max-width: 600px;
+}
+
+.cert-recipient-name {
+  font-family: var(--font-display);
+  font-size: clamp(1.85rem, 4.2vw, 2.75rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: #fff6db;
+  text-shadow: 0 0 16px rgba(245, 184, 66, 0.6), 0 2px 10px rgba(0, 0, 0, 0.8);
+  margin-bottom: 0.35rem;
+  word-wrap: break-word;
+}
+
+.cert-name-underline {
+  width: 140px;
+  height: 2px;
+  margin: 0 auto;
+  background: linear-gradient(90deg, transparent, var(--gold-400), transparent);
+}
+
+.cert-participation-text {
+  font-size: 1rem;
+  color: #f7e6c4;
+  line-height: 1.6;
+  max-width: 580px;
+  margin: 0 auto 0.65rem;
+}
+
+.cert-celebration-text {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.cert-mantras-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.cert-mantra-pill {
+  display: inline-block;
+  background: rgba(245, 184, 66, 0.12);
+  border: 1px solid rgba(245, 184, 66, 0.35);
+  border-radius: var(--radius-full);
+  padding: 0.4rem 1.15rem;
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gold-300);
+  letter-spacing: 0.03em;
+}
+
+.cert-footer-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(245, 184, 66, 0.25);
+  gap: 1rem;
+}
+
+.cert-sig-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+}
+
+.cert-sig-line {
+  width: 130px;
+  height: 1px;
+  background: rgba(245, 184, 66, 0.5);
+  margin-bottom: 0.45rem;
+}
+
+.cert-sig-title {
+  font-family: var(--font-serif);
+  font-size: 0.85rem;
+  color: var(--gold-200);
+  font-weight: 600;
+  text-align: center;
+}
+
+.cert-sig-sub {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.cert-seal-block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.cert-seal-badge {
+  width: 66px;
+  height: 66px;
+  border-radius: var(--radius-full);
+  border: 2px dashed var(--gold-400);
+  background: radial-gradient(circle, rgba(245, 184, 66, 0.2) 0%, rgba(104, 21, 35, 0.5) 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 16px rgba(245, 184, 66, 0.3);
+}
+
+.seal-icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+.seal-text {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--gold-200);
+  letter-spacing: 0.08em;
+}
+
+.seal-year {
+  font-family: var(--font-serif);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff4cc;
+}
+
+.cert-bottom-controls {
+  display: none;
+  justify-content: center;
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .cert-name-dialog {
+    padding: 1.75rem 1.25rem;
+  }
+  .cert-preview-topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.75rem 1rem;
+    gap: 0.5rem;
+  }
+  .cert-preview-actions {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .personalized-cert-card {
+    padding: 1.5rem 1rem;
+  }
+  .cert-inner-frame {
+    padding: 1.5rem 0.85rem;
+  }
+  .cert-footer-section {
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+  .cert-bottom-controls {
+    display: flex;
+  }
+}
+
+/* --------------------------------------------------------------------------
    PRINT STYLESHEET: 7-PAGE COMMEMORATIVE KEEPSAKE BOOK
    Exact A4 Portrait pagination: 1 distinct sheet per commemorative page
    -------------------------------------------------------------------------- */
@@ -4140,14 +4623,31 @@ body.capsule-modal-open {
     print-color-adjust: exact !important;
   }
 
-  /* 2. Hide ALL outside sections, header, footer, modals to avoid accidental print pages */
-  body > *:not(#capsule-modal) {
+  /* 2. Hide elements depending on print mode */
+  body.print-personalized-cert > *:not(#personalized-cert-modal) {
     display: none !important;
     height: 0 !important;
     max-height: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
     overflow: hidden !important;
+  }
+  body.print-personalized-cert #capsule-modal {
+    display: none !important;
+    height: 0 !important;
+  }
+
+  body:not(.print-personalized-cert) > *:not(#capsule-modal) {
+    display: none !important;
+    height: 0 !important;
+    max-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+  body:not(.print-personalized-cert) #personalized-cert-modal {
+    display: none !important;
+    height: 0 !important;
   }
 
   header, footer, main, section, nav, aside, canvas,
@@ -4764,6 +5264,197 @@ body.capsule-modal-open {
     font-weight: 800 !important;
     color: #a16207 !important;
     margin-top: 2px !important;
+  }
+
+  /* ------------------------------------------------------------------------
+     PRINT STYLESHEET: PERSONALIZED PARTICIPATION CERTIFICATE ONLY
+     ------------------------------------------------------------------------ */
+  body.print-personalized-cert #capsule-modal,
+  body.print-personalized-cert .cert-preview-topbar,
+  body.print-personalized-cert .cert-bottom-controls,
+  body.print-personalized-cert .cert-name-dialog {
+    display: none !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  body.print-personalized-cert #personalized-cert-modal {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+
+  body.print-personalized-cert .cert-preview-wrapper {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    height: auto !important;
+    background: transparent !important;
+  }
+
+  body.print-personalized-cert .cert-preview-scroll-area {
+    display: block !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  body.print-personalized-cert .personalized-cert-card {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 250mm !important;
+    max-height: 275mm !important;
+    margin: 0 auto !important;
+    padding: 14mm 16mm !important;
+    background: #fffdf8 !important;
+    background-color: #fffdf8 !important;
+    color: #1f140e !important;
+    border: 4px double #c99238 !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    page-break-after: avoid !important;
+    break-after: avoid !important;
+  }
+
+  body.print-personalized-cert .cert-corner {
+    color: #c99238 !important;
+    font-size: 1.2rem !important;
+  }
+
+  body.print-personalized-cert .cert-inner-frame {
+    border: 1.5px dashed #c99238 !important;
+    padding: 12mm 12mm 10mm !important;
+    border-radius: 8px !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    box-sizing: border-box !important;
+  }
+
+  body.print-personalized-cert .cert-ganesha-emblem {
+    font-size: 1.5rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  body.print-personalized-cert .cert-sanskrit-line {
+    color: #92580c !important;
+    font-size: 0.85rem !important;
+    margin-bottom: 4px !important;
+  }
+
+  body.print-personalized-cert .cert-main-title {
+    color: #8b1e1e !important;
+    font-family: Georgia, 'Cinzel', serif !important;
+    font-size: 1.65rem !important;
+    font-weight: 800 !important;
+    text-shadow: none !important;
+    margin-bottom: 6px !important;
+  }
+
+  body.print-personalized-cert .cert-decorative-line {
+    color: #c99238 !important;
+  }
+
+  body.print-personalized-cert .cert-decorative-line .dec-bar {
+    background: #c99238 !important;
+  }
+
+  body.print-personalized-cert .cert-present-lead {
+    color: #3b281c !important;
+    font-family: Georgia, serif !important;
+    font-size: 1rem !important;
+    margin-bottom: 6px !important;
+  }
+
+  body.print-personalized-cert .cert-recipient-name {
+    color: #8b1e1e !important;
+    font-family: Georgia, 'Cinzel', serif !important;
+    font-size: 2.3rem !important;
+    font-weight: 800 !important;
+    text-shadow: none !important;
+    margin-bottom: 4px !important;
+  }
+
+  body.print-personalized-cert .cert-name-underline {
+    background: #c99238 !important;
+    height: 2px !important;
+    width: 140px !important;
+  }
+
+  body.print-personalized-cert .cert-participation-text {
+    color: #2b170c !important;
+    font-size: 0.95rem !important;
+    line-height: 1.5 !important;
+    margin: 8px auto 4px !important;
+  }
+
+  body.print-personalized-cert .cert-celebration-text {
+    color: #553e30 !important;
+    font-family: Georgia, serif !important;
+    font-size: 0.88rem !important;
+  }
+
+  body.print-personalized-cert .cert-mantra-pill {
+    background: #fdf8ed !important;
+    border: 1px solid #c99238 !important;
+    color: #92580c !important;
+    font-weight: 700 !important;
+    font-size: 0.84rem !important;
+  }
+
+  body.print-personalized-cert .cert-footer-section {
+    border-top: 1px solid #d4a34b !important;
+    padding-top: 8px !important;
+    flex-direction: row !important;
+    justify-content: space-between !important;
+  }
+
+  body.print-personalized-cert .cert-sig-line {
+    background: #92580c !important;
+  }
+
+  body.print-personalized-cert .cert-sig-title {
+    color: #781919 !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+  }
+
+  body.print-personalized-cert .cert-sig-sub {
+    color: #553e30 !important;
+    font-size: 0.72rem !important;
+  }
+
+  body.print-personalized-cert .cert-seal-badge {
+    border: 1.5px dashed #c99238 !important;
+    background: #fdf6e6 !important;
+    box-shadow: none !important;
+  }
+
+  body.print-personalized-cert .seal-text {
+    color: #8b1e1e !important;
+  }
+
+  body.print-personalized-cert .seal-year {
+    color: #92580c !important;
   }
 }
 
