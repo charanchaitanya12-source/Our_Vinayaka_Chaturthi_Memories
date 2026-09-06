@@ -8,6 +8,7 @@
  */
 
 import { memoriesData } from '../data/memoriesData.js';
+import { CloudSyncService } from '../services/cloudSyncService.js';
 
 // Default backup clone of the initial videos
 const DEFAULT_SAMPLE_VIDEOS = JSON.parse(JSON.stringify(memoriesData.videos));
@@ -209,8 +210,15 @@ export class VideoMemoriesController {
     // 0. Auto-import any video sync data present in URL hash or parameters (#videoSync=...)
     this.checkForVideoUrlSync();
 
-    // 1. Restore persistent state (deleted videos + localStorage sync + IndexedDB)
+    // 1. Restore persistent state (deleted videos + localStorage sync + IndexedDB + Cloud Database)
     await this.restorePersistedVideos();
+
+    // 1b. Listen for real-time cloud updates so videos added from other phones/computers immediately appear
+    CloudSyncService.subscribeVideos((cloudVideos) => {
+      if (Array.isArray(cloudVideos) && cloudVideos.length > 0) {
+        this.syncFromCloudList(cloudVideos, false);
+      }
+    });
 
     // 2. Render initial view
     this.render();
@@ -403,7 +411,14 @@ export class VideoMemoriesController {
 
   async restorePersistedVideos() {
     try {
-      // A. Filter out any videos that were deleted by user
+      // A. Check Cloud Database first for multi-device sync
+      const cloudVideos = await CloudSyncService.fetchVideos();
+      if (cloudVideos && Array.isArray(cloudVideos) && cloudVideos.length > 0) {
+        this.syncFromCloudList(cloudVideos, false);
+        return;
+      }
+
+      // B. Filter out any videos that were deleted by user
       const deletedJson = localStorage.getItem('bappa_deleted_video_ids');
       if (deletedJson) {
         const deletedIds = JSON.parse(deletedJson);
@@ -812,8 +827,9 @@ export class VideoMemoriesController {
     // 3. Remove from IndexedDB if it was custom
     await this.videoStore.deleteVideo(vidId);
 
-    // 4. Update localStorage
+    // 4. Update localStorage & Cloud Database
     this.saveToLocalStorage();
+    CloudSyncService.saveVideos(this.getCleanVideoList());
 
     // 5. Update UI
     this.render();
@@ -834,6 +850,8 @@ export class VideoMemoriesController {
 
     // 3. Restore default sample list
     memoriesData.videos = JSON.parse(JSON.stringify(DEFAULT_SAMPLE_VIDEOS));
+    this.saveToLocalStorage();
+    CloudSyncService.saveVideos(this.getCleanVideoList());
 
     // 4. Re-render UI
     this.render();
@@ -1081,8 +1099,9 @@ export class VideoMemoriesController {
 
     memoriesData.videos.push(newVideo);
 
-    // Persist to localStorage for immediate multi-device sync availability
+    // Persist to localStorage and Cloud Database for immediate multi-device sync
     this.saveToLocalStorage();
+    CloudSyncService.saveVideos(this.getCleanVideoList());
 
     // Close modal and reset form
     this.closeAddModal();
@@ -1334,8 +1353,9 @@ export class VideoMemoriesController {
 
     memoriesData.videos.push(newVideo);
 
-    // Persist to localStorage for multi-device sync
+    // Persist to localStorage and Cloud Database for multi-device sync
     this.saveToLocalStorage();
+    CloudSyncService.saveVideos(this.getCleanVideoList());
 
     // Reset inline form
     this.resetInlineForm();
@@ -1343,8 +1363,8 @@ export class VideoMemoriesController {
     // Re-render video grid
     this.render();
 
-    // Show celebratory feedback toast with cross-device tip
-    this.showToast(`🎬 Added "${newVideo.title}"! Click "📲 Sync to Phone" above to open on mobile.`);
+    // Show celebratory feedback toast with cross-device confirmation
+    this.showToast(`🎬 Added "${newVideo.title}"! Synced live across all devices.`);
 
     // Smoothly scroll down to the newly created video card
     setTimeout(() => {
@@ -1623,6 +1643,32 @@ export class VideoMemoriesController {
     this.render();
     if (fromUrl) {
       this.showToast("🎉 Videos synced & saved successfully on your phone! ✨");
+    }
+  }
+
+  syncFromCloudList(cloudList, showToastNotice = false) {
+    if (!Array.isArray(cloudList) || cloudList.length === 0) return;
+
+    memoriesData.videos = cloudList.map(item => {
+      const existing = memoriesData.videos.find(v => v.id === item.id);
+      return {
+        id: item.id,
+        title: item.title || 'Celebration Video',
+        desc: item.desc || 'Our Vinayaka Chaturthi video memory.',
+        thumb: item.thumb || 'assets/images/video_thumb_visarjan_immersion.jpg',
+        duration: item.duration || '00:30',
+        videoUrl: (existing && existing.videoUrl && existing.videoUrl.startsWith('blob:')) 
+          ? existing.videoUrl 
+          : (item.videoUrl || ''),
+        customFileName: item.customFileName || (existing ? existing.customFileName : ''),
+        isCustom: item.isCustom !== undefined ? item.isCustom : true
+      };
+    });
+
+    this.saveToLocalStorage();
+    this.render();
+    if (showToastNotice) {
+      this.showToast("☁️ Videos updated from live cloud sync!");
     }
   }
 

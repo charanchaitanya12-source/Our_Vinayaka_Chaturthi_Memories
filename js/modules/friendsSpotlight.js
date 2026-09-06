@@ -90,19 +90,24 @@ export class FriendsController {
 
   purgeLegacyCaches() {
     try {
-      for (let i = localStorage.length - 1; i >= 0; i--) {
-        const key = localStorage.key(i);
-        if (key && (key.includes('gang') || key.includes('friend') || key.startsWith('vinayaka_'))) {
-          localStorage.removeItem(key);
-        }
-      }
+      // Only purge deprecated legacy keys (v1 to v5), preserve active v14 and cloud sync keys
+      const legacyKeys = ['vinayaka_gang_v1', 'vinayaka_gang_v2', 'vinayaka_saved_gang_v1', 'vinayaka_saved_gang_v2'];
+      legacyKeys.forEach(k => localStorage.removeItem(k));
     } catch (e) {}
   }
 
   async init() {
     this.purgeLegacyCaches();
-    this.loadFriends();
+    await this.loadFriends();
     this.render();
+
+    // Subscribe to live real-time gang updates across all devices
+    CloudSyncService.subscribeGang((gang) => {
+      if (Array.isArray(gang) && gang.length > 0) {
+        this.friends = gang;
+        this.render();
+      }
+    });
 
     // Re-render when external refresh requested
     window.addEventListener('refresh-friends', () => {
@@ -116,7 +121,26 @@ export class FriendsController {
 
   markDeleted(id) {}
 
-  loadFriends() {
+  async loadFriends() {
+    // 1. Fetch from Cloud Database first (multi-device source of truth)
+    const cloudGang = await CloudSyncService.fetchGang();
+    if (cloudGang && Array.isArray(cloudGang.friends) && cloudGang.friends.length > 0) {
+      this.friends = cloudGang.friends;
+      return;
+    }
+
+    // 2. Check local storage cache
+    const stored = localStorage.getItem(this.storageKey);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          this.friends = parsed;
+          return;
+        }
+      } catch (e) {}
+    }
+
     this.friends = (memoriesData.friends || []).map(f => {
       if (f.id === 'friend-sai-nikhil' || (f.name && f.name.toLowerCase().includes('sai nikhil'))) {
         return {

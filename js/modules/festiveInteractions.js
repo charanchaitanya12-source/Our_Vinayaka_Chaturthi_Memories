@@ -9,6 +9,7 @@
  */
 
 import { memoriesData } from '../data/memoriesData.js';
+import { CloudSyncService } from '../services/cloudSyncService.js';
 
 export class FestiveInteractions {
   constructor(audioEngine, particleEngine) {
@@ -39,12 +40,28 @@ export class FestiveInteractions {
     };
     updateDisplays();
 
+    // Fetch live count from Cloud Database
+    CloudSyncService.fetchDiyas().then(count => {
+      if (typeof count === 'number') {
+        litCount = count;
+        updateDisplays();
+      }
+    });
+
+    // Subscribe to live diya increments across all devices
+    CloudSyncService.subscribeDiyas((count) => {
+      if (typeof count === 'number') {
+        litCount = count;
+        updateDisplays();
+      }
+    });
+
     document.querySelectorAll('.btn-light-diya').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         const diyaCard = btn.closest('.diya-interactive-widget');
         const flame = diyaCard ? diyaCard.querySelector('.diya-flame-glow') : null;
         
-        litCount++;
+        litCount = await CloudSyncService.incrementDiyas();
         localStorage.setItem(this.diyaKey, litCount.toString());
         updateDisplays();
 

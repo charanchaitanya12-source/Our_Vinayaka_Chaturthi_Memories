@@ -12,17 +12,9 @@
   <!-- Favicon -->
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪔</text></svg>" />
 
-  <!-- Cache Clear Guard for Gang Data -->
-  <script>
-    try {
-      for (let i = localStorage.length - 1; i >= 0; i--) {
-        const k = localStorage.key(i);
-        if (k && (k.startsWith('vinayaka_') || k.includes('gang') || k.includes('friend'))) {
-          localStorage.removeItem(k);
-        }
-      }
-    } catch (e) {}
-  </script>
+  <!-- Firebase App & Realtime Database SDK for Cross-Device Cloud Sync -->
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-database-compat.js"></script>
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="css/design-system.css?v=4.4" />
@@ -86,6 +78,12 @@
           </div>
           <input type="range" id="audio-volume" class="audio-volume-slider" min="0" max="1" step="0.05" value="0.6" title="Volume Slider" />
         </div>
+
+        <!-- Multi-Device Realtime Cloud Sync Status Button -->
+        <button id="btn-cloud-sync-status" class="btn-cloud-sync local-only" title="Multi-Device Cloud Sync: View sync status or connect cloud database" aria-label="Cloud Sync Status">
+          <span class="cloud-sync-dot local-only"></span>
+          <span id="cloud-sync-badge-text">Multi-Device Sync ☁️</span>
+        </button>
 
         <!-- Share Memories Button in Header -->
         <button id="btn-header-share" class="btn-header-share btn-share-trigger" title="Share Memories • మన జ్ఞాపకాలను పంచుకోండి" aria-label="Share Memories">
@@ -625,6 +623,9 @@
           <button id="btn-add-video-main" class="btn-primary btn-add-video-banner" title="Add a new celebration video clip to Our Memories">
             <span>➕ Add New Video</span>
           </button>
+          <button id="btn-sync-videos-cloud" class="btn-primary" style="background: linear-gradient(135deg, #10b981, #059669); color: #fff; font-weight: 700;" title="Multi-Device Cloud Sync: Sync added videos and memories across all phones and computers">
+            <span>☁️ Multi-Device Cloud Sync</span>
+          </button>
           <button id="btn-sync-videos-qr" class="btn-primary" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: #000; font-weight: 700;" title="Sync all added videos to your phone via QR Code or Link">
             <span>📲 Sync to Phone</span>
           </button>
@@ -640,7 +641,7 @@
         </div>
 
         <div class="video-replace-guide-pill">
-          <span>💡 <strong>Multi-Device Tip:</strong> Videos added on this device stay saved in your browser. Click <strong>"📲 Sync to Phone"</strong> to open them instantly on your phone with a QR code or direct link, or click <strong>"💾 Export to Website Code"</strong> to save permanently for all visitors!</span>
+          <span>💡 <strong>Live Multi-Device Sync:</strong> Videos & memories added here sync directly to the cloud and become visible to everyone on any phone, tablet, or laptop! Click <strong>"☁️ Multi-Device Cloud Sync"</strong> to view status or connect your Firebase database.</span>
         </div>
       </div>
 
@@ -1385,7 +1386,96 @@
     </div>
   </aside>
 
+  <!-- =========================================================================
+       15. MULTI-DEVICE CLOUD SYNC MANAGER MODAL
+       ========================================================================= -->
+  <div id="cloud-sync-modal" class="customizer-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="cloud-modal-title">
+    <div class="customizer-modal-card cloud-modal-card">
+      <div class="customizer-modal-header">
+        <div>
+          <span class="customizer-badge">☁️ Multi-Device Cloud Sync</span>
+          <h3 id="cloud-modal-title" class="customizer-title" style="margin-top: 0.25rem;">Live Cloud Synchronization</h3>
+          <p class="customizer-subtitle">Ensure every video, memory wall note, and gang update you add is visible to everyone on any phone, tablet, or laptop.</p>
+        </div>
+        <button type="button" id="cloud-sync-close" class="customizer-close-btn" aria-label="Close Cloud Sync Settings">&times;</button>
+      </div>
+
+      <div class="customizer-modal-body">
+        <!-- Status Overview Card -->
+        <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <span id="cloud-modal-status-tag" class="cloud-status-badge info">⚪ Local Storage Mode</span>
+            <span style="font-size: 0.78rem; color: var(--text-dim);">Last Synced: <span id="cloud-modal-last-sync" style="color: var(--text-secondary);">Never</span></span>
+          </div>
+          <p id="cloud-modal-status-details" style="font-size: 0.86rem; color: var(--text-secondary); margin-top: 0.4rem; line-height: 1.5;">
+            Currently, any added videos or memory wall posts stay saved in this browser. Connect a free Firebase Realtime Database below so everyone visiting can see your updates instantly!
+          </p>
+          <div style="margin-top: 0.85rem; display: flex; gap: 0.65rem; flex-wrap: wrap;">
+            <button type="button" id="btn-push-local-to-cloud" class="btn-primary" style="font-size: 0.82rem; padding: 0.45rem 1.1rem;">
+              ⬆️ <span>Push Local Memories to Cloud</span>
+            </button>
+            <button type="button" id="btn-clear-cloud-config" class="btn-secondary" style="font-size: 0.82rem; padding: 0.45rem 1rem; color: #ff9e9e; border-color: rgba(255, 100, 100, 0.3);">
+              <span>Disconnect</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Configuration Form -->
+        <form id="cloud-config-form">
+          <h4 style="font-size: 0.95rem; color: var(--gold-300); margin-bottom: 0.75rem; font-family: var(--font-display);">
+            Firebase Realtime Database Credentials
+          </h4>
+          <div style="margin-bottom: 0.75rem;">
+            <label class="form-label" for="cloud-cfg-dburl">Database URL <span style="color: var(--gold-400);">*</span></label>
+            <input type="url" id="cloud-cfg-dburl" class="form-input" placeholder="https://your-project-default-rtdb.firebaseio.com" />
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 0.75rem;">
+            <div>
+              <label class="form-label" for="cloud-cfg-projectid">Project ID</label>
+              <input type="text" id="cloud-cfg-projectid" class="form-input" placeholder="e.g. bappa-memories-2026" />
+            </div>
+            <div>
+              <label class="form-label" for="cloud-cfg-apikey">API Key</label>
+              <input type="text" id="cloud-cfg-apikey" class="form-input" placeholder="AIzaSy..." />
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1rem;">
+            <button type="button" id="btn-test-cloud-config" class="btn-secondary" style="font-size: 0.85rem; padding: 0.5rem 1.15rem;">
+              🔍 Test Connection
+            </button>
+            <button type="submit" id="btn-save-cloud-config" class="btn-primary" style="font-size: 0.85rem; padding: 0.5rem 1.35rem;">
+              💾 Save & Connect Cloud
+            </button>
+          </div>
+
+          <div id="cloud-config-feedback" class="cloud-feedback-box"></div>
+        </form>
+
+        <!-- 1-Minute Quick Setup Guide -->
+        <div class="cloud-guide-card">
+          <h5 style="color: var(--gold-400); font-size: 0.88rem; margin-bottom: 0.65rem; display: flex; align-items: center; gap: 0.4rem;">
+            <span>🚀</span> How to Connect a Free Firebase Database in 60 Seconds:
+          </h5>
+          <div class="cloud-guide-step">
+            <span class="cloud-guide-num">1</span>
+            <span>Go to <a href="https://console.firebase.google.com" target="_blank" rel="noopener" style="color: var(--gold-300); text-decoration: underline;">console.firebase.google.com</a> and create a free project.</span>
+          </div>
+          <div class="cloud-guide-step">
+            <span class="cloud-guide-num">2</span>
+            <span>In the left sidebar, click <strong>Build &rarr; Realtime Database</strong> &rarr; click <strong>Create Database</strong> &rarr; choose <strong>Start in test mode</strong>.</span>
+          </div>
+          <div class="cloud-guide-step">
+            <span class="cloud-guide-num">3</span>
+            <span>Copy the <strong>Database URL</strong> (starts with <code>https://...firebaseio.com</code>), paste it above, and click <strong>Save & Connect Cloud</strong>!</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Main JavaScript App Entrypoint (ES Module) -->
-  <script type="module" src="js/main.js?v=6.1"></script>
+  <script type="module" src="js/main.js?v=6.2"></script>
 </body>
 </html>

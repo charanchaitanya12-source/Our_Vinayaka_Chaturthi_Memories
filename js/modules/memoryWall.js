@@ -12,6 +12,7 @@
  */
 
 import { memoriesData } from '../data/memoriesData.js';
+import { CloudSyncService } from '../services/cloudSyncService.js';
 
 export class MemoryWallController {
   constructor() {
@@ -39,8 +40,8 @@ export class MemoryWallController {
     this.init();
   }
 
-  init() {
-    this.loadPosts();
+  async init() {
+    await this.loadPosts();
     this.initStickerPicker();
     this.initPhotoUpload();
     this.initCharacterCounter();
@@ -48,16 +49,34 @@ export class MemoryWallController {
     this.initForm();
     this.initExportImport();
     this.render();
+
+    // Listen for live real-time cloud updates across all devices
+    CloudSyncService.subscribeMemories((cloudPosts) => {
+      const demoIds = new Set(['msg-1', 'msg-2', 'msg-3', 'msg-4', 'msg-5']);
+      if (Array.isArray(cloudPosts)) {
+        this.posts = cloudPosts.filter(p => p && !demoIds.has(p.id) && !p.isDemo);
+        this.render();
+      }
+    });
   }
 
-  loadPosts() {
+  async loadPosts() {
     const demoIds = new Set(['msg-1', 'msg-2', 'msg-3', 'msg-4', 'msg-5']);
+
+    // 1. Fetch from Cloud Database first (multi-device source of truth)
+    const cloudPosts = await CloudSyncService.fetchMemories();
+    if (cloudPosts && Array.isArray(cloudPosts) && cloudPosts.length > 0) {
+      this.posts = cloudPosts.filter(p => p && !demoIds.has(p.id) && !p.isDemo);
+      this.render();
+      return;
+    }
+
+    // 2. Fallback to localStorage
     const saved = localStorage.getItem(this.storageKey);
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed)) {
-          // Remove all demo messages while preserving any real user-submitted posts
           this.posts = parsed.filter(p => p && !demoIds.has(p.id) && !p.isDemo);
         } else {
           this.posts = [];
@@ -74,8 +93,9 @@ export class MemoryWallController {
   savePosts() {
     try {
       localStorage.setItem(this.storageKey, JSON.stringify(this.posts));
+      CloudSyncService.saveMemories(this.posts);
     } catch (e) {
-      console.warn('Could not save memories to localStorage:', e);
+      console.warn('Could not save memories:', e);
     }
   }
 
