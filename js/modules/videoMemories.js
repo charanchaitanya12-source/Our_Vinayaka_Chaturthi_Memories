@@ -411,12 +411,21 @@ export class VideoMemoriesController {
 
   async restorePersistedVideos() {
     try {
-      // 0. Ensure all canonical festival videos are visible across existing browser sessions
-      if (localStorage.getItem('bappa_videos_catalog_v65') !== 'true') {
+      // 0. Ensure all canonical festival videos are visible across existing browser sessions and clear legacy duplicate cache
+      if (localStorage.getItem('bappa_videos_dedup_v66') !== 'true') {
         localStorage.removeItem('bappa_deleted_video_ids');
         localStorage.removeItem('bappa_saved_videos_v2');
-        localStorage.setItem('bappa_videos_catalog_v65', 'true');
+        localStorage.setItem('bappa_videos_dedup_v66', 'true');
       }
+
+      // Helper to match existing videos by ID, filename, or title to prevent duplicate cards
+      const findExistingVideo = (saved) => {
+        return memoriesData.videos.find(v => 
+          v.id === saved.id ||
+          (v.customFileName && saved.customFileName && v.customFileName.toLowerCase().trim() === saved.customFileName.toLowerCase().trim()) ||
+          (v.title && saved.title && v.title.toLowerCase().trim() === saved.title.toLowerCase().trim())
+        );
+      };
 
       // A. Check Cloud Database first for multi-device sync
       const cloudVideos = await CloudSyncService.fetchVideos();
@@ -441,16 +450,14 @@ export class VideoMemoriesController {
           const savedList = JSON.parse(storedJson);
           if (Array.isArray(savedList) && savedList.length > 0) {
             savedList.forEach(saved => {
-              let existing = memoriesData.videos.find(v => v.id === saved.id);
+              let existing = findExistingVideo(saved);
               if (existing) {
                 if (saved.videoUrl && !saved.videoUrl.startsWith('blob:')) existing.videoUrl = saved.videoUrl;
                 if (saved.thumb) existing.thumb = saved.thumb;
                 if (saved.duration) existing.duration = saved.duration;
-                if (saved.title) existing.title = saved.title;
-                if (saved.desc) existing.desc = saved.desc;
                 if (saved.customFileName) existing.customFileName = saved.customFileName;
                 existing.isCustom = true;
-              } else {
+              } else if (saved.customFileName && saved.title) {
                 let fallbackUrl = saved.videoUrl || '';
                 if ((!fallbackUrl || fallbackUrl.startsWith('blob:')) && saved.customFileName) {
                   fallbackUrl = `assets/videos/${saved.customFileName}`;
@@ -477,7 +484,7 @@ export class VideoMemoriesController {
       const savedList = await this.videoStore.getAllVideos();
       if (savedList && savedList.length > 0) {
         savedList.forEach(saved => {
-          let existing = memoriesData.videos.find(v => v.id === saved.id);
+          let existing = findExistingVideo(saved);
           let videoUrl = '';
           if (saved.blob instanceof Blob) {
             videoUrl = URL.createObjectURL(saved.blob);
@@ -491,9 +498,9 @@ export class VideoMemoriesController {
             if (videoUrl) existing.videoUrl = videoUrl;
             existing.thumb = saved.thumb || existing.thumb;
             existing.duration = saved.duration || existing.duration;
-            existing.customFileName = saved.customFileName || existing.customFileName || 'Custom Video';
+            existing.customFileName = saved.customFileName || existing.customFileName;
             existing.isCustom = true;
-          } else {
+          } else if (saved.customFileName && saved.title) {
             // Newly added video from past session
             memoriesData.videos.push({
               id: saved.id,
@@ -515,6 +522,30 @@ export class VideoMemoriesController {
 
   render() {
     if (!this.container) return;
+
+    // Strict deduplication by filename, title, and ID to guarantee zero repeated video cards
+    if (Array.isArray(memoriesData.videos)) {
+      const seenFiles = new Set();
+      const seenTitles = new Set();
+      const seenIds = new Set();
+      const uniqueVideos = [];
+
+      for (const vid of memoriesData.videos) {
+        const fileKey = (vid.customFileName || (vid.videoUrl ? vid.videoUrl.split('/').pop() : '')).toLowerCase().trim();
+        const titleKey = (vid.title || '').toLowerCase().trim();
+        const idKey = (vid.id || '').trim();
+
+        if (seenIds.has(idKey)) continue;
+        if (fileKey && seenFiles.has(fileKey)) continue;
+        if (titleKey && seenTitles.has(titleKey)) continue;
+
+        seenIds.add(idKey);
+        if (fileKey) seenFiles.add(fileKey);
+        if (titleKey) seenTitles.add(titleKey);
+        uniqueVideos.push(vid);
+      }
+      memoriesData.videos = uniqueVideos;
+    }
 
     if (!memoriesData.videos || memoriesData.videos.length === 0) {
       this.container.innerHTML = `
