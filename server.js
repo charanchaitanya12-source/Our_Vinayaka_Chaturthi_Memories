@@ -30,43 +30,9 @@ if (!fs.existsSync(DATA_DIR)) {
   fs.mkdirSync(DATA_DIR, { recursive: true });
 }
 
-// Seed default initial memories if file doesn't exist
+// Ensure memories storage file exists
 if (!fs.existsSync(MEMORIES_FILE)) {
-  const initialMemories = [
-    {
-      id: 'mem_init_1',
-      name: 'Charan & Gang',
-      author: 'Charan & Gang',
-      relation: 'Street Family',
-      role: 'Street Family',
-      memoryType: 'Favorite Moment',
-      category: 'Favorite Moment',
-      sticker: '🙏',
-      message: 'ఈ ఉత్సవం మన గల్లీలో తెచ్చిన ఆనందం, మన స్నేహం ఎప్పటికీ చిరస్మరణీయం! గణపతి బప్పా మోరియా! Wishing peace, unity, and endless happiness to everyone who celebrated with us.',
-      photo: null,
-      photo_url: null,
-      createdAt: Date.now() - 3600000 * 24 * 2,
-      date: 'Sep 4, 2026',
-      likes: 12
-    },
-    {
-      id: 'mem_init_2',
-      name: 'Pandal Youth',
-      author: 'Pandal Youth',
-      relation: 'The Gang',
-      role: 'The Gang',
-      memoryType: 'Funniest Incident',
-      category: 'Funniest Incident',
-      sticker: '🥁',
-      message: 'నిమజ్జనం రోజు డప్పుల మోత, తీన్‌మార్ డాన్సులు, గల్లీ మొత్తం ఒకే కుటుంబంలా ఆడిన ఆటలు ఎప్పటికీ మర్చిపోలేము! Ganpati Bappa Morya!',
-      photo: null,
-      photo_url: null,
-      createdAt: Date.now() - 3600000 * 12,
-      date: 'Sep 6, 2026',
-      likes: 8
-    }
-  ];
-  fs.writeFileSync(MEMORIES_FILE, JSON.stringify(initialMemories, null, 2), 'utf-8');
+  fs.writeFileSync(MEMORIES_FILE, '[]', 'utf-8');
 }
 
 // Active Server-Sent Events client connections

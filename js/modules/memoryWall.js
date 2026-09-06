@@ -58,14 +58,27 @@ export class MemoryWallController {
     // Render initial loading state immediately
     this.render();
 
+    // Clean out any cached legacy demo messages from localStorage
+    try {
+      ['vinayaka_chat_memories_wall_v3', 'vinayaka_chat_memories_wall_v2', 'vinayaka_chat_memories_wall_v1'].forEach(k => {
+        const item = localStorage.getItem(k);
+        if (item) {
+          const parsed = JSON.parse(item);
+          if (Array.isArray(parsed)) {
+            const cleaned = parsed.filter(p => !this.isDemoPost(p));
+            localStorage.setItem(k, JSON.stringify(cleaned));
+          }
+        }
+      });
+    } catch (e) {}
+
     // Load posts from shared cloud database
     await this.loadPosts();
 
     // Listen for live real-time cloud updates across all connected devices
     CloudSyncService.subscribeMemories((cloudPosts) => {
-      const demoIds = new Set(['msg-1', 'msg-2', 'msg-3', 'msg-4', 'msg-5']);
       if (Array.isArray(cloudPosts)) {
-        this.posts = cloudPosts.filter(p => p && !demoIds.has(p.id) && !p.isDemo);
+        this.posts = cloudPosts.filter(p => !this.isDemoPost(p));
         this.isLoading = false;
         this.render();
       }
@@ -120,16 +133,25 @@ export class MemoryWallController {
     }, duration);
   }
 
+  isDemoPost(p) {
+    if (!p) return true;
+    if (p.isDemo) return true;
+    const id = String(p.id || '');
+    if (id.startsWith('msg-') || id.startsWith('mem_init_') || id.includes('demo') || id.includes('init')) {
+      return true;
+    }
+    return false;
+  }
+
   async loadPosts() {
     this.isLoading = true;
     this.render();
 
     try {
-      const demoIds = new Set(['msg-1', 'msg-2', 'msg-3', 'msg-4', 'msg-5']);
       const cloudPosts = await CloudSyncService.fetchMemories();
 
       if (cloudPosts && Array.isArray(cloudPosts)) {
-        this.posts = cloudPosts.filter(p => p && !demoIds.has(p.id) && !p.isDemo);
+        this.posts = cloudPosts.filter(p => !this.isDemoPost(p));
       } else {
         this.posts = [];
       }

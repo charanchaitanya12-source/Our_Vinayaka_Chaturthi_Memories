@@ -17,26 +17,8 @@ ADMIN_PASSCODE = 'chaturthi2026'
 os.makedirs(DATA_DIR, exist_ok=True)
 
 if not os.path.exists(MEMORIES_FILE):
-    initial = [
-        {
-            "id": "mem_init_1",
-            "name": "Charan & Gang",
-            "author": "Charan & Gang",
-            "relation": "Street Family",
-            "role": "Street Family",
-            "memoryType": "Favorite Moment",
-            "category": "Favorite Moment",
-            "sticker": "🙏",
-            "message": "ఈ ఉత్సవం మన గల్లీలో తెచ్చిన ఆనందం, మన స్నేహం ఎప్పటికీ చిరస్మరణీయం! గణపతి బప్పా మోరియా! Wishing peace, unity, and endless happiness to everyone who celebrated with us.",
-            "photo": None,
-            "photo_url": None,
-            "createdAt": int(time.time() * 1000) - 3600000 * 24 * 2,
-            "date": "Sep 4, 2026",
-            "likes": 12
-        }
-    ]
     with open(MEMORIES_FILE, 'w', encoding='utf-8') as f:
-        json.dump(initial, f, indent=2, ensure_ascii=False)
+        json.dump([], f, indent=2)
 
 def read_memories():
     try:

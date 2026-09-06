@@ -249,10 +249,23 @@ export class CloudSyncService {
      ========================================================================= */
 
   /**
+   * Identifies any legacy demo or sample posts
+   */
+  static isDemoPost(p) {
+    if (!p) return true;
+    if (p.isDemo) return true;
+    const id = String(p.id || '');
+    if (id.startsWith('msg-') || id.startsWith('mem_init_') || id.includes('demo') || id.includes('init')) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Normalizes memory object structure for backwards/forwards compatibility
    */
   static normalizeMemory(m) {
-    if (!m) return null;
+    if (!m || this.isDemoPost(m)) return null;
     const author = m.name || m.author || 'గల్లీ మిత్రుడు (Well Wisher)';
     const role = m.relation || m.role || 'Street Family';
     const cat = m.memoryType || m.category || 'Favorite Moment';
@@ -290,15 +303,13 @@ export class CloudSyncService {
         if (val) {
           let list = [];
           if (Array.isArray(val)) {
-            list = val.filter(Boolean).map(m => this.normalizeMemory(m));
+            list = val.filter(m => m && !this.isDemoPost(m)).map(m => this.normalizeMemory(m)).filter(Boolean);
           } else if (typeof val === 'object') {
-            list = Object.values(val).map(m => this.normalizeMemory(m));
+            list = Object.values(val).filter(m => m && !this.isDemoPost(m)).map(m => this.normalizeMemory(m)).filter(Boolean);
           }
-          if (list.length > 0) {
-            list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
-            localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(list));
-            return list;
-          }
+          list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(list));
+          return list;
         }
       } catch (err) {
         console.warn('CloudSync fetchMemories (Firebase) error:', err);
@@ -311,7 +322,10 @@ export class CloudSyncService {
       if (resp.ok) {
         const data = await resp.json();
         if (data && Array.isArray(data.memories)) {
-          const normalized = data.memories.map(m => this.normalizeMemory(m));
+          const normalized = data.memories
+            .filter(m => m && !this.isDemoPost(m))
+            .map(m => this.normalizeMemory(m))
+            .filter(Boolean);
           normalized.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
           localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(normalized));
           return normalized;
@@ -326,8 +340,14 @@ export class CloudSyncService {
       const stored = localStorage.getItem(this.CACHE_KEYS.MEMORIES);
       if (stored) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          return parsed.map(m => this.normalizeMemory(m)).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+        if (Array.isArray(parsed)) {
+          const cleaned = parsed
+            .filter(m => m && !this.isDemoPost(m))
+            .map(m => this.normalizeMemory(m))
+            .filter(Boolean)
+            .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(cleaned));
+          return cleaned;
         }
       }
     } catch (e) {}
