@@ -94,8 +94,8 @@ const MIME_TYPES = {
 };
 
 const server = http.createServer((req, res) => {
-  const parsedUrl = url.parse(req.url, true);
-  let pathname = decodeURIComponent(parsedUrl.pathname);
+  const reqUrl = new URL(req.url, `http://${req.headers.host || 'localhost'}`);
+  let pathname = decodeURIComponent(reqUrl.pathname);
 
   // Set global CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -105,6 +105,13 @@ const server = http.createServer((req, res) => {
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
     res.end();
+    return;
+  }
+
+  // Healthcheck endpoint for Render / monitoring
+  if ((pathname === '/healthz' || pathname === '/health' || pathname === '/api/health') && req.method === 'GET') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'ok', time: new Date().toISOString() }));
     return;
   }
 
@@ -305,14 +312,16 @@ const server = http.createServer((req, res) => {
         'Content-Type': contentType
       });
       fileStream.pipe(res);
-      const isCode = ['.html', '.js', '.css', '.json'].includes(ext);
-      res.writeHead(200, {
-        'Content-Length': totalSize,
-        'Content-Type': contentType,
-        'Cache-Control': isCode ? 'no-cache, no-store, must-revalidate' : 'public, max-age=86400'
-      });
-      fs.createReadStream(filePath).pipe(res);
+      return;
     }
+
+    const isCode = ['.html', '.js', '.css', '.json'].includes(ext);
+    res.writeHead(200, {
+      'Content-Length': totalSize,
+      'Content-Type': contentType,
+      'Cache-Control': isCode ? 'no-cache, no-store, must-revalidate' : 'public, max-age=86400'
+    });
+    fs.createReadStream(filePath).pipe(res);
   });
 });
 
