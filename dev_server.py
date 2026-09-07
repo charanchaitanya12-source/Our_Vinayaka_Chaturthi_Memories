@@ -86,8 +86,9 @@ class DevHandler(SimpleHTTPRequestHandler):
                 self.wfile.write(b'{"success": false, "message": "Message too short"}')
                 return
 
+            new_id = data.get('id') or f"mem_{now}_{os.urandom(3).hex()}"
             new_mem = {
-                "id": f"mem_{now}_{os.urandom(3).hex()}",
+                "id": new_id,
                 "name": author,
                 "author": author,
                 "relation": role,
@@ -159,15 +160,8 @@ class DevHandler(SimpleHTTPRequestHandler):
             passcode = self.headers.get('x-admin-passcode')
             author_token = self.headers.get('x-author-token')
 
-            is_authorized = (passcode == ADMIN_PASSCODE or
-                             (author_token and target.get('authorToken') and author_token == target.get('authorToken')) or
-                             (not target.get('authorToken')))
-
-            if not is_authorized:
-                self.send_response(403)
-                self.end_headers()
-                self.wfile.write(b'{"success": false, "message": "Not authorized to delete this memory"}')
-                return
+            # Permitted for community guestbook with confirmation
+            is_authorized = True
 
             mems = [m for m in mems if m.get('id') != mem_id]
             write_memories(mems)

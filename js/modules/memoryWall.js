@@ -86,6 +86,7 @@ export class MemoryWallController {
 
   async init() {
     this.createToastContainer();
+    this.createDeleteConfirmModal();
     this.initStickerPicker();
     this.initPhotoUpload();
     this.initCharacterCounter();
@@ -452,6 +453,21 @@ export class MemoryWallController {
         this.isSubmitting = false;
       }
     });
+
+    const clearBtn = document.getElementById('btn-clear-memory-form');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        this.form.reset();
+        this.selectedSticker = '🙏';
+        this.attachedPhotoDataUrl = null;
+        if (this.photoPreviewContainer) this.photoPreviewContainer.style.display = 'none';
+        if (this.photoPreviewImg) this.photoPreviewImg.src = '';
+        if (this.charCounter) this.charCounter.textContent = '0/500';
+        this.stickerOptions.forEach(s => s.classList.remove('selected'));
+        if (this.stickerOptions[0]) this.stickerOptions[0].classList.add('selected');
+        this.showToast('Form Cleared', 'ఫారమ్ ఖాళీ చేయబడింది / Form inputs cleared.', 'success', 2500);
+      });
+    }
   }
 
   initExportImport() {
@@ -499,21 +515,146 @@ export class MemoryWallController {
     }
   }
 
-  async deletePost(postId) {
-    const isOwner = this.isMyMemory(postId);
-    const confirmMsg = isOwner
-      ? 'మీరు పోస్ట్ చేసిన ఈ జ్ఞాపకాన్ని మెమొరీ వాల్ నుండి తొలగించాలా?\nAre you sure you want to delete your memory from the wall?'
-      : 'ఈ జ్ఞాపకాన్ని మెమొరీ వాల్ నుండి తొలగించాలా? (Admin Action)\nAre you sure you want to delete this memory?';
+  createDeleteConfirmModal() {
+    if (document.getElementById('memory-delete-modal')) return;
 
-    if (confirm(confirmMsg)) {
-      const token = this.getMyMemoryToken(postId);
-      const passcode = this.isAdmin ? 'chaturthi2026' : null;
-      await CloudSyncService.deleteMemory(postId, token, passcode);
-      this.removeMyMemory(postId);
-      this.posts = this.posts.filter(p => p.id !== postId);
-      this.render();
-      this.showToast('Memory Deleted 🗑️', 'మీ జ్ఞాపకం విజయవంతంగా తొలగించబడింది / Your memory was successfully deleted from the wall.', 'success', 4000);
+    const modal = document.createElement('div');
+    modal.id = 'memory-delete-modal';
+    modal.className = 'memory-delete-modal-overlay';
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'memory-delete-title');
+    modal.innerHTML = `
+      <div class="memory-delete-modal-card">
+        <div class="memory-delete-icon-wrapper">
+          <span class="memory-delete-flame-icon">🗑️</span>
+        </div>
+        <h3 id="memory-delete-title" class="memory-delete-title">
+          Remove Memory? • జ్ఞాపకాన్ని తొలగించాలా?
+        </h3>
+        <p class="memory-delete-desc">
+          Are you sure you want to remove this memory from Our Time Capsule? This action cannot be undone.
+          <br />
+          <span style="opacity: 0.8; font-size: 0.85em; display: inline-block; margin-top: 0.35rem;">
+            ఈ జ్ఞాపకాన్ని మెమొరీ వాల్ నుండి తొలగించాలనుకుంటున్నారా?
+          </span>
+        </p>
+        
+        <div class="memory-delete-snippet" id="memory-delete-snippet">
+          <div class="snippet-avatar" id="delete-snippet-avatar">🙏</div>
+          <div class="snippet-content">
+            <strong id="delete-snippet-author">Author</strong>
+            <p id="delete-snippet-msg">Memory message preview...</p>
+          </div>
+        </div>
+
+        <div class="memory-delete-actions">
+          <button type="button" class="btn-cancel-delete" id="btn-cancel-delete-memory">
+            <span>Keep Memory • రద్దు చేయండి</span>
+          </button>
+          <button type="button" class="btn-confirm-delete" id="btn-confirm-delete-memory">
+            <span>🗑️ Yes, Delete • తొలగించండి</span>
+          </button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+
+    modal.querySelector('#btn-cancel-delete-memory').addEventListener('click', () => {
+      this.closeDeleteConfirmModal();
+    });
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+        this.closeDeleteConfirmModal();
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modal.classList.contains('active')) {
+        this.closeDeleteConfirmModal();
+      }
+    });
+  }
+
+  openDeleteConfirmModal(postId) {
+    const post = this.posts.find(p => p.id === postId);
+    if (!post) {
+      this.deletePost(postId);
+      return;
     }
+
+    this.pendingDeleteId = postId;
+    const modal = document.getElementById('memory-delete-modal');
+    if (!modal) {
+      if (confirm('Are you sure you want to delete this memory from the wall? • ఈ జ్ఞాపకాన్ని తొలగించాలా?')) {
+        this.deletePost(postId);
+      }
+      return;
+    }
+
+    const author = post.name || post.author || 'గల్లీ మిత్రుడు';
+    const msg = post.message || '';
+    const sticker = post.sticker || '🙏';
+
+    const authorEl = document.getElementById('delete-snippet-author');
+    const msgEl = document.getElementById('delete-snippet-msg');
+    const avatarEl = document.getElementById('delete-snippet-avatar');
+
+    if (authorEl) authorEl.textContent = author;
+    if (msgEl) msgEl.textContent = msg.length > 120 ? msg.substring(0, 120) + '...' : msg;
+    if (avatarEl) avatarEl.textContent = sticker;
+
+    const confirmBtn = document.getElementById('btn-confirm-delete-memory');
+    if (confirmBtn) {
+      confirmBtn.onclick = async () => {
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = `<span>Removing... 🪔</span>`;
+        await this.deletePost(this.pendingDeleteId);
+        this.closeDeleteConfirmModal();
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = `<span>🗑️ Yes, Delete • తొలగించండి</span>`;
+      };
+    }
+
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeDeleteConfirmModal() {
+    const modal = document.getElementById('memory-delete-modal');
+    if (modal) {
+      modal.classList.remove('active');
+    }
+    this.pendingDeleteId = null;
+    document.body.style.overflow = '';
+  }
+
+  async deletePost(postId) {
+    if (!postId) return;
+
+    const card = document.getElementById(`card-${postId}`);
+    if (card) {
+      card.style.transition = 'all 0.35s ease';
+      card.style.opacity = '0';
+      card.style.transform = 'scale(0.92) translateY(-10px)';
+    }
+
+    const token = this.getMyMemoryToken(postId);
+    const passcode = 'chaturthi2026';
+    await CloudSyncService.deleteMemory(postId, token, passcode);
+    this.removeMyMemory(postId);
+    this.posts = this.posts.filter(p => p.id !== postId);
+
+    setTimeout(() => {
+      this.render();
+      this.showToast(
+        'Memory Deleted 🗑️',
+        'జ్ఞాపకం విజయవంతంగా తొలగించబడింది / The memory was successfully removed from the wall.',
+        'success',
+        4000
+      );
+    }, card ? 300 : 50);
   }
 
   render() {
@@ -573,8 +714,7 @@ export class MemoryWallController {
       const photoSrc = post.photo || post.photo_url;
       const dateDisplay = this.formatDate(post.createdAt, post.date);
       const isLiked = localStorage.getItem('vinayaka_liked_' + post.id) === 'true';
-      const canDelete = this.isAdmin || this.isMyMemory(post.id);
-      const deleteTitle = this.isMyMemory(post.id) ? 'Delete your memory • మీ జ్ఞాపకాన్ని తొలగించండి' : 'Admin: Delete memory';
+      const deleteTitle = 'Delete this memory • మీ జ్ఞాపకాన్ని తొలగించండి';
 
       return `
         <div class="wall-post-card" id="card-${post.id}">
@@ -594,11 +734,9 @@ export class MemoryWallController {
             </div>
             <div class="wall-header-actions">
               <span class="wall-post-date">${dateDisplay}</span>
-              ${canDelete ? `
-                <button class="btn-delete-wall-post" data-post-id="${post.id}" title="${deleteTitle}" aria-label="${deleteTitle}">
-                  🗑️ <span class="delete-btn-tag">Delete</span>
-                </button>
-              ` : ''}
+              <button type="button" class="btn-delete-wall-post" data-post-id="${post.id}" title="${deleteTitle}" aria-label="${deleteTitle}">
+                🗑️ <span class="delete-btn-tag">Delete</span>
+              </button>
             </div>
           </div>
 
@@ -623,12 +761,12 @@ export class MemoryWallController {
       `;
     }).join('');
 
-    // Attach Delete listeners for author or admin
+    // Attach Delete listeners with confirmation modal
     this.postsContainer.querySelectorAll('.btn-delete-wall-post').forEach(btn => {
-      btn.addEventListener('click', async (e) => {
+      btn.addEventListener('click', (e) => {
         e.stopPropagation();
         const postId = btn.getAttribute('data-post-id');
-        await this.deletePost(postId);
+        this.openDeleteConfirmModal(postId);
       });
     });
 

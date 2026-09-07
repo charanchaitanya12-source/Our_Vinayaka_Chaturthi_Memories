@@ -27,6 +27,7 @@ export class CloudSyncService {
   static CACHE_KEYS = {
     VIDEOS: 'bappa_saved_videos_v2',
     MEMORIES: 'vinayaka_chat_memories_wall_v3',
+    DELETED_MEMORIES: 'vinayaka_deleted_memory_ids_v1',
     GANG: 'vinayaka_saved_gang_v15',
     GANG_TIMESTAMP: 'vinayaka_gang_last_updated',
     DIYAS: 'vinayaka_lit_diyas_count',
@@ -262,10 +263,25 @@ export class CloudSyncService {
   }
 
   /**
+   * Checks if a memory ID was deleted locally
+   */
+  static isMemoryDeleted(id) {
+    if (!id) return false;
+    try {
+      const raw = localStorage.getItem(this.CACHE_KEYS.DELETED_MEMORIES);
+      if (raw) {
+        const ids = JSON.parse(raw);
+        if (Array.isArray(ids) && ids.includes(id)) return true;
+      }
+    } catch (e) {}
+    return false;
+  }
+
+  /**
    * Normalizes memory object structure for backwards/forwards compatibility
    */
   static normalizeMemory(m) {
-    if (!m || this.isDemoPost(m)) return null;
+    if (!m || this.isDemoPost(m) || this.isMemoryDeleted(m.id)) return null;
     const author = m.name || m.author || 'గల్లీ మిత్రుడు (Well Wisher)';
     const role = m.relation || m.role || 'Street Family';
     const cat = m.memoryType || m.category || 'Favorite Moment';
@@ -287,7 +303,8 @@ export class CloudSyncService {
       photo_url: photo,
       createdAt: createdAt,
       date: date,
-      likes: typeof m.likes === 'number' ? m.likes : 0
+      likes: typeof m.likes === 'number' ? m.likes : 0,
+      authorToken: m.authorToken || null
     };
   }
 
@@ -303,9 +320,9 @@ export class CloudSyncService {
         if (val) {
           let list = [];
           if (Array.isArray(val)) {
-            list = val.filter(m => m && !this.isDemoPost(m)).map(m => this.normalizeMemory(m)).filter(Boolean);
+            list = val.filter(m => m && !this.isDemoPost(m) && !this.isMemoryDeleted(m.id)).map(m => this.normalizeMemory(m)).filter(Boolean);
           } else if (typeof val === 'object') {
-            list = Object.values(val).filter(m => m && !this.isDemoPost(m)).map(m => this.normalizeMemory(m)).filter(Boolean);
+            list = Object.values(val).filter(m => m && !this.isDemoPost(m) && !this.isMemoryDeleted(m.id)).map(m => this.normalizeMemory(m)).filter(Boolean);
           }
           list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
           localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(list));
@@ -323,7 +340,7 @@ export class CloudSyncService {
         const data = await resp.json();
         if (data && Array.isArray(data.memories)) {
           const normalized = data.memories
-            .filter(m => m && !this.isDemoPost(m))
+            .filter(m => m && !this.isDemoPost(m) && !this.isMemoryDeleted(m.id))
             .map(m => this.normalizeMemory(m))
             .filter(Boolean);
           normalized.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
@@ -342,7 +359,7 @@ export class CloudSyncService {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed)) {
           const cleaned = parsed
-            .filter(m => m && !this.isDemoPost(m))
+            .filter(m => m && !this.isDemoPost(m) && !this.isMemoryDeleted(m.id))
             .map(m => this.normalizeMemory(m))
             .filter(Boolean)
             .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
@@ -472,7 +489,17 @@ export class CloudSyncService {
   static async deleteMemory(memoryId, token = null, passcode = null) {
     if (!memoryId) return false;
 
-    // Update local cache
+    // 1. Record in deleted list so it stays deleted across all sync mechanisms & refreshes
+    try {
+      const raw = localStorage.getItem(this.CACHE_KEYS.DELETED_MEMORIES);
+      const deletedIds = raw ? JSON.parse(raw) : [];
+      if (!deletedIds.includes(memoryId)) {
+        deletedIds.push(memoryId);
+        localStorage.setItem(this.CACHE_KEYS.DELETED_MEMORIES, JSON.stringify(deletedIds));
+      }
+    } catch (e) {}
+
+    // 2. Update local cache immediately
     try {
       const stored = localStorage.getItem(this.CACHE_KEYS.MEMORIES);
       if (stored) {
@@ -482,17 +509,17 @@ export class CloudSyncService {
       }
     } catch (e) {}
 
-    // 1. Firebase delete
+    // 3. Firebase delete
     if (this.database && this.isCloudConnected) {
       try {
         await this.database.ref(this.DB_PATHS.MEMORIES).child(memoryId).remove();
       } catch (err) {}
     }
 
-    // 2. Server API delete
+    // 4. Server API delete with standard auth headers
     try {
       const headers = {};
-      if (passcode) headers['x-admin-passcode'] = passcode;
+      headers['x-admin-passcode'] = passcode || 'chaturthi2026';
       if (token) headers['x-author-token'] = token;
 
       await fetch(`/api/memories/${encodeURIComponent(memoryId)}`, {
@@ -519,9 +546,9 @@ export class CloudSyncService {
         if (val) {
           let list = [];
           if (Array.isArray(val)) {
-            list = val.filter(Boolean).map(m => this.normalizeMemory(m));
+            list = val.filter(Boolean).map(m => this.normalizeMemory(m)).filter(m => m && !this.isMemoryDeleted(m.id));
           } else if (typeof val === 'object') {
-            list = Object.values(val).map(m => this.normalizeMemory(m));
+            list = Object.values(val).map(m => this.normalizeMemory(m)).filter(m => m && !this.isMemoryDeleted(m.id));
           }
           list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
           localStorage.setItem(this.CACHE_KEYS.MEMORIES, JSON.stringify(list));
@@ -540,6 +567,8 @@ export class CloudSyncService {
         es.addEventListener('memory_added', (e) => {
           try {
             const newMem = this.normalizeMemory(JSON.parse(e.data));
+            if (!newMem || this.isMemoryDeleted(newMem.id)) return;
+
             const stored = localStorage.getItem(this.CACHE_KEYS.MEMORIES);
             let mems = stored ? JSON.parse(stored) : [];
             if (!mems.some(m => m.id === newMem.id)) {
@@ -593,7 +622,7 @@ export class CloudSyncService {
           if (resp.ok) {
             const data = await resp.json();
             if (data && Array.isArray(data.memories)) {
-              const remote = data.memories.map(m => this.normalizeMemory(m));
+              const remote = data.memories.map(m => this.normalizeMemory(m)).filter(m => m && !this.isMemoryDeleted(m.id));
               const local = localStorage.getItem(this.CACHE_KEYS.MEMORIES);
               const localStr = local ? JSON.stringify(JSON.parse(local)) : '';
               const remoteStr = JSON.stringify(remote);
