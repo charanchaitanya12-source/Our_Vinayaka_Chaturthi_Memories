@@ -305,11 +305,11 @@ const server = http.createServer((req, res) => {
         'Content-Type': contentType
       });
       fileStream.pipe(res);
-    } else {
+      const isCode = ['.html', '.js', '.css', '.json'].includes(ext);
       res.writeHead(200, {
         'Content-Length': totalSize,
         'Content-Type': contentType,
-        'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=86400'
+        'Cache-Control': isCode ? 'no-cache, no-store, must-revalidate' : 'public, max-age=86400'
       });
       fs.createReadStream(filePath).pipe(res);
     }

@@ -6276,6 +6276,8 @@ body.cert-modal-open {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
   padding-top: 0.65rem;
   border-top: 1px solid rgba(245, 184, 66, 0.12);
   margin-top: auto;
@@ -6285,6 +6287,35 @@ body.cert-modal-open {
   font-size: 0.74rem;
   color: var(--gold-400);
   font-weight: 500;
+}
+
+.wall-post-actions-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-delete-wall-post-footer {
+  background: rgba(217, 56, 41, 0.14);
+  border: 1px solid rgba(217, 56, 41, 0.4);
+  color: #ff9e99;
+  padding: 0.28rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  line-height: 1;
+}
+
+.btn-delete-wall-post-footer:hover {
+  background: #d93829;
+  border-color: #ff5252;
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(217, 56, 41, 0.45);
 }
 
 .btn-like-post {

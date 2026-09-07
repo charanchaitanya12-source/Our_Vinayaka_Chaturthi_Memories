@@ -752,10 +752,16 @@ export class MemoryWallController {
 
           <div class="wall-post-footer">
             <span class="wall-post-community-tag">🪔 మన పండుగ జ్ఞాపకం</span>
-            <button class="btn-like-post ${isLiked ? 'liked-active' : ''}" data-post-id="${post.id}" title="Love this memory" aria-label="Love this memory">
-              <span class="heart-icon">❤️</span>
-              <span class="like-count">${post.likes || 0}</span>
-            </button>
+            <div class="wall-post-actions-row">
+              <button type="button" class="btn-delete-wall-post btn-delete-wall-post-footer" data-post-id="${post.id}" title="${deleteTitle}" aria-label="${deleteTitle}">
+                <span>🗑️</span>
+                <span class="delete-btn-tag">Delete • తొలగించండి</span>
+              </button>
+              <button class="btn-like-post ${isLiked ? 'liked-active' : ''}" data-post-id="${post.id}" title="Love this memory" aria-label="Love this memory">
+                <span class="heart-icon">❤️</span>
+                <span class="like-count">${post.likes || 0}</span>
+              </button>
+            </div>
           </div>
         </div>
       `;
