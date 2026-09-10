@@ -28,7 +28,7 @@ export class CloudSyncService {
     VIDEOS: 'bappa_saved_videos_v2',
     MEMORIES: 'vinayaka_chat_memories_wall_v3',
     DELETED_MEMORIES: 'vinayaka_deleted_memory_ids_v1',
-    GANG: 'vinayaka_saved_gang_v15',
+    GANG: 'vinayaka_saved_gang_v16',
     GANG_TIMESTAMP: 'vinayaka_gang_last_updated',
     DIYAS: 'vinayaka_lit_diyas_count',
     LAST_CLOUD_SYNC: 'vinayaka_last_cloud_sync_time'

@@ -1187,6 +1187,11 @@
   transition: transform var(--transition-normal);
 }
 
+#card-friend-sai .square-friend-avatar,
+[data-friend-id="friend-sai"] .square-friend-avatar {
+  object-position: center 28%;
+}
+
 .standard-square-card:hover .square-friend-avatar {
   transform: scale(1.05);
 }

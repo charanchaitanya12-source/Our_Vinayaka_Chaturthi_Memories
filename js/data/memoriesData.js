@@ -366,6 +366,16 @@ export const memoriesData = {
       taggedMoments: ["gal-1", "gal-2", "gal-13"]
     },
     {
+      id: "friend-sai",
+      name: "Sai",
+      nickname: "The Gang",
+      photos: [
+        "assets/images/gang/gang_member_sai.jpg",
+        "assets/images/gang/real_gang_sai.jpg"
+      ],
+      taggedMoments: ["gal-1", "gal-2"]
+    },
+    {
       id: "friend-pradeep",
       name: "Pradeep",
       nickname: "The Gang",

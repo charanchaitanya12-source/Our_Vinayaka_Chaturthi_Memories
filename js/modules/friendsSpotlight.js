@@ -9,8 +9,8 @@
  * 2. Standalone Tall Vertical Column for Sai Nikhil Raj Muppana (3 stacked photos).
  */
 
-import { memoriesData } from '../data/memoriesData.js?v=6.8';
-import { CloudSyncService } from '../services/cloudSyncService.js?v=6.8';
+import { memoriesData } from '../data/memoriesData.js?v=9.6';
+import { CloudSyncService } from '../services/cloudSyncService.js?v=9.6';
 
 export class FriendsController {
   constructor(containerId = 'friends-grid-container') {
@@ -42,8 +42,8 @@ export class FriendsController {
     this.saveAllBtn = document.getElementById('btn-save-friends');
 
     // Storage Keys
-    this.storageKey = CloudSyncService.CACHE_KEYS?.GANG || 'vinayaka_saved_gang_v15';
-    this.deletedKey = 'vinayaka_deleted_friend_ids_v15';
+    this.storageKey = CloudSyncService.CACHE_KEYS?.GANG || 'vinayaka_saved_gang_v16';
+    this.deletedKey = 'vinayaka_deleted_friend_ids_v16';
     this.currentUploadedPhoto = null;
     this.friends = [];
 
@@ -90,11 +90,12 @@ export class FriendsController {
 
   purgeLegacyCaches() {
     try {
-      // Purge deprecated legacy keys including v14 to prevent stale name overrides
+      // Purge deprecated legacy keys including v14 and v15 to prevent stale name overrides
       const legacyKeys = [
         'vinayaka_gang_v1', 'vinayaka_gang_v2', 'vinayaka_saved_gang_v1', 'vinayaka_saved_gang_v2',
         'vinayaka_saved_gang_v10', 'vinayaka_saved_gang_v11', 'vinayaka_saved_gang_v12',
-        'vinayaka_saved_gang_v13', 'vinayaka_saved_gang_v14', 'vinayaka_deleted_friend_ids_v14'
+        'vinayaka_saved_gang_v13', 'vinayaka_saved_gang_v14', 'vinayaka_deleted_friend_ids_v14',
+        'vinayaka_saved_gang_v15', 'vinayaka_deleted_friend_ids_v15'
       ];
       legacyKeys.forEach(k => localStorage.removeItem(k));
     } catch (e) {}
@@ -190,6 +191,18 @@ export class FriendsController {
           nickname: f.nickname || 'The Gang',
           photos: (f.photos && f.photos.length > 0) ? [...f.photos] : ['assets/images/gang/gang_member_ramesh.jpg'],
           taggedMoments: f.taggedMoments || ['gal-1', 'gal-2', 'gal-13']
+        };
+      }
+      if (f.id === 'friend-sai' || (f.name && f.name.toLowerCase().trim() === 'sai')) {
+        return {
+          id: 'friend-sai',
+          name: 'Sai',
+          nickname: f.nickname || 'The Gang',
+          photos: (f.photos && f.photos.length > 0) ? [...f.photos] : [
+            'assets/images/gang/gang_member_sai.jpg',
+            'assets/images/gang/real_gang_sai.jpg'
+          ],
+          taggedMoments: f.taggedMoments || ['gal-1', 'gal-2']
         };
       }
       if (f.id === 'friend-teja' || (f.name && f.name.toLowerCase().includes('teja'))) {
