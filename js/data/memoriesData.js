@@ -386,16 +386,6 @@ export const memoriesData = {
       taggedMoments: ["gal-1", "gal-2"]
     },
     {
-      id: "friend-teja",
-      name: "Teja",
-      nickname: "The Gang",
-      photos: [
-        "assets/images/gang/gang_member_teja.jpg",
-        "assets/images/gang/real_gang_teja.jpg"
-      ],
-      taggedMoments: ["gal-1", "gal-2", "gal-12"]
-    },
-    {
       id: "friend-charan",
       name: "Charan",
       nickname: "The Gang",
@@ -404,6 +394,16 @@ export const memoriesData = {
         "assets/images/gang/real_gang_charan.jpg"
       ],
       taggedMoments: ["gal-1", "gal-2", "gal-11"]
+    },
+    {
+      id: "friend-teja",
+      name: "Teja",
+      nickname: "The Gang",
+      photos: [
+        "assets/images/gang/gang_member_teja.jpg",
+        "assets/images/gang/real_gang_teja.jpg"
+      ],
+      taggedMoments: ["gal-1", "gal-2", "gal-12"]
     },
     {
       id: "friend-hamu",
