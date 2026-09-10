@@ -396,14 +396,14 @@ export const memoriesData = {
       taggedMoments: ["gal-1", "gal-2", "gal-11"]
     },
     {
-      id: "friend-teja",
-      name: "Teja",
+      id: "friend-chinna",
+      name: "Chinna",
       nickname: "The Gang",
       photos: [
-        "assets/images/gang/gang_member_teja.jpg",
-        "assets/images/gang/real_gang_teja.jpg"
+        "assets/images/gang/gang_member_chinna.jpg",
+        "assets/images/gang/real_gang_chinna.jpg"
       ],
-      taggedMoments: ["gal-1", "gal-2", "gal-12"]
+      taggedMoments: ["gal-1", "gal-2", "gal-7"]
     },
     {
       id: "friend-hamu",
@@ -426,14 +426,14 @@ export const memoriesData = {
       taggedMoments: ["gal-1", "gal-2", "gal-3"]
     },
     {
-      id: "friend-chinna",
-      name: "Chinna",
+      id: "friend-teja",
+      name: "Teja",
       nickname: "The Gang",
       photos: [
-        "assets/images/gang/gang_member_chinna.jpg",
-        "assets/images/gang/real_gang_chinna.jpg"
+        "assets/images/gang/gang_member_teja.jpg",
+        "assets/images/gang/real_gang_teja.jpg"
       ],
-      taggedMoments: ["gal-1", "gal-2", "gal-7"]
+      taggedMoments: ["gal-1", "gal-2", "gal-12"]
     },
     {
       id: "friend-committee",

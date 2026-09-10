@@ -9,8 +9,8 @@
  * 2. Standalone Tall Vertical Column for Sai Nikhil Raj Muppana (3 stacked photos).
  */
 
-import { memoriesData } from '../data/memoriesData.js?v=9.7';
-import { CloudSyncService } from '../services/cloudSyncService.js?v=9.7';
+import { memoriesData } from '../data/memoriesData.js?v=9.8';
+import { CloudSyncService } from '../services/cloudSyncService.js?v=9.8';
 
 export class FriendsController {
   constructor(containerId = 'friends-grid-container') {
@@ -42,8 +42,8 @@ export class FriendsController {
     this.saveAllBtn = document.getElementById('btn-save-friends');
 
     // Storage Keys
-    this.storageKey = CloudSyncService.CACHE_KEYS?.GANG || 'vinayaka_saved_gang_v17';
-    this.deletedKey = 'vinayaka_deleted_friend_ids_v17';
+    this.storageKey = CloudSyncService.CACHE_KEYS?.GANG || 'vinayaka_saved_gang_v18';
+    this.deletedKey = 'vinayaka_deleted_friend_ids_v18';
     this.currentUploadedPhoto = null;
     this.friends = [];
 
@@ -90,13 +90,14 @@ export class FriendsController {
 
   purgeLegacyCaches() {
     try {
-      // Purge deprecated legacy keys including v14, v15, and v16 to prevent stale name/order overrides
+      // Purge deprecated legacy keys including v14, v15, v16, and v17 to prevent stale name/order overrides
       const legacyKeys = [
         'vinayaka_gang_v1', 'vinayaka_gang_v2', 'vinayaka_saved_gang_v1', 'vinayaka_saved_gang_v2',
         'vinayaka_saved_gang_v10', 'vinayaka_saved_gang_v11', 'vinayaka_saved_gang_v12',
         'vinayaka_saved_gang_v13', 'vinayaka_saved_gang_v14', 'vinayaka_deleted_friend_ids_v14',
         'vinayaka_saved_gang_v15', 'vinayaka_deleted_friend_ids_v15',
-        'vinayaka_saved_gang_v16', 'vinayaka_deleted_friend_ids_v16'
+        'vinayaka_saved_gang_v16', 'vinayaka_deleted_friend_ids_v16',
+        'vinayaka_saved_gang_v17', 'vinayaka_deleted_friend_ids_v17'
       ];
       legacyKeys.forEach(k => localStorage.removeItem(k));
     } catch (e) {}

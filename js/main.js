@@ -4,20 +4,20 @@
  * ============================================================================
  */
 
-import { memoriesData } from './data/memoriesData.js?v=9.7';
-import { AmbientAudioEngine } from './modules/ambientAudio.js?v=9.7';
-import { ParticleEngine } from './modules/particleCanvas.js?v=9.7';
-import { TimelineController } from './modules/timeline.js?v=9.7';
-import { GalleryController } from './modules/gallery.js?v=9.7';
-import { InsideJokesController } from './modules/insideJokes.js?v=9.7';
-import { FriendsController } from './modules/friendsSpotlight.js?v=9.7';
-import { StorytellingController } from './modules/storytelling.js?v=9.7';
-import { VideoMemoriesController } from './modules/videoMemories.js?v=9.7';
-import { MemoryWallController } from './modules/memoryWall.js?v=9.7';
-import { PhotoManagerController } from './modules/photoManager.js?v=9.7';
-import { TributeController } from './modules/tribute.js?v=9.7';
-import { FestiveInteractions } from './modules/festiveInteractions.js?v=9.7';
-import { ShareManagerController } from './modules/shareManager.js?v=9.7';
+import { memoriesData } from './data/memoriesData.js?v=9.8';
+import { AmbientAudioEngine } from './modules/ambientAudio.js?v=9.8';
+import { ParticleEngine } from './modules/particleCanvas.js?v=9.8';
+import { TimelineController } from './modules/timeline.js?v=9.8';
+import { GalleryController } from './modules/gallery.js?v=9.8';
+import { InsideJokesController } from './modules/insideJokes.js?v=9.8';
+import { FriendsController } from './modules/friendsSpotlight.js?v=9.8';
+import { StorytellingController } from './modules/storytelling.js?v=9.8';
+import { VideoMemoriesController } from './modules/videoMemories.js?v=9.8';
+import { MemoryWallController } from './modules/memoryWall.js?v=9.8';
+import { PhotoManagerController } from './modules/photoManager.js?v=9.8';
+import { TributeController } from './modules/tribute.js?v=9.8';
+import { FestiveInteractions } from './modules/festiveInteractions.js?v=9.8';
+import { ShareManagerController } from './modules/shareManager.js?v=9.8';
 
 class App {
   constructor() {
