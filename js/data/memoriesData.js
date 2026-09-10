@@ -295,6 +295,54 @@ export const memoriesData = {
       aspectRatio: "landscape",
       src: "assets/images/real_gang_candid_moments.jpg",
       tags: ["Friendship", "Memories", "Mandap"]
+    },
+    {
+      id: "gal-14",
+      category: "bloopers",
+      type: "video",
+      title: "Electric DJ Night Dance",
+      caption: "Video memory: High-voltage night dance celebration with the gang under flashing lights.",
+      date: "Festival Night",
+      aspectRatio: "landscape",
+      src: "assets/images/video_thumb_fest_drive_1.jpg",
+      videoUrl: "assets/videos/WhatsApp Video 2026-09-10 at 17.30.36 (2).mp4",
+      tags: ["Dance", "Video", "DJNight", "Gang"]
+    },
+    {
+      id: "gal-15",
+      category: "bloopers",
+      type: "video",
+      title: "Green Lights Festival Craze",
+      caption: "Video memory: Hands in the air, joyous festival crowd, and electrifying dance energy.",
+      date: "Festival Night",
+      aspectRatio: "landscape",
+      src: "assets/images/video_thumb_fest_drive_2.jpg",
+      videoUrl: "assets/videos/WhatsApp Video 2026-08-18 at 09.19.30.mp4",
+      tags: ["Dance", "Video", "Celebration", "Lights"]
+    },
+    {
+      id: "gal-16",
+      category: "visarjan",
+      type: "video",
+      title: "Street Dance & Brotherhood",
+      caption: "Video memory: Unfiltered festive energy and spirited street procession dance moves.",
+      date: "Procession Day",
+      aspectRatio: "portrait",
+      src: "assets/images/video_thumb_fest_drive_3.jpg",
+      videoUrl: "assets/videos/WhatsApp Video 2026-09-10 at 17.34.33.mp4",
+      tags: ["StreetDance", "Video", "Procession", "Brotherhood"]
+    },
+    {
+      id: "gal-17",
+      category: "candid",
+      type: "video",
+      title: "Pandal Front Dance Groove",
+      caption: "Video memory: Dancing with all our hearts right in front of the illuminated mandap.",
+      date: "Mandap Celebration",
+      aspectRatio: "landscape",
+      src: "assets/images/video_thumb_fest_drive_4.jpg",
+      videoUrl: "assets/videos/WhatsApp Video 2026-09-10 at 17.30.36.mp4",
+      tags: ["MandapDance", "Video", "Candid", "Celebration"]
     }
   ],
 
@@ -673,6 +721,46 @@ export const memoriesData = {
       videoUrl: "assets/videos/video_05_sacred_visarjan_immersion.mp4",
       customFileName: "video_05_sacred_visarjan_immersion.mp4",
       isCustom: false
+    },
+    {
+      id: "vid-fest-drive-dj-energy",
+      title: "ELECTRIC DJ NIGHT DANCE",
+      desc: "High-voltage night dance celebration with the gang under the flashing disco lights.",
+      thumb: "assets/images/video_thumb_fest_drive_1.jpg",
+      duration: "01:34",
+      videoUrl: "assets/videos/WhatsApp Video 2026-09-10 at 17.30.36 (2).mp4",
+      customFileName: "WhatsApp Video 2026-09-10 at 17.30.36 (2).mp4",
+      isCustom: true
+    },
+    {
+      id: "vid-fest-drive-green-craze",
+      title: "GREEN LIGHTS FESTIVAL CRAZE",
+      desc: "Hands in the air, joyous festival crowd, and electrifying dance energy with friends.",
+      thumb: "assets/images/video_thumb_fest_drive_2.jpg",
+      duration: "01:09",
+      videoUrl: "assets/videos/WhatsApp Video 2026-08-18 at 09.19.30.mp4",
+      customFileName: "WhatsApp Video 2026-08-18 at 09.19.30.mp4",
+      isCustom: true
+    },
+    {
+      id: "vid-fest-drive-street-vibes",
+      title: "STREET DANCE & BROTHERHOOD",
+      desc: "Unfiltered festive energy, brotherhood, and spirited moves along our street during celebrations.",
+      thumb: "assets/images/video_thumb_fest_drive_3.jpg",
+      duration: "00:46",
+      videoUrl: "assets/videos/WhatsApp Video 2026-09-10 at 17.34.33.mp4",
+      customFileName: "WhatsApp Video 2026-09-10 at 17.34.33.mp4",
+      isCustom: true
+    },
+    {
+      id: "vid-fest-drive-pandal-groove",
+      title: "PANDAL FRONT DANCE GROOVE",
+      desc: "Dancing with all our hearts right in front of the illuminated mandap as everyone cheers.",
+      thumb: "assets/images/video_thumb_fest_drive_4.jpg",
+      duration: "00:31",
+      videoUrl: "assets/videos/WhatsApp Video 2026-09-10 at 17.30.36.mp4",
+      customFileName: "WhatsApp Video 2026-09-10 at 17.30.36.mp4",
+      isCustom: true
     }
   ],
 
