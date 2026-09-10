@@ -14,6 +14,59 @@ import { CloudSyncService } from '../services/cloudSyncService.js';
 const DEFAULT_SAMPLE_VIDEOS = JSON.parse(JSON.stringify(memoriesData.videos));
 
 /**
+ * Canonical mapping of each video ID to its authentic, high-quality thumbnail image.
+ */
+export const CANONICAL_VIDEO_THUMBNAILS = {
+  'vid-fest-aagman': 'assets/images/video_thumb_grand_aagman.jpg',
+  'vid-fest-day1': 'assets/images/video_thumb_day1_vinayaka_chavithi.jpg',
+  'vid-fest-song': 'assets/images/video_thumb_song_fell_in_love.jpg',
+  'vid-fest-pandhiri': 'assets/images/video_thumb_night_fun_pandhiri.jpg',
+  'vid-fest-dance': 'assets/images/video_thumb_dance_full_of_joy.jpg',
+  'vid-fest-dj-night': 'assets/images/video_thumb_dj_night_celebration.jpg',
+  'vid-fest-annadanam': 'assets/images/video_thumb_food_prasad_feast.jpg',
+  'vid-fest-prasad': 'assets/images/video_thumb_pujadance_celebration.jpg',
+  'vid-fest-neighborhood': 'assets/images/video_thumb_festival_moments.jpg',
+  'vid-fest-highway': 'assets/images/video_thumb_highway_roadtrip.jpg',
+  'vid-fest-nimarjanam': 'assets/images/video_thumb_nimarjanam_full_fire.jpg',
+  'vid-fest-procession': 'assets/images/video_thumb_visarjan_procession.jpg',
+  'vid-fest-immersion': 'assets/images/video_thumb_visarjan_immersion.jpg'
+};
+
+export function getCanonicalThumbnail(id, customFileName = '') {
+  if (id && CANONICAL_VIDEO_THUMBNAILS[id]) {
+    return CANONICAL_VIDEO_THUMBNAILS[id];
+  }
+  if (customFileName) {
+    const fn = customFileName.toLowerCase();
+    if (fn.includes('17.17.50')) return 'assets/images/video_thumb_day1_vinayaka_chavithi.jpg';
+    if (fn.includes('17.17.47')) return 'assets/images/video_thumb_song_fell_in_love.jpg';
+    if (fn.includes('17.17.48')) return 'assets/images/video_thumb_night_fun_pandhiri.jpg';
+    if (fn.includes('17.17.49')) return 'assets/images/video_thumb_dance_full_of_joy.jpg';
+    if (fn.includes('17.17.28')) return 'assets/images/video_thumb_nimarjanam_full_fire.jpg';
+    if (fn.includes('aagman') || fn.includes('video_02')) return 'assets/images/video_thumb_grand_aagman.jpg';
+    if (fn.includes('dj') || fn.includes('video_03')) return 'assets/images/video_thumb_dj_night_celebration.jpg';
+    if (fn.includes('food') || fn.includes('prasad_feast') || fn.includes('video_06')) return 'assets/images/video_thumb_food_prasad_feast.jpg';
+    if (fn.includes('pujadance') || fn.includes('video_07')) return 'assets/images/video_thumb_pujadance_celebration.jpg';
+    if (fn.includes('festival_moments') || fn.includes('video_08')) return 'assets/images/video_thumb_festival_moments.jpg';
+    if (fn.includes('highway') || fn.includes('roadtrip') || fn.includes('video_01')) return 'assets/images/video_thumb_highway_roadtrip.jpg';
+    if (fn.includes('procession') || fn.includes('video_04')) return 'assets/images/video_thumb_visarjan_procession.jpg';
+    if (fn.includes('immersion') || fn.includes('video_05')) return 'assets/images/video_thumb_visarjan_immersion.jpg';
+  }
+  const found = DEFAULT_SAMPLE_VIDEOS.find(v => v.id === id);
+  if (found && found.thumb) return found.thumb;
+  return 'assets/images/video_thumb_grand_aagman.jpg';
+}
+
+export function sanitizeThumbnail(id, thumb, customFileName = '') {
+  if (!thumb) return getCanonicalThumbnail(id, customFileName);
+  // Protect against accidental pollution from visarjan immersion image on non-immersion cards
+  if (typeof thumb === 'string' && thumb.includes('video_thumb_visarjan_immersion.jpg') && id !== 'vid-fest-immersion') {
+    return getCanonicalThumbnail(id, customFileName);
+  }
+  return thumb;
+}
+
+/**
  * IndexedDB storage engine for persisting large video files and metadata
  */
 class VideoStorageEngine {
@@ -411,11 +464,11 @@ export class VideoMemoriesController {
 
   async restorePersistedVideos() {
     try {
-      // 0. Ensure all canonical festival videos are visible across existing browser sessions and clear legacy duplicate cache
-      if (localStorage.getItem('bappa_videos_dedup_v66') !== 'true') {
+      // 0. Ensure all canonical festival videos are visible across existing browser sessions and clear legacy duplicate/corrupted cache
+      if (localStorage.getItem('bappa_videos_dedup_v68') !== 'true') {
         localStorage.removeItem('bappa_deleted_video_ids');
         localStorage.removeItem('bappa_saved_videos_v2');
-        localStorage.setItem('bappa_videos_dedup_v66', 'true');
+        localStorage.setItem('bappa_videos_dedup_v68', 'true');
       }
 
       // Helper to match existing videos by ID, filename, or title to prevent duplicate cards
@@ -453,7 +506,7 @@ export class VideoMemoriesController {
               let existing = findExistingVideo(saved);
               if (existing) {
                 if (saved.videoUrl && !saved.videoUrl.startsWith('blob:')) existing.videoUrl = saved.videoUrl;
-                if (saved.thumb) existing.thumb = saved.thumb;
+                existing.thumb = sanitizeThumbnail(existing.id, saved.thumb, existing.customFileName || saved.customFileName);
                 if (saved.duration) existing.duration = saved.duration;
                 if (saved.customFileName) existing.customFileName = saved.customFileName;
                 existing.isCustom = true;
@@ -466,7 +519,7 @@ export class VideoMemoriesController {
                   id: saved.id,
                   title: saved.title || 'Celebration Video',
                   desc: saved.desc || 'Our Vinayaka Chaturthi video memory.',
-                  thumb: saved.thumb || 'assets/images/video_thumb_visarjan_immersion.jpg',
+                  thumb: sanitizeThumbnail(saved.id, saved.thumb, saved.customFileName),
                   duration: saved.duration || '00:30',
                   videoUrl: fallbackUrl,
                   customFileName: saved.customFileName || '',
@@ -496,7 +549,7 @@ export class VideoMemoriesController {
 
           if (existing) {
             if (videoUrl) existing.videoUrl = videoUrl;
-            existing.thumb = saved.thumb || existing.thumb;
+            existing.thumb = sanitizeThumbnail(existing.id, saved.thumb || existing.thumb, existing.customFileName || saved.customFileName);
             existing.duration = saved.duration || existing.duration;
             existing.customFileName = saved.customFileName || existing.customFileName;
             existing.isCustom = true;
@@ -506,7 +559,7 @@ export class VideoMemoriesController {
               id: saved.id,
               title: saved.title || 'Celebration Video',
               desc: saved.desc || 'Our Vinayaka Chaturthi video memory.',
-              thumb: saved.thumb || 'assets/images/video_thumb_visarjan_immersion.jpg',
+              thumb: sanitizeThumbnail(saved.id, saved.thumb, saved.customFileName),
               duration: saved.duration || '00:30',
               videoUrl: videoUrl || (saved.customFileName ? `assets/videos/${saved.customFileName}` : ''),
               customFileName: saved.customFileName || 'Custom Video',
@@ -514,6 +567,26 @@ export class VideoMemoriesController {
             });
           }
         });
+      }
+
+      // D. Guarantee canonical URLs and high-res matching thumbs for festival videos
+      const vDay1 = memoriesData.videos.find(v => v.id === 'vid-fest-day1');
+      if (vDay1) {
+        if (!vDay1.videoUrl || vDay1.videoUrl.includes('17.17.28')) {
+          vDay1.videoUrl = 'assets/videos/WhatsApp Video 2026-09-04 at 17.17.50.mp4';
+          vDay1.customFileName = 'WhatsApp Video 2026-09-04 at 17.17.50.mp4';
+          vDay1.duration = '00:40';
+        }
+        vDay1.thumb = sanitizeThumbnail('vid-fest-day1', vDay1.thumb, vDay1.customFileName);
+      }
+      const vNimarjanam = memoriesData.videos.find(v => v.id === 'vid-fest-nimarjanam');
+      if (vNimarjanam) {
+        if (!vNimarjanam.videoUrl || vNimarjanam.videoUrl.includes('17.17.50')) {
+          vNimarjanam.videoUrl = 'assets/videos/WhatsApp Video 2026-09-04 at 17.17.28.mp4';
+          vNimarjanam.customFileName = 'WhatsApp Video 2026-09-04 at 17.17.28.mp4';
+          vNimarjanam.duration = '00:45';
+        }
+        vNimarjanam.thumb = sanitizeThumbnail('vid-fest-nimarjanam', vNimarjanam.thumb, vNimarjanam.customFileName);
       }
     } catch (e) {
       console.warn('Could not restore persisted videos:', e);
@@ -580,11 +653,13 @@ export class VideoMemoriesController {
     const cardsHtml = memoriesData.videos.map((vid, idx) => {
       const fileName = vid.customFileName || (vid.videoUrl ? vid.videoUrl.split('/').pop() : 'sample_video.mp4');
       const isCustom = vid.isCustom || false;
+      const canonicalThumb = getCanonicalThumbnail(vid.id, vid.customFileName);
+      const displayThumb = sanitizeThumbnail(vid.id, vid.thumb, vid.customFileName);
 
       return `
       <div class="video-card revealed reveal-delay-${(idx % 3) + 1}" data-video-id="${vid.id}" style="opacity: 1 !important; transform: none !important; visibility: visible !important;">
         <div class="video-thumb-wrapper" data-video-id="${vid.id}" title="Click to play in HD">
-          <img src="${vid.thumb}" alt="${vid.title}" loading="lazy" />
+          <img src="${displayThumb}" alt="${vid.title}" loading="lazy" onerror="this.onerror=null; this.src='${canonicalThumb}';" />
           <div class="video-play-badge" aria-label="Play Video">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
               <path d="M8 5v14l11-7z"/>
@@ -832,7 +907,7 @@ export class VideoMemoriesController {
 
     // 4. Extract preview frame from video for thumbnail
     probe.onloadeddata = () => {
-      probe.currentTime = Math.min(1.0, (probe.duration || 2) / 2);
+      probe.currentTime = Math.min(2.5, (probe.duration || 6) * 0.2);
     };
 
     probe.onseeked = async () => {
@@ -848,8 +923,10 @@ export class VideoMemoriesController {
           const img = card.querySelector('.video-thumb-wrapper img');
           if (img) img.src = thumbData;
         }
-        // Save thumbnail to IndexedDB
+        // Save thumbnail to IndexedDB and sync
         await this.videoStore.saveVideo(vidId, file, video.duration, thumbData, file.name, video.title, video.desc);
+        this.saveToLocalStorage();
+        CloudSyncService.saveVideos(this.getCleanVideoList());
       } catch (err) {
         console.warn('Could not generate frame thumbnail:', err);
       }
@@ -1128,7 +1205,7 @@ export class VideoMemoriesController {
     }
 
     const vidId = 'vid-custom-' + Date.now();
-    const fallbackThumb = 'assets/images/video_thumb_visarjan_immersion.jpg';
+    const fallbackThumb = getCanonicalThumbnail(vidId);
     const thumb = this.currentPendingThumb || fallbackThumb;
 
     let videoUrl = '';
@@ -1199,7 +1276,7 @@ export class VideoMemoriesController {
       id: vidId,
       title: title || 'New Celebration Video',
       desc: desc || 'Our Vinayaka Chaturthi video memory.',
-      thumb: 'assets/images/video_thumb_visarjan_immersion.jpg',
+      thumb: getCanonicalThumbnail(vidId),
       duration: duration || '00:30',
       videoUrl: '',
       isCustom: false
@@ -1382,7 +1459,7 @@ export class VideoMemoriesController {
     }
 
     const vidId = 'vid-custom-' + Date.now();
-    const fallbackThumb = 'assets/images/video_thumb_visarjan_immersion.jpg';
+    const fallbackThumb = getCanonicalThumbnail(vidId);
     const thumb = this.inlinePendingThumb || fallbackThumb;
 
     let videoUrl = '';
@@ -1622,8 +1699,8 @@ export class VideoMemoriesController {
       title: v.title,
       desc: v.desc || 'Our Vinayaka Chaturthi video memory.',
       thumb: v.thumb && v.thumb.startsWith('data:') 
-        ? (v.thumb.length < 40000 ? v.thumb : 'assets/images/video_thumb_visarjan_immersion.jpg') 
-        : (v.thumb || 'assets/images/video_thumb_visarjan_immersion.jpg'),
+        ? (v.thumb.length < 40000 ? v.thumb : getCanonicalThumbnail(v.id, v.customFileName)) 
+        : sanitizeThumbnail(v.id, v.thumb, v.customFileName),
       duration: v.duration || '00:30',
       videoUrl: v.videoUrl && !v.videoUrl.startsWith('blob:') 
         ? v.videoUrl 
@@ -1682,7 +1759,7 @@ export class VideoMemoriesController {
         existing.desc = incoming.desc || existing.desc;
         existing.duration = incoming.duration || existing.duration;
         if (incoming.videoUrl) existing.videoUrl = incoming.videoUrl;
-        if (incoming.thumb) existing.thumb = incoming.thumb;
+        if (incoming.thumb) existing.thumb = sanitizeThumbnail(existing.id, incoming.thumb, incoming.customFileName || existing.customFileName);
         if (incoming.customFileName) existing.customFileName = incoming.customFileName;
         existing.isCustom = true;
       } else {
@@ -1690,7 +1767,7 @@ export class VideoMemoriesController {
           id: incoming.id,
           title: incoming.title || 'Celebration Video',
           desc: incoming.desc || 'Our Vinayaka Chaturthi video memory.',
-          thumb: incoming.thumb || 'assets/images/video_thumb_visarjan_immersion.jpg',
+          thumb: sanitizeThumbnail(incoming.id, incoming.thumb, incoming.customFileName),
           duration: incoming.duration || '00:30',
           videoUrl: incoming.videoUrl || '',
           customFileName: incoming.customFileName || '',
@@ -1715,7 +1792,7 @@ export class VideoMemoriesController {
         id: item.id,
         title: item.title || 'Celebration Video',
         desc: item.desc || 'Our Vinayaka Chaturthi video memory.',
-        thumb: item.thumb || 'assets/images/video_thumb_visarjan_immersion.jpg',
+        thumb: sanitizeThumbnail(item.id, item.thumb, item.customFileName || (existing ? existing.customFileName : '')),
         duration: item.duration || '00:30',
         videoUrl: (existing && existing.videoUrl && existing.videoUrl.startsWith('blob:')) 
           ? existing.videoUrl 

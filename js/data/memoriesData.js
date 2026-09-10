@@ -560,8 +560,8 @@ export const memoriesData = {
       desc: "First day celebrations, sacred rituals, and the joyful welcome of Bappa.",
       thumb: "assets/images/video_thumb_day1_vinayaka_chavithi.jpg",
       duration: "00:40",
-      videoUrl: "assets/videos/WhatsApp Video 2026-09-04 at 17.17.28.mp4",
-      customFileName: "WhatsApp Video 2026-09-04 at 17.17.28.mp4",
+      videoUrl: "assets/videos/WhatsApp Video 2026-09-04 at 17.17.50.mp4",
+      customFileName: "WhatsApp Video 2026-09-04 at 17.17.50.mp4",
       isCustom: true
     },
     {
@@ -650,8 +650,8 @@ export const memoriesData = {
       desc: "Electrifying festive atmosphere and high spirits on the immersion day.",
       thumb: "assets/images/video_thumb_nimarjanam_full_fire.jpg",
       duration: "00:45",
-      videoUrl: "assets/videos/WhatsApp Video 2026-09-04 at 17.17.50.mp4",
-      customFileName: "WhatsApp Video 2026-09-04 at 17.17.50.mp4",
+      videoUrl: "assets/videos/WhatsApp Video 2026-09-04 at 17.17.28.mp4",
+      customFileName: "WhatsApp Video 2026-09-04 at 17.17.28.mp4",
       isCustom: true
     },
     {
