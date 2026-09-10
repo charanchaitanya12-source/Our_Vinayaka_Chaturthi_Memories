@@ -4,20 +4,20 @@
  * ============================================================================
  */
 
-import { memoriesData } from './data/memoriesData.js?v=9.9';
-import { AmbientAudioEngine } from './modules/ambientAudio.js?v=9.9';
-import { ParticleEngine } from './modules/particleCanvas.js?v=9.9';
-import { TimelineController } from './modules/timeline.js?v=9.9';
-import { GalleryController } from './modules/gallery.js?v=9.9';
-import { InsideJokesController } from './modules/insideJokes.js?v=9.9';
-import { FriendsController } from './modules/friendsSpotlight.js?v=9.9';
-import { StorytellingController } from './modules/storytelling.js?v=9.9';
-import { VideoMemoriesController } from './modules/videoMemories.js?v=9.9';
-import { MemoryWallController } from './modules/memoryWall.js?v=9.9';
-import { PhotoManagerController } from './modules/photoManager.js?v=9.9';
-import { TributeController } from './modules/tribute.js?v=9.9';
-import { FestiveInteractions } from './modules/festiveInteractions.js?v=9.9';
-import { ShareManagerController } from './modules/shareManager.js?v=9.9';
+import { memoriesData } from './data/memoriesData.js?v=10.0';
+import { AmbientAudioEngine } from './modules/ambientAudio.js?v=10.0';
+import { ParticleEngine } from './modules/particleCanvas.js?v=10.0';
+import { TimelineController } from './modules/timeline.js?v=10.0';
+import { GalleryController } from './modules/gallery.js?v=10.0';
+import { InsideJokesController } from './modules/insideJokes.js?v=10.0';
+import { FriendsController } from './modules/friendsSpotlight.js?v=10.0';
+import { StorytellingController } from './modules/storytelling.js?v=10.0';
+import { VideoMemoriesController } from './modules/videoMemories.js?v=10.0';
+import { MemoryWallController } from './modules/memoryWall.js?v=10.0';
+import { PhotoManagerController } from './modules/photoManager.js?v=10.0';
+import { TributeController } from './modules/tribute.js?v=10.0';
+import { FestiveInteractions } from './modules/festiveInteractions.js?v=10.0';
+import { ShareManagerController } from './modules/shareManager.js?v=10.0';
 
 class App {
   constructor() {

@@ -9,8 +9,8 @@
  * 2. Standalone Tall Vertical Column for Sai Nikhil Raj Muppana (3 stacked photos).
  */
 
-import { memoriesData } from '../data/memoriesData.js?v=9.9';
-import { CloudSyncService } from '../services/cloudSyncService.js?v=9.9';
+import { memoriesData } from '../data/memoriesData.js?v=10.0';
+import { CloudSyncService } from '../services/cloudSyncService.js?v=10.0';
 
 export class FriendsController {
   constructor(containerId = 'friends-grid-container') {
@@ -42,8 +42,8 @@ export class FriendsController {
     this.saveAllBtn = document.getElementById('btn-save-friends');
 
     // Storage Keys
-    this.storageKey = CloudSyncService.CACHE_KEYS?.GANG || 'vinayaka_saved_gang_v19';
-    this.deletedKey = 'vinayaka_deleted_friend_ids_v19';
+    this.storageKey = CloudSyncService.CACHE_KEYS?.GANG || 'vinayaka_saved_gang_v20';
+    this.deletedKey = 'vinayaka_deleted_friend_ids_v20';
     this.currentUploadedPhoto = null;
     this.friends = [];
 
@@ -90,7 +90,7 @@ export class FriendsController {
 
   purgeLegacyCaches() {
     try {
-      // Purge deprecated legacy keys including v14, v15, v16, v17, and v18 to prevent stale name/order overrides
+      // Purge deprecated legacy keys including v14, v15, v16, v17, v18, and v19 to prevent stale name/order overrides
       const legacyKeys = [
         'vinayaka_gang_v1', 'vinayaka_gang_v2', 'vinayaka_saved_gang_v1', 'vinayaka_saved_gang_v2',
         'vinayaka_saved_gang_v10', 'vinayaka_saved_gang_v11', 'vinayaka_saved_gang_v12',
@@ -98,7 +98,8 @@ export class FriendsController {
         'vinayaka_saved_gang_v15', 'vinayaka_deleted_friend_ids_v15',
         'vinayaka_saved_gang_v16', 'vinayaka_deleted_friend_ids_v16',
         'vinayaka_saved_gang_v17', 'vinayaka_deleted_friend_ids_v17',
-        'vinayaka_saved_gang_v18', 'vinayaka_deleted_friend_ids_v18'
+        'vinayaka_saved_gang_v18', 'vinayaka_deleted_friend_ids_v18',
+        'vinayaka_saved_gang_v19', 'vinayaka_deleted_friend_ids_v19'
       ];
       legacyKeys.forEach(k => localStorage.removeItem(k));
     } catch (e) {}
@@ -353,7 +354,7 @@ export class FriendsController {
       return `
         <div class="friend-card standard-square-card reveal-item reveal-delay-${(idx % 3) + 1}" data-friend-id="${friend.id}" id="card-${friend.id}">
           <div class="square-photo-wrapper">
-            <img class="square-friend-avatar" src="${photoSrc}?v=4.4" alt="${displayName}" loading="lazy" />
+            <img class="square-friend-avatar" src="${photoSrc}?v=10.0" alt="${displayName}" loading="lazy" />
           </div>
           <div class="square-card-content">
             <h4 class="square-friend-name" title="${displayName}">${displayName}</h4>
@@ -388,7 +389,7 @@ export class FriendsController {
             <div class="tall-sai-photos-stack">
               ${saiPhotos.map((p, pIdx) => `
                 <div class="tall-sai-photo-item">
-                  <img class="tall-sai-avatar" src="${p}?v=4.4" alt="${saiName} Photo ${pIdx + 1}" loading="lazy" />
+                  <img class="tall-sai-avatar" src="${p}?v=10.0" alt="${saiName} Photo ${pIdx + 1}" loading="lazy" />
                 </div>
               `).join('')}
             </div>
@@ -428,7 +429,7 @@ export class FriendsController {
             <div class="tall-sai-photos-horizontal">
               ${saiPhotos.map((p, pIdx) => `
                 <div class="tall-sai-photo-item hero-photo-item">
-                  <img class="tall-sai-avatar" src="${p}" alt="${saiName} Photo ${pIdx + 1}" loading="lazy" />
+                  <img class="tall-sai-avatar" src="${p}?v=10.0" alt="${saiName} Photo ${pIdx + 1}" loading="lazy" />
                 </div>
               `).join('')}
             </div>
