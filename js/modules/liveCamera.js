@@ -84,6 +84,25 @@ export class LiveCameraController {
     
     ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
 
+    // Reset transform to draw text normally (not mirrored)
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+    // Add "2026 memories" text watermark
+    const fontSize = Math.max(24, Math.floor(this.canvas.width / 25));
+    ctx.font = `bold ${fontSize}px sans-serif`;
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+    ctx.textAlign = 'right';
+    ctx.textBaseline = 'bottom';
+    
+    // Add shadow for better visibility on varied backgrounds
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+    ctx.shadowBlur = 8;
+    ctx.shadowOffsetX = 2;
+    ctx.shadowOffsetY = 2;
+    
+    // Draw text at the bottom right corner with some padding
+    ctx.fillText('2026 memories', this.canvas.width - 20, this.canvas.height - 20);
+
     // Get image data
     const dataUrl = this.canvas.toDataURL('image/jpeg', 0.8);
     
