@@ -7,7 +7,7 @@
  */
 
 export const memoriesData = {
-  version: "6.1.0",
+  version: "6.2.0",
   lastUpdated: "Festival Season",
 
   // 1. HERO SECTION CONFIGURATION
@@ -343,6 +343,52 @@ export const memoriesData = {
       src: "assets/images/video_thumb_fest_drive_4.jpg",
       videoUrl: "assets/videos/WhatsApp Video 2026-09-10 at 17.30.36.mp4",
       tags: ["MandapDance", "Video", "Candid", "Celebration"]
+    },
+    {
+      id: "gal-18",
+      category: "group",
+      title: "Veranda Gang Chills & Candid Smiles",
+      caption: "All of us hanging out together on the steps, laughing, teasing, and sharing timeless memories.",
+      date: "Festival Afternoon",
+      aspectRatio: "landscape",
+      src: "assets/images/real_gang_porch_selfie.jpg",
+      tags: ["Gang", "Selfie", "Brotherhood", "Smiles"]
+    },
+    {
+      id: "gal-19",
+      category: "bloopers",
+      type: "video",
+      title: "Grove Gathering & Gang Vibes",
+      caption: "Video memory: Relaxed outdoor gathering under the grove trees, sharing jokes, memories, and laughs.",
+      date: "Celebration Day",
+      aspectRatio: "landscape",
+      src: "assets/images/video_thumb_grove_celebration_vibes.jpg",
+      videoUrl: "assets/videos/video_09_grove_celebration_vibes.mp4",
+      tags: ["Gang", "Video", "Grove", "Celebration"]
+    },
+    {
+      id: "gal-20",
+      category: "bloopers",
+      type: "video",
+      title: "Grove Mass Dance Beats",
+      caption: "Video memory: Synchronized energetic mass dance moves with high spirits surrounded by trees.",
+      date: "Celebration Day",
+      aspectRatio: "landscape",
+      src: "assets/images/video_thumb_grove_mass_dance.jpg",
+      videoUrl: "assets/videos/video_10_grove_mass_dance.mp4",
+      tags: ["Dance", "Video", "Grove", "Energy"]
+    },
+    {
+      id: "gal-21",
+      category: "bloopers",
+      type: "video",
+      title: "Grove Dance & Non-Stop Laughter",
+      caption: "Video memory: Circling up, funny dance face-offs, and pure brotherly laughter in the outdoors.",
+      date: "Celebration Day",
+      aspectRatio: "landscape",
+      src: "assets/images/video_thumb_grove_laughter_energy.jpg",
+      videoUrl: "assets/videos/video_11_grove_laughter_energy.mp4",
+      tags: ["Dance", "Video", "Laughter", "Bloopers"]
     }
   ],
 
@@ -411,7 +457,7 @@ export const memoriesData = {
       name: "Ramesh",
       nickname: "The Gang",
       photos: ["assets/images/gang/gang_member_ramesh.jpg"],
-      taggedMoments: ["gal-1", "gal-2", "gal-13"]
+      taggedMoments: ["gal-1", "gal-2", "gal-13", "gal-18"]
     },
     {
       id: "friend-sai",
@@ -421,7 +467,7 @@ export const memoriesData = {
         "assets/images/gang/gang_member_sai.jpg",
         "assets/images/gang/real_gang_sai.jpg"
       ],
-      taggedMoments: ["gal-1", "gal-2"]
+      taggedMoments: ["gal-1", "gal-2", "gal-18"]
     },
     {
       id: "friend-pradeep",
@@ -431,7 +477,7 @@ export const memoriesData = {
         "assets/images/gang/gang_member_pradeep.jpg",
         "assets/images/gang/real_gang_pradeep.jpg"
       ],
-      taggedMoments: ["gal-1", "gal-2"]
+      taggedMoments: ["gal-1", "gal-2", "gal-18"]
     },
     {
       id: "friend-charan",
@@ -441,7 +487,7 @@ export const memoriesData = {
         "assets/images/gang/gang_member_charan.jpg",
         "assets/images/gang/real_gang_charan.jpg"
       ],
-      taggedMoments: ["gal-1", "gal-2", "gal-11"]
+      taggedMoments: ["gal-1", "gal-2", "gal-11", "gal-18"]
     },
     {
       id: "friend-chinna",
@@ -451,7 +497,7 @@ export const memoriesData = {
         "assets/images/gang/gang_member_chinna.jpg",
         "assets/images/gang/real_gang_chinna.jpg"
       ],
-      taggedMoments: ["gal-1", "gal-2", "gal-7"]
+      taggedMoments: ["gal-1", "gal-2", "gal-7", "gal-18"]
     },
     {
       id: "friend-hamu",
@@ -461,7 +507,7 @@ export const memoriesData = {
         "assets/images/gang/gang_member_hamu.jpg",
         "assets/images/gang/real_gang_hamu.jpg"
       ],
-      taggedMoments: ["gal-1", "gal-2"]
+      taggedMoments: ["gal-1", "gal-2", "gal-18"]
     },
     {
       id: "friend-narendra",
@@ -471,7 +517,7 @@ export const memoriesData = {
         "assets/images/gang/gang_member_narendra.jpg",
         "assets/images/gang/real_gang_narendra.jpg"
       ],
-      taggedMoments: ["gal-1", "gal-2", "gal-3"]
+      taggedMoments: ["gal-1", "gal-2", "gal-3", "gal-18"]
     },
     {
       id: "friend-teja",
@@ -481,7 +527,7 @@ export const memoriesData = {
         "assets/images/gang/gang_member_teja.jpg",
         "assets/images/gang/real_gang_teja.jpg"
       ],
-      taggedMoments: ["gal-1", "gal-2", "gal-12"]
+      taggedMoments: ["gal-1", "gal-2", "gal-12", "gal-18"]
     },
     {
       id: "friend-committee",
@@ -760,6 +806,36 @@ export const memoriesData = {
       duration: "00:31",
       videoUrl: "assets/videos/WhatsApp Video 2026-09-10 at 17.30.36.mp4",
       customFileName: "WhatsApp Video 2026-09-10 at 17.30.36.mp4",
+      isCustom: true
+    },
+    {
+      id: "vid-fest-grove-vibes",
+      title: "GROVE GATHERING & GANG VIBES",
+      desc: "Relaxed outdoor hangouts, brotherhood talks, and spontaneous celebration with the boys.",
+      thumb: "assets/images/video_thumb_grove_celebration_vibes.jpg",
+      duration: "02:17",
+      videoUrl: "assets/videos/video_09_grove_celebration_vibes.mp4",
+      customFileName: "video_09_grove_celebration_vibes.mp4",
+      isCustom: true
+    },
+    {
+      id: "vid-fest-grove-dance",
+      title: "GROVE MASS DANCE BEATS",
+      desc: "Full mass dance energy and rocking beats surrounded by the green grove trees.",
+      thumb: "assets/images/video_thumb_grove_mass_dance.jpg",
+      duration: "01:25",
+      videoUrl: "assets/videos/video_10_grove_mass_dance.mp4",
+      customFileName: "video_10_grove_mass_dance.mp4",
+      isCustom: true
+    },
+    {
+      id: "vid-fest-grove-laughter",
+      title: "GROVE DANCE & NON-STOP LAUGHTER",
+      desc: "Hilarious dance face-offs, non-stop smiles, and joyful celebration moments with the gang.",
+      thumb: "assets/images/video_thumb_grove_laughter_energy.jpg",
+      duration: "01:54",
+      videoUrl: "assets/videos/video_11_grove_laughter_energy.mp4",
+      customFileName: "video_11_grove_laughter_energy.mp4",
       isCustom: true
     }
   ],

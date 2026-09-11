@@ -33,7 +33,10 @@ export const CANONICAL_VIDEO_THUMBNAILS = {
   'vid-fest-drive-dj-energy': 'assets/images/video_thumb_fest_drive_1.jpg',
   'vid-fest-drive-green-craze': 'assets/images/video_thumb_fest_drive_2.jpg',
   'vid-fest-drive-street-vibes': 'assets/images/video_thumb_fest_drive_3.jpg',
-  'vid-fest-drive-pandal-groove': 'assets/images/video_thumb_fest_drive_4.jpg'
+  'vid-fest-drive-pandal-groove': 'assets/images/video_thumb_fest_drive_4.jpg',
+  'vid-fest-grove-vibes': 'assets/images/video_thumb_grove_celebration_vibes.jpg',
+  'vid-fest-grove-dance': 'assets/images/video_thumb_grove_mass_dance.jpg',
+  'vid-fest-grove-laughter': 'assets/images/video_thumb_grove_laughter_energy.jpg'
 };
 
 export function getCanonicalThumbnail(id, customFileName = '') {
@@ -51,6 +54,9 @@ export function getCanonicalThumbnail(id, customFileName = '') {
     if (fn.includes('09.19.30')) return 'assets/images/video_thumb_fest_drive_2.jpg';
     if (fn.includes('17.34.33')) return 'assets/images/video_thumb_fest_drive_3.jpg';
     if (fn.includes('17.30.36')) return 'assets/images/video_thumb_fest_drive_4.jpg';
+    if (fn.includes('grove_celebration') || fn.includes('video_09') || fn.includes('fest_drive_5')) return 'assets/images/video_thumb_grove_celebration_vibes.jpg';
+    if (fn.includes('grove_mass') || fn.includes('video_10') || fn.includes('fest_drive_6')) return 'assets/images/video_thumb_grove_mass_dance.jpg';
+    if (fn.includes('grove_laughter') || fn.includes('video_11') || fn.includes('fest_drive_7')) return 'assets/images/video_thumb_grove_laughter_energy.jpg';
     if (fn.includes('aagman') || fn.includes('video_02')) return 'assets/images/video_thumb_grand_aagman.jpg';
     if (fn.includes('dj') || fn.includes('video_03')) return 'assets/images/video_thumb_dj_night_celebration.jpg';
     if (fn.includes('food') || fn.includes('prasad_feast') || fn.includes('video_06')) return 'assets/images/video_thumb_food_prasad_feast.jpg';
@@ -473,10 +479,10 @@ export class VideoMemoriesController {
   async restorePersistedVideos() {
     try {
       // 0. Ensure all canonical festival videos are visible across existing browser sessions and clear legacy duplicate/corrupted cache
-      if (localStorage.getItem('bappa_videos_dedup_v69') !== 'true') {
+      if (localStorage.getItem('bappa_videos_dedup_v70') !== 'true') {
         localStorage.removeItem('bappa_deleted_video_ids');
         localStorage.removeItem('bappa_saved_videos_v2');
-        localStorage.setItem('bappa_videos_dedup_v69', 'true');
+        localStorage.setItem('bappa_videos_dedup_v70', 'true');
       }
 
       // Helper to match existing videos by ID, filename, or title to prevent duplicate cards

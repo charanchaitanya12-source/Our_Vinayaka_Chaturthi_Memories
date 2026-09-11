@@ -9,8 +9,8 @@
  * 2. Standalone Tall Vertical Column for Sai Nikhil Raj Muppana (3 stacked photos).
  */
 
-import { memoriesData } from '../data/memoriesData.js?v=10.0';
-import { CloudSyncService } from '../services/cloudSyncService.js?v=10.0';
+import { memoriesData } from '../data/memoriesData.js?v=11.0';
+import { CloudSyncService } from '../services/cloudSyncService.js?v=11.0';
 
 export class FriendsController {
   constructor(containerId = 'friends-grid-container') {
