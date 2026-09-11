@@ -18,6 +18,7 @@ import { PhotoManagerController } from './modules/photoManager.js?v=11.0';
 import { TributeController } from './modules/tribute.js?v=11.0';
 import { FestiveInteractions } from './modules/festiveInteractions.js?v=11.0';
 import { ShareManagerController } from './modules/shareManager.js?v=11.0';
+import { LiveCameraController } from './modules/liveCamera.js?v=11.0';
 
 class App {
   constructor() {
@@ -44,6 +45,7 @@ class App {
     this.photoManager = new PhotoManagerController();
     this.festiveInteractions = new FestiveInteractions(this.audio, this.particles);
     this.shareManager = new ShareManagerController();
+    this.liveCamera = new LiveCameraController();
 
     // 3. Setup Scroll Observers & Interactions
     this.initScrollReveal();

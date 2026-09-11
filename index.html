@@ -50,6 +50,7 @@
         <a href="#tribute" class="nav-link">In Memory</a>
         <a href="#stories" class="nav-link">Stories</a>
         <a href="#our-memories" class="nav-link">Our Memories</a>
+        <a href="#live-camera" class="nav-link">Live Camera</a>
         <a href="#memory-wall" class="nav-link">Memory Wall</a>
         <button type="button" class="nav-link btn-capsule-trigger" id="btn-nav-capsule" style="background: none; border: none; cursor: pointer; color: var(--gold-300); font-weight: 600;" title="Open Our Digital Time Capsule Keepsake">Time Capsule 📜</button>
       </nav>
@@ -103,6 +104,7 @@
       <a href="#tribute" class="mobile-subnav-pill">Sai Nikhil 🙏</a>
       <a href="#stories" class="mobile-subnav-pill">Stories</a>
       <a href="#our-memories" class="mobile-subnav-pill">Videos 🎬</a>
+      <a href="#live-camera" class="mobile-subnav-pill">Camera 📷</a>
       <a href="#memory-wall" class="mobile-subnav-pill">Memory Wall ✍️</a>
       <button type="button" class="mobile-subnav-pill btn-capsule-trigger" id="btn-mobile-capsule" style="background: rgba(245, 184, 66, 0.18); border-color: rgba(245, 184, 66, 0.5); cursor: pointer;" title="Open Our Digital Time Capsule Keepsake">Capsule 📜</button>
     </div>
@@ -772,6 +774,52 @@
 
       <div id="video-grid-container" class="video-grid">
         <!-- Dynamically populated with sample videos from videoMemories.js -->
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================================
+       10.5 LIVE CAMERA (CAPTURE & SAVE)
+       ========================================================================= -->
+  <section class="section-padding" id="live-camera">
+    <div class="container">
+      <div class="section-header reveal-item">
+        <span class="section-tag">Capture Moments • క్షణాలను బంధించండి</span>
+        <h2 class="section-title">Live Camera</h2>
+        <p class="section-subtitle">
+          <span class="telugu-subtext">మీ ఫోటోలను ఇప్పుడే తీసి భద్రపరచండి 📷</span>
+          <span class="subtext-english">Click a picture right now and it will be saved to your device immediately.</span>
+        </p>
+      </div>
+
+      <div class="camera-container reveal-item reveal-delay-1">
+        <div class="camera-preview-wrapper" id="camera-preview-wrapper">
+          <div class="camera-placeholder" id="camera-placeholder">
+            <span class="camera-icon-large">📷</span>
+            <p>Click "Open Camera" to start</p>
+          </div>
+          <video id="live-camera-video" autoplay playsinline></video>
+          <canvas id="live-camera-canvas" style="display: none;"></canvas>
+        </div>
+        
+        <div class="camera-controls">
+          <button id="btn-open-camera" class="btn-secondary" style="font-size: 1rem; padding: 0.6rem 1.5rem;">
+            <span>📷 Open Camera</span>
+          </button>
+          <button id="btn-capture-photo" class="btn-primary" style="font-size: 1rem; padding: 0.6rem 1.5rem; display: none;">
+            <span>📸 Capture Photo</span>
+          </button>
+          <button id="btn-switch-camera" class="btn-secondary" style="font-size: 1rem; padding: 0.6rem 1.2rem; display: none;" title="Switch Camera">
+            <span>🔄</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="captured-photos-section reveal-item reveal-delay-2" style="margin-top: 3rem;">
+        <h3 style="text-align: center; color: var(--gold-300); margin-bottom: 1.5rem; font-family: var(--font-display);">Captured Moments</h3>
+        <div id="live-camera-grid" class="camera-grid">
+          <!-- Captured photos will appear here -->
+        </div>
       </div>
     </div>
   </section>
