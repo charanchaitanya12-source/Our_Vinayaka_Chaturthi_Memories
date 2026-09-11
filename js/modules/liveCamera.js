@@ -96,6 +96,49 @@ export class LiveCameraController {
     this.photos.unshift(newPhoto);
     this.savePhotos();
     this.renderGrid();
+    
+    this.showCaptureSuccess();
+  }
+
+  showCaptureSuccess() {
+    let existing = document.getElementById('camera-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'camera-toast';
+    toast.innerHTML = '📸 Photo clicked successfully!';
+    Object.assign(toast.style, {
+      position: 'fixed',
+      bottom: '40px',
+      left: '50%',
+      transform: 'translateX(-50%) translateY(20px)',
+      background: 'var(--maroon-700, #4a0d17)',
+      color: 'var(--gold-300, #ffe494)',
+      padding: '12px 24px',
+      borderRadius: '30px',
+      boxShadow: '0 8px 16px rgba(0,0,0,0.4)',
+      zIndex: '9999',
+      fontFamily: 'var(--font-sans, sans-serif)',
+      fontSize: '1rem',
+      fontWeight: '600',
+      opacity: '0',
+      transition: 'opacity 0.3s ease, transform 0.3s ease',
+      pointerEvents: 'none',
+      border: '1px solid var(--gold-500, #f5b842)'
+    });
+
+    document.body.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+    });
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(20px)';
+      setTimeout(() => toast.remove(), 300);
+    }, 2500);
   }
 
   deletePhoto(id) {
