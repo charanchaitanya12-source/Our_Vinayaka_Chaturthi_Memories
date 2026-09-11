@@ -4,21 +4,21 @@
  * ============================================================================
  */
 
-import { memoriesData } from './data/memoriesData.js?v=11.0';
-import { AmbientAudioEngine } from './modules/ambientAudio.js?v=11.0';
-import { ParticleEngine } from './modules/particleCanvas.js?v=11.0';
-import { TimelineController } from './modules/timeline.js?v=11.0';
-import { GalleryController } from './modules/gallery.js?v=11.0';
-import { InsideJokesController } from './modules/insideJokes.js?v=11.0';
-import { FriendsController } from './modules/friendsSpotlight.js?v=11.0';
-import { StorytellingController } from './modules/storytelling.js?v=11.0';
-import { VideoMemoriesController } from './modules/videoMemories.js?v=11.0';
-import { MemoryWallController } from './modules/memoryWall.js?v=11.0';
-import { PhotoManagerController } from './modules/photoManager.js?v=11.0';
-import { TributeController } from './modules/tribute.js?v=11.0';
-import { FestiveInteractions } from './modules/festiveInteractions.js?v=11.0';
-import { ShareManagerController } from './modules/shareManager.js?v=11.0';
-import { LiveCameraController } from './modules/liveCamera.js?v=11.0';
+import { memoriesData } from './data/memoriesData.js?v=12.0';
+import { AmbientAudioEngine } from './modules/ambientAudio.js?v=12.0';
+import { ParticleEngine } from './modules/particleCanvas.js?v=12.0';
+import { TimelineController } from './modules/timeline.js?v=12.0';
+import { GalleryController } from './modules/gallery.js?v=12.0';
+import { InsideJokesController } from './modules/insideJokes.js?v=12.0';
+import { FriendsController } from './modules/friendsSpotlight.js?v=12.0';
+import { StorytellingController } from './modules/storytelling.js?v=12.0';
+import { VideoMemoriesController } from './modules/videoMemories.js?v=12.0';
+import { MemoryWallController } from './modules/memoryWall.js?v=12.0';
+import { PhotoManagerController } from './modules/photoManager.js?v=12.0';
+import { TributeController } from './modules/tribute.js?v=12.0';
+import { FestiveInteractions } from './modules/festiveInteractions.js?v=12.0';
+import { ShareManagerController } from './modules/shareManager.js?v=12.0';
+import { LiveCameraController } from './modules/liveCamera.js?v=12.0';
 
 class App {
   constructor() {
