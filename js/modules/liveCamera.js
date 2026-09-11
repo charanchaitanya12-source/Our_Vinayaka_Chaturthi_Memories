@@ -84,25 +84,6 @@ export class LiveCameraController {
     
     ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
 
-    // Reset transform to draw text normally (not mirrored)
-    ctx.setTransform(1, 0, 0, 1, 0, 0);
-
-    // Add "2026 memory" text watermark
-    const fontSize = Math.max(32, Math.floor(this.canvas.width / 15));
-    ctx.font = `bold ${fontSize}px sans-serif`;
-    ctx.fillStyle = 'rgba(255, 255, 255, 1)';
-    ctx.textAlign = 'right';
-    ctx.textBaseline = 'bottom';
-    
-    // Add shadow for better visibility on varied backgrounds
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.9)';
-    ctx.shadowBlur = 6;
-    ctx.shadowOffsetX = 3;
-    ctx.shadowOffsetY = 3;
-    
-    // Draw text at the bottom right corner with some padding
-    ctx.fillText('2026 memory', this.canvas.width - 25, this.canvas.height - 25);
-
     // Get image data
     const dataUrl = this.canvas.toDataURL('image/jpeg', 0.8);
     
@@ -156,8 +137,11 @@ export class LiveCameraController {
 
     this.grid.innerHTML = this.photos.map(photo => `
       <div class="camera-photo-card" id="photo-${photo.id}">
-        <img src="${photo.dataUrl}" alt="Captured Moment" />
-        <button class="delete-photo-btn" data-id="${photo.id}" title="Delete photo">✕</button>
+        <div class="camera-photo-img-wrapper">
+          <img src="${photo.dataUrl}" alt="Captured Moment" />
+          <button class="delete-photo-btn" data-id="${photo.id}" title="Delete photo">✕</button>
+        </div>
+        <div class="camera-photo-caption">2026 memory</div>
       </div>
     `).join('');
 
