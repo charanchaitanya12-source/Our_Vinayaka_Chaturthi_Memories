@@ -2970,7 +2970,7 @@
 /* --------------------------------------------------------------------------
    15. RESPONSIVE BREAKPOINTS (Mobile-First Optimizations)
    -------------------------------------------------------------------------- */
-@media (max-width: 1350px) {
+@media (max-width: 1700px) {
   .nav-links {
     display: none;
   }
@@ -6782,7 +6782,7 @@ body.cert-modal-open {
   box-shadow: 0 0 10px rgba(245, 184, 66, 0.4);
 }
 
-@media (max-width: 1350px) {
+@media (max-width: 1700px) {
   .mobile-subnav-track {
     display: flex;
   }
